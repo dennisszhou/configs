@@ -1,0 +1,31 @@
+set nu
+set tabstop=2
+set shiftwidth=2
+set expandtab
+set smarttab
+
+set backspace=2
+
+filetype off
+filetype plugin indent off
+set runtimepath+=/usr/local/go/misc/vim
+filetype plugin indent on
+syntax on
+
+set ignorecase
+
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" Vundle 
+" set the runtime path to include Vundle and initialize
+
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'ctrlpvim/ctrlp.vim'
+
+call vundle#end()            " required
+filetype plugin indent on    " required
