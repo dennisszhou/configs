@@ -1,0 +1,9 @@
+[user]
+        name = Dennis Zhou
+        email = dennisszhou@gmail.com
+[sendemail]
+        chainreplyto = false
+        smtpencryption = tls 
+        smtpserver = "smtp.gmail.com"
+        smtpuser = dennisszhou@gmail.com
+        smtpserverport = 587

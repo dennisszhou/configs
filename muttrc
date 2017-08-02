@@ -1,0 +1,31 @@
+set mbox_type=Maildir
+save-hook '.*' ~/staging
+
+set realname="Dennis Zhou"
+set reverse_name
+set from="dennisszhou@gmail.com"
+set include=yes
+
+set smtp_url="smtp://dennisszhou@gmail.com@smtp.gmail.com:587/"
+set imap_user="dennisszhou@gmail.com"
+set smtp_authenticators="gssapi:login"
+
+set imap_idle=yes
+set imap_keepalive=30
+set folder="imaps://imap.gmail.com:993"
+set spoolfile="+INBOX"
+set copy=yes
+set record="+INBOX"
+set postponed="+Drafts"
+
+set autoedit=yes
+set fast_reply=yes
+set edit_headers=yes
+set header_cache=~/.mutt-cache/hcache.f
+set message_cachedir=~/.mutt-cache/mcache.f
+set sort=threads
+set sort_aux=last-date-received
+set pager_index_lines=10
+set pager_stop=yes
+
+set connect_timeout=15

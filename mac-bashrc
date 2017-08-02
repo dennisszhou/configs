@@ -4,28 +4,12 @@ export LSCOLORS=ExFxCxDxBxegedabagacad
 #Homebrew
 export PATH=/usr/local/sbin:$PATH
 
-export HADOOP_HOME="/usr/local/Cellar/hadoop/2.3.0"
-export HADOOP_DAEMONS="$HADOOP_HOME/libexec/sbin"
+alias vim='<VIM_PATH>'
 
-export HIVE_HOME="/Users/dennzhou/Hive/hive-0.11.0"
-export PATH=$HIVE_HOME/bin:$PATH
-
-export PATH=~/AWS/elastic-mapreduce-cli:$PATH
-
-export PATH=$PATH:/usr/local/go/bin
-
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
-
-#Boost
-export DYLD_LIBRARY_PATH=$HOME/libraries/boost_1_61_0/lib:$DYLD_LIBRARY_PATH
-
-alias vim='/usr/local/Cellar/vim/7.4.1345/bin/vim'
-
-export VISUAL='/usr/local/Cellar/vim/7.4.1345/bin/vim'
+export VISUAL='<VIM_PATH>'
 export EDITOR="$VISUAL"
 
 alias f='find ./ -name '
-alias fig='/Users/dennzhou/scripts/fig'
 
 alias gr='grep -r'
 alias gri='grep -ri'
@@ -36,5 +20,3 @@ alias gs='git branch -vv && git status'
 alias ta='tmux attach -t'
 alias td='tmux detach'
 alias tls='tmux ls'
-
-alias ssh-wisc='ssh -X denniszhou@theseus.cs.wisc.edu'
