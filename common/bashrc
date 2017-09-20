@@ -1,13 +1,7 @@
-export CLICOLOR=1
-export LSCOLORS=ExFxCxDxBxegedabagacad
-
-#Homebrew
-export PATH=/usr/local/sbin:$PATH
-
-alias vim='<VIM_PATH>'
-
-export VISUAL='<VIM_PATH>'
+export VISUAL='vim'
 export EDITOR="$VISUAL"
+
+alias ls='ls --color'
 
 alias f='find ./ -name '
 

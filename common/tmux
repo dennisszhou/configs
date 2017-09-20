@@ -1,0 +1,37 @@
+set -g prefix C-a
+
+unbind-key C-b
+bind-key C-a send-prefix
+
+bind-key E setw synchronize-panes
+
+bind-key n new-window -c '#{pane_current_path}'
+
+bind-key % split-window -h -c '#{pane_current_path}'
+bind-key '"' split-window -v -c '#{pane_current_path}'
+
+unbind-key C-o
+
+# move around panes with hjkl, as one would in vim after pressing ctrl-w
+bind h select-pane -L
+bind j select-pane -D
+bind k select-pane -U
+bind l select-pane -R
+
+#change defaults for resurrect (two steps)
+#1. unbind the current defaults C-s and C-r
+unbind-key -T prefix C-s
+unbind-key -T prefix C-r
+   
+#2. Still use prefix C-s and C-r, but now ask for (y/n) response before saving/restoring.
+#This assumes tmux-resurrect is saved to ~/build/tmux-resurrect folder
+bind-key -T prefix C-s confirm-before -p 'Save this tmux session? (y/n)' 'run-shell ~/build/tmux-resurrect/scripts/save.sh'
+bind-key -T prefix C-r confirm-before -p 'Resurrect last tmux session? (y/n)' 'run-shell ~/build/tmux-resurrect/scripts/restore.sh'
+
+# List of plugins
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tmux-sensible'
+set -g @plugin 'tmux-plugins/tmux-resurrect'
+
+# Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
+run '~/.tmux/plugins/tpm/tpm'

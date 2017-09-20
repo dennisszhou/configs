@@ -1,0 +1,7 @@
+export CLICOLOR=1
+export LSCOLORS=ExFxCxDxBxegedabagacad
+
+#Homebrew
+export PATH=/usr/local/sbin:$PATH
+
+alias vim='<VIM_PATH>'
