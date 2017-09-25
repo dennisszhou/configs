@@ -16,6 +16,7 @@ if [ ! -d $install_dir ]; then
   git clone https://github.com/tmux-plugins/tpm $install_dir
 fi
 cp common/tmux ~/.tmux.conf
+~/.tmux/plugins/tpm/bin/install_plugins
 
 
 # vim
