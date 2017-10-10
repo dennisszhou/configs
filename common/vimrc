@@ -22,12 +22,16 @@ hi DiffChange    ctermfg=0	ctermbg=38	cterm=NONE
 hi DiffDelete    ctermfg=0	ctermbg=167	cterm=NONE
 hi DiffText      ctermfg=16	ctermbg=221	cterm=NONE
 
-" highlighting settings
+" search settings
 set ignorecase
+set hlsearch
+hi Search ctermbg=44
 map <Space> :noh<cr>
 
 " Normal settings
+syntax on
 set nu
+
 
 set tabstop=2
 set shiftwidth=2

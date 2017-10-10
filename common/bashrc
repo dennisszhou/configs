@@ -1,6 +1,8 @@
 export VISUAL='vim'
 export EDITOR="$VISUAL"
 
+set -o ignoreeof
+
 alias ls='ls --color'
 
 alias f='find ./ -name '
