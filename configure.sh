@@ -27,3 +27,6 @@ echo $install_dir
 fi
 cp common/vimrc ~/.vimrc
 vim +PluginInstall +qall
+
+# git
+cp common/gitconfig ~/.gitconfig
