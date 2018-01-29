@@ -24,9 +24,9 @@ run '~/.tmux/plugins/tpm/tpm'
 
 # change defaults for resurrect (two steps)
 # 1. unbind the current defaults C-s and C-r
-unbind-key -T prefix C-s
-unbind-key -T prefix C-r
+unbind-key C-s
+unbind-key C-r
 
 # 2. Still use prefix C-s and C-r, but now ask for (y/n) response before saving/restoring.
-bind-key -T prefix C-s confirm-before -p 'Save this tmux session? (y/n)' 'run-shell ~/.tmux/plugins/tmux-resurrect/scripts/save.sh'
-bind-key -T prefix C-r confirm-before -p 'Resurrect last tmux session? (y/n)' 'run-shell ~/.tmux/plugins/tmux-resurrect/scripts/restore.sh'
+bind-key C-s confirm-before -p 'Save this tmux session? (y/n)' 'run-shell ~/.tmux/plugins/tmux-resurrect/scripts/save.sh'
+bind-key C-r confirm-before -p 'Resurrect last tmux session? (y/n)' 'run-shell ~/.tmux/plugins/tmux-resurrect/scripts/restore.sh'

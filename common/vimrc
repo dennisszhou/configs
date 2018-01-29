@@ -22,6 +22,12 @@ hi DiffChange    ctermfg=0	ctermbg=38	cterm=NONE
 hi DiffDelete    ctermfg=0	ctermbg=167	cterm=NONE
 hi DiffText      ctermfg=16	ctermbg=221	cterm=NONE
 
+" remember last position
+if has("autocmd")
+    au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+                \| exe "normal! g'\"" | endif
+endif
+
 " search settings
 set ignorecase
 set hlsearch

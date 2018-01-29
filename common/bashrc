@@ -3,8 +3,6 @@ export EDITOR="$VISUAL"
 
 set -o ignoreeof
 
-alias ls='ls --color'
-
 alias f='find ./ -name '
 
 alias gr='grep -r'
