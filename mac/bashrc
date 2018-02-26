@@ -4,4 +4,4 @@ export LSCOLORS=ExFxCxDxBxegedabagacad
 #Homebrew
 export PATH=/usr/local/sbin:$PATH
 
-alias vim='<VIM_PATH>'
+export PATH=/usr/local/Cellar/vim/<version>
