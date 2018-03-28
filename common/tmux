@@ -30,3 +30,9 @@ unbind-key C-r
 # 2. Still use prefix C-s and C-r, but now ask for (y/n) response before saving/restoring.
 bind-key C-s confirm-before -p 'Save this tmux session? (y/n)' 'run-shell ~/.tmux/plugins/tmux-resurrect/scripts/save.sh'
 bind-key C-r confirm-before -p 'Resurrect last tmux session? (y/n)' 'run-shell ~/.tmux/plugins/tmux-resurrect/scripts/restore.sh'
+
+# tmux buffer settings
+bind P paste-buffer
+bind-key -t vi-copy 'v' begin-selection
+bind-key -t vi-copy 'y' copy-selection
+bind-key -t vi-copy 'r' rectangle-toggle
