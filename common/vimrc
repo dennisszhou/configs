@@ -34,16 +34,15 @@ set hlsearch
 hi Search ctermbg=44
 map <Space> :noh<cr>
 
-" Normal settings
 syntax on
 set nu
+set backspace=2
 
+" Normal settings
 " set tabstop=2
 " set shiftwidth=2
 " set expandtab
 " set smarttab
-" 
-" set backspace=2
 
 " kernel work
 set noexpandtab
