@@ -1,22 +1,27 @@
 set mbox_type=Maildir
 save-hook '.*' ~/staging
 
-set realname="Dennis Zhou"
 set reverse_name
-set from="dennisszhou@gmail.com"
 set include=yes
 
-set smtp_url="smtp://dennisszhou@gmail.com@smtp.gmail.com:587/"
+reply-hook . source ~/.mutt/dennis-gmail.conf
+reply-hook ~Cdennis@kernel.org source ~/.mutt/dennis-korg.conf
+
 set imap_user="dennisszhou@gmail.com"
+set imap_pass="PASSWORD"
 set smtp_authenticators="gssapi:login"
 
 set imap_idle=yes
 set imap_keepalive=30
 set folder="imaps://imap.gmail.com:993"
-set spoolfile="+INBOX"
+# set spoolfile="+INBOX"
 set copy=yes
-set record="+INBOX"
+# set record="+INBOX"
 set postponed="+Drafts"
+
+mailboxes +INBOX +linux +linux/block +linux/mm \
+		  +linux/percpu +linux/kbuild \
+		  ~/workplace/percpu-patches/for-4.20
 
 set autoedit=yes
 set fast_reply=yes
@@ -24,8 +29,26 @@ set edit_headers=yes
 set header_cache=~/.mutt-cache/hcache.f
 set message_cachedir=~/.mutt-cache/mcache.f
 set sort=threads
-set sort_aux=last-date-received
+set sort_aux=date-received
 set pager_index_lines=10
 set pager_stop=yes
 
 set connect_timeout=15
+
+bind pager h exit
+bind attach,browser,pager,index \Cu half-up
+bind attach,browser,pager,index \Cd half-down
+
+# pager settings
+set pager_index_lines=20
+
+# sidebar settings
+set sidebar_visible=yes
+set sidebar_width=38
+color sidebar_highlight   cyan    black
+
+# ctrl-n, ctrl-p to select next, prev folder
+# ctrl-o to open selected folder
+bind pager,index \Ck sidebar-prev
+bind pager,index \Cj sidebar-next
+bind pager,index \Co sidebar-open
