@@ -4,3 +4,6 @@ git send-email --to "Tejun Heo <tj@kernel.org>" --to "Christoph Lameter <cl@linu
 
 # format patches
 git format-patch -n —thread —coverletter -o <output_path>
+
+# fix git send-email on mac
+sudo -H cpan Net::SMTP::SSL
