@@ -39,18 +39,7 @@ set nu
 set backspace=2
 
 " Normal settings
-" set tabstop=2
-" set shiftwidth=2
-" set expandtab
-" set smarttab
-
-" kernel work
-set noexpandtab
-set copyindent
-set preserveindent
-set shiftwidth=8
-set tabstop=8
-
-set noet sw=8 ts=8
-set cindent
-set cinoptions=(0,u0,U0
+set tabstop=4
+set shiftwidth=4
+set expandtab
+set smarttab
