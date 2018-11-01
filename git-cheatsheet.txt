@@ -5,5 +5,11 @@ git send-email --to "Tejun Heo <tj@kernel.org>" --to "Christoph Lameter <cl@linu
 # format patches
 git format-patch -n —thread —coverletter -o <output_path>
 
+# create request-pull
+git request-pull linus git-origin for-4.20
+
+# set remote
+git-origin      git://git.kernel.org/pub/scm/linux/kernel/git/dennis/percpu.git
+
 # fix git send-email on mac
 sudo -H cpan Net::SMTP::SSL
