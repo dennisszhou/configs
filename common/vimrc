@@ -28,6 +28,9 @@ if has("autocmd")
                 \| exe "normal! g'\"" | endif
 endif
 
+" persistent undo
+set undodir=~/.vim/undodir
+
 " search settings
 set ignorecase
 set hlsearch

@@ -27,6 +27,8 @@ setup_configs() {
     cp common/vimrc $HOME/.vimrc
     mkdir -p $HOME/.vim/after/ftplugin
     cp common/vim/c.vim $HOME/.vim/after/ftplugin/
+    # vim persistent undo
+    mkdir -p $HOME/.vim/undodir
 
     # git
     if [[ -e $HOME/.gitconfig ]]; then
