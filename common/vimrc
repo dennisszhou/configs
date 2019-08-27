@@ -30,6 +30,7 @@ endif
 
 " persistent undo
 set undodir=~/.vim/undodir
+set undofile
 
 " search settings
 set ignorecase
