@@ -62,13 +62,13 @@ while [ "$#" -gt 0 ]; do
     esac
 done
 
-if [[ -v $PLATFORM ]]; then
+if [[ -z "$PLATFORM" ]]; then
     echo "set platform -p or --platform=<linux|mac>"
     exit 1
 fi
 
 # should I configure?
-if [[ -v "$INSTALL_ONLY" ]]; then
+if [[ -z "$INSTALL_ONLY" ]]; then
     setup_configs
 fi
 
