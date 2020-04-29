@@ -27,8 +27,8 @@ setup_configs() {
         cp $HOME/.vimrc $HOME/.vimrc.old
     fi
     cp common/vimrc $HOME/.vimrc
-    mkdir -p $HOME/.vim/after/ftplugin
-    cp common/vim/c.vim $HOME/.vim/after/ftplugin/
+    mkdir -p $HOME/.vim/ftplugin
+    cp common/vim/c.vim $HOME/.vim/ftplugin/
     # vim persistent undo
     mkdir -p $HOME/.vim/undodir
 

@@ -47,3 +47,6 @@ set tabstop=4
 set shiftwidth=4
 set expandtab
 set smarttab
+
+" c.vim
+let g:c_repo_whitelist = ['workplace/percpu', 'workplace/drgn']

@@ -48,4 +48,17 @@ function! s:GuessStyle()
     call StyleLinux()
 endfunction
 
-silent call s:GuessStyle()
+function! s:IsWhitelistedRepo()
+    if exists('g:c_repo_whitelist')
+        return
+    endif
+    for repo in  g:c_repo_whitelist
+        let repo_regex = ".*" . repo . ".*"
+        if expand("%:p:h") =~ repo_regex
+            silent call s:GuessStyle()
+            break
+        endif
+    endfor
+endfunction
+
+silent call s:IsWhitelistedRepo()
