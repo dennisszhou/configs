@@ -3,15 +3,3 @@ export VISUAL='vim'
 export EDITOR="$VISUAL"
 
 set -o ignoreeof
-
-alias f='find ./ -name '
-
-alias gr='grep -r'
-alias gri='grep -ri'
-
-alias ggi='git grep -i'
-alias gs='git branch -vv && git status'
-
-alias ta='tmux attach -t'
-alias td='tmux detach'
-alias tls='tmux ls'
