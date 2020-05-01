@@ -10,6 +10,9 @@ call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 " Plugin 'Valloric/YouCompleteMe'
 Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'itchyny/lightline.vim'
+Plugin 'jiangmiao/auto-pairs'
+Plugin 'preservim/nerdtree'
 Plugin 'will133/vim-dirdiff'
 
 call vundle#end()            " required
@@ -50,3 +53,48 @@ set smarttab
 
 " c.vim
 let g:c_repo_whitelist = ['workplace/percpu', 'workplace/drgn']
+
+set showtabline=2
+
+" pane management
+set splitbelow
+set splitright
+
+noremap <C-w>-  :sp<CR>
+noremap <C-w><bar>  :vsp<CR>
+
+" go to tab by number
+nnoremap <C-t>    :tabnew<CR>
+noremap g1 1gt
+noremap g2 2gt
+noremap g3 3gt
+noremap g4 4gt
+noremap g5 5gt
+noremap g6 6gt
+noremap g7 7gt
+noremap g8 8gt
+noremap g9 9gt
+noremap g0 :tablast<cr>
+
+" terminal
+nnoremap <C-w>t :terminal<CR>
+
+" ycm
+let g:ycm_autoclose_preview_window_after_completion = 1
+
+" ctrlp
+let g:ctrlp_working_path_mode = 'c'
+
+" nerdtree
+map <C-n> :NERDTreeToggle<CR>
+let NERDTreeQuitOnOpen = 1
+let NERDTreeMinimalUI = 1
+let NERDTreeDirArrows = 1
+let NERDTreeMapOpenSplit = '-'
+let NERDTreeMapOpenVSplit = '<bar>'
+
+" lightline
+set laststatus=2
+let g:lightline = {
+      \ 'colorscheme': 'solarized'
+      \ }
