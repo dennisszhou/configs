@@ -1,0 +1,25 @@
+From 8bfa4682bcd1ff169d7c874e2be87a9b475e8d53 Mon Sep 17 00:00:00 2001
+From: Dennis Zhou <dennis@kernel.org>
+Date: Wed, 20 May 2020 23:03:15 +0000
+Subject: [PATCH] Always split diff panel below.
+
+---
+ plugin/dirdiff.vim | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/plugin/dirdiff.vim b/plugin/dirdiff.vim
+index cf99d46..b220908 100644
+--- a/plugin/dirdiff.vim
++++ b/plugin/dirdiff.vim
+@@ -495,7 +495,7 @@ function! <SID>DirDiffOpen()
+             endif
+         else
+             "Open the diff windows
+-            silent exec "split ".s:FilenameB
++            silent exec "leftabove split ".s:FilenameB
+ 
+             " To ensure that A is on the left and B on the right, splitright must be off
+             silent exec "leftabove vert diffsplit ".s:FilenameA
+-- 
+2.26.2.761.g0e0b3e54be-goog
+
