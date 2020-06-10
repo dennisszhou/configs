@@ -80,7 +80,21 @@ noremap g0 :tablast<cr>
 nnoremap <C-w>t :terminal<CR>
 
 " ycm
-let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_autoclose_preview_window_after_completion = 0
+
+nnoremap <F5> :YcmForceCompileAndDiagnostics<CR>
+nnoremap <F6> :YcmRestartServer<CR>
+nnoremap <leader>h :YcmShowDetailedDiagnostic<CR>
+nnoremap <leader>gt :YcmCompleter GoTo<CR>
+nnoremap <leader>fi :YcmCompleter FixIt<CR>
+nnoremap <leader>gd :YcmCompleter GetDoc<CR>
+nnoremap <leader>gtp :YcmCompleter GetType<CR>
+nnoremap <leader>gp :YcmCompleter GetParent<CR>
+nnoremap <leader>gti :YcmCompleter GoToInclude<CR>
+nnoremap <leader>gdf :YcmCompleter GoToDefinition<CR>
+nnoremap <leader>gdc :YcmCompleter GoToDeclaration<CR>
+nnoremap <leader>yd :YcmDiags<CR>
+nmap <leader>c <plug>(YCMHover)
 
 " ctrlp
 let g:ctrlp_working_path_mode = 'c'
