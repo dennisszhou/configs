@@ -3,7 +3,9 @@
 setup_configs() {
     # bashrc
     if [[ -e $HOME/.bashrc ]]; then
-        cp $HOME/.bashrc $HOME/.bashrc.old
+	    cp $HOME/.bashrc $HOME/.bashrc.old
+    fi
+    if [[ -e $HOME/.bashrc_aliases ]]; then
         cp $HOME/.bash_aliases $HOME/.bash_aliases.old
     fi
     if [[ $PLATFORM = "mac" ]]; then
@@ -15,6 +17,12 @@ setup_configs() {
     cat common/bashrc >> $HOME/.bashrc
     cat common/bash_profile >> $HOME/.bash_profile
     cp common/bash_aliases $HOME/.bash_aliases
+
+    if [[ -e $HOME/.bash_helpers ]]; then
+	    rm -rf $HOME/.bash_helpers.old
+	    mv $HOME/.bash_helpers $HOME/.bash_helpers.old
+    fi
+    cp -r common/bash_helpers $HOME/.bash_helpers
 
     # tmux
     if [[ -e $HOME/.tmux.conf ]]; then

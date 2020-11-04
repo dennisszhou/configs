@@ -3,3 +3,5 @@ export VISUAL='vim'
 export EDITOR="$VISUAL"
 
 set -o ignoreeof
+
+for f in $HOME/.bash_helpers/*; do source $f; done

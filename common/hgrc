@@ -1,0 +1,41 @@
+[alias]
+ssl = xl
+show = log -pvr
+echo = ![[ -z "$1" ]] && $HG id -i | xargs $HG log -l 1 -pvr ||$HG log -pvr $1
+
+[ui]
+editor = vim -c ":set textwidth=80"
+
+[extensions]
+strip =
+
+[color]
+# and for hg diff output also
+diff.diffline = bold
+diff.extended = cyan
+diff.file_a = red
+diff.file_b = blue
+diff.hunk = magenta
+diff.deleted = red
+diff.inserted = blue
+diff.changed = yellow
+diff.trailingwhitespace = bold red_background
+diff.deleted.changed=red
+diff.inserted.changed=blue bold
+diff.inserted.unchanged = blue
+
+[committemplate]
+changeset = {if(desc, desc, "\n\nBUG=\n\nR=")}\n
+    HG: Enter commit message.  Lines beginning with 'HG:' are removed.
+    HG: {extramsg}
+    HG: --
+    HG: user: {author}\n{ifeq(p2rev, "-1", "",
+   "HG: branch merge\n")
+   }HG: branch '{branch}'\n{if(activebookmark,
+   "HG: bookmark '{activebookmark}'\n")   }{subrepos %
+   "HG: subrepo {subrepo}\n"              }{file_adds %
+   "HG: added {file}\n"                   }{file_mods %
+   "HG: changed {file}\n"                 }{file_dels %
+   "HG: removed {file}\n"                 }{if(files, "",
+   "HG: no files changed\n")}
+   {sub('(?m)^', 'HG: ', diff())}
