@@ -1,7 +1,7 @@
 [alias]
+hdiff = diff -r 'limit(children(.), 1)'
 ssl = xl
-show = log -pvr
-echo = ![[ -z "$1" ]] && $HG id -i | xargs $HG log -l 1 -pvr ||$HG log -pvr $1
+show = ![[ -z "$2"  ]] && $HG id -i | sed "s/+$//g" | xargs $HG log -l 1 -pvr || $HG log -pvr $1
 
 [ui]
 editor = vim -c ":set textwidth=80"
