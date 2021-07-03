@@ -1,0 +1,3 @@
+# mips
+sudo apt install -y binutils-mips64-linux-gnuabi64 gcc-mips64-linux-gnuabi64
+make ARCH=mips CROSS_COMPILE=mips64-linux-gnuabi64- -j 64
