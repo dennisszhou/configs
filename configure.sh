@@ -5,8 +5,11 @@ setup_configs() {
     if [[ -e $HOME/.bashrc ]]; then
 	    cp $HOME/.bashrc $HOME/.bashrc.old
     fi
-    if [[ -e $HOME/.bashrc_aliases ]]; then
+    if [[ -e $HOME/.bash_aliases ]]; then
         cp $HOME/.bash_aliases $HOME/.bash_aliases.old
+    fi
+    if [[ -e $HOME/.bash_profile ]]; then
+        cp $HOME/.bash_profile $HOME/.bash_profile.old
     fi
     if [[ $PLATFORM = "mac" ]]; then
         cp mac/bashrc $HOME/.bashrc
@@ -15,9 +18,10 @@ setup_configs() {
     fi
     echo -ne "\n" >> $HOME/.bashrc
     cat common/bashrc >> $HOME/.bashrc
+    cat common/bash_aliases >> $HOME/.bash_aliases
     cat common/bash_profile >> $HOME/.bash_profile
-    cp common/bash_aliases $HOME/.bash_aliases
 
+    # bash_helpers
     if [[ -e $HOME/.bash_helpers ]]; then
 	    rm -rf $HOME/.bash_helpers.old
 	    mv $HOME/.bash_helpers $HOME/.bash_helpers.old
@@ -49,6 +53,9 @@ setup_configs() {
 
 install_plugins() {
     # tmux tpm
+    if [[ -e $HOME/.tmux ]]; then
+        rm -rf $HOME/.tmux
+    fi
     install_dir="$HOME/.tmux/plugins/tpm"
     if [ ! -d $install_dir ]; then
         git clone https://github.com/tmux-plugins/tpm $install_dir

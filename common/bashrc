@@ -5,3 +5,7 @@ export EDITOR="$VISUAL"
 set -o ignoreeof
 
 for f in $HOME/.bash_helpers/*; do source $f; done
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi

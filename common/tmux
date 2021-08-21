@@ -7,9 +7,6 @@ bind-key E setw synchronize-panes
 
 bind-key c new-window -c '#{pane_current_path}'
 
-bind-key % split-window -h -c '#{pane_current_path}'
-bind-key '"' split-window -v -c '#{pane_current_path}'
-
 unbind-key C-o
 
 # List of plugins
@@ -20,6 +17,7 @@ set -g @plugin 'tmux-plugins/tmux-sensible'
 set -g @plugin 'tmux-plugins/tmux-yank'
 
 # Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
+setenv -g TMUX_PLUGIN_MANAGER_PATH "$HOME/.tmux/plugins/"
 run '~/.tmux/plugins/tpm/tpm'
 
 # change defaults for resurrect (two steps)
@@ -28,20 +26,20 @@ unbind-key C-s
 unbind-key C-r
 
 # 2. Still use prefix C-s and C-r, but now ask for (y/n) response before saving/restoring.
-bind-key C-s confirm-before -p 'Save this tmux session? (y/n)' 'run-shell ~/.tmux/plugins/tmux-resurrect/scripts/save.sh'
-bind-key C-r confirm-before -p 'Resurrect last tmux session? (y/n)' 'run-shell ~/.tmux/plugins/tmux-resurrect/scripts/restore.sh'
+bind-key C-s confirm-before -p 'Save this tmux session? (y/n)' "run-shell $HOME/.tmux/plugins/tmux-resurrect/scripts/save.sh"
+bind-key C-r confirm-before -p 'Resurrect last tmux session? (y/n)' "run-shell $HOME/.tmux/plugins/tmux-resurrect/scripts/restore.sh"
 
 # tmux buffer settings
-bind P paste-buffer
-bind-key -t vi-copy 'v' begin-selection
-bind-key -t vi-copy 'C-v' rectangle-toggle
-bind-key -t vi-copy 'y' copy-selection
+# bind P paste-buffer
+# bind-key -t vi-copy 'v' begin-selection
+# bind-key -t vi-copy 'C-v' rectangle-toggle
+# bind-key -t vi-copy 'y' copy-selection
 
 # tmux >= 2.4 buffer settings
-# bind P paste-buffer
-# bind-key -T copy-mode-vi 'v' send-keys -X begin-selection
-# bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
-# bind-key -T copy-mode-vi 'y' send-keys -X copy-selection
+bind P paste-buffer
+bind-key -T copy-mode-vi 'v' send-keys -X begin-selection
+bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
+bind-key -T copy-mode-vi 'y' send-keys -X copy-selection
 
 # enable mouse
 # Toggle mouse on

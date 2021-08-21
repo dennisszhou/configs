@@ -80,7 +80,9 @@ noremap g0 :tablast<cr>
 nnoremap <C-w>t :terminal<CR>
 
 " ycm
-let g:ycm_autoclose_preview_window_after_completion = 0
+let g:ycm_add_preview_to_completeopt = 1
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_key_list_stop_completion = ['<C-y>', '<Enter>']
 
 nnoremap <F5> :YcmForceCompileAndDiagnostics<CR>
 nnoremap <F6> :YcmRestartServer<CR>
