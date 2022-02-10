@@ -1,6 +1,9 @@
 export CLICOLOR=1
 export LSCOLORS=ExFxCxDxBxegedabagacad
 # export LSCOLORS=exfxcxdxbxegehbhbgacad
+export PS1="%F{green}%n@%m %F{blue}%C%F{black}$ "
+# export PS1="\[\033[0;32m\]\u@\h\[$(tput sgr0)\] \[\033[0;34m\]\W\[$(tput sgr0)\]\$ "
 
-#Homebrew
-export PATH=/usr/local/sbin:$PATH
+# homebrew
+export PATH=/usr/local/bin:$PATH
+# export PATH=/opt/homebrew/bin:$PATH
