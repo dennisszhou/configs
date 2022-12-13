@@ -1,13 +1,16 @@
 [user]
-        name = Dennis Zhou
-        email = dennis@kernel.org
-[sendemail] chainreplyto = false
-        smtpencryption = tls 
-        smtpserver = "smtp.gmail.com"
-        smtpuser = dennisszhou@gmail.com
-        smtpserverport = 587
+    name = Dennis Zhou
+    email = dennis@kernel.org
+    signingkey = F601402DE6AF99D01DB40DD24A1BEAB7BF729AB7
+
+[sendemail]
+    chainreplyto = false
+    smtpencryption = tls
+    smtpserver = "smtp.gmail.com"
+    smtpuser = dennisszhou@gmail.com
+    smtpserverport = 587
 
 [url "ssh://git@gitolite.kernel.org"]
-	insteadOf = https://git.kernel.org
-	insteadOf = http://git.kernel.org
-	insteadOf = git://git.kernel.org
+    insteadOf = https://git.kernel.org
+    insteadOf = http://git.kernel.org
+    # insteadOf = git://git.kernel.org
