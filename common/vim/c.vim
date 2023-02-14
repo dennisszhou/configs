@@ -49,7 +49,7 @@ function! s:GuessStyle()
 endfunction
 
 function! s:IsWhitelistedRepo()
-    if exists('g:c_repo_whitelist')
+    if ! exists('g:c_repo_whitelist')
         return
     endif
     for repo in  g:c_repo_whitelist
