@@ -10,3 +10,5 @@ alias gs='git branch -vv && git status'
 alias ta='tmux attach -t'
 alias td='tmux detach'
 alias tls='tmux ls'
+
+alias reset="clear && printf '\e[3J'"
