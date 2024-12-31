@@ -7,6 +7,7 @@ git format-patch -n —thread —coverletter -o <output_path>
 
 # create request-pull
 git request-pull linus git-origin for-4.20
+git request-pull linus git-origin percpu-for-6.8-rc4 > /home/dennis/workplace/percpu-patches/for-6.8-rc4.email
 
 # set remote
 git-origin      git://git.kernel.org/pub/scm/linux/kernel/git/dennis/percpu.git
