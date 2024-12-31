@@ -4,11 +4,12 @@
     signingkey = F601402DE6AF99D01DB40DD24A1BEAB7BF729AB7
 
 [sendemail]
-    chainreplyto = false
-    smtpencryption = tls
-    smtpserver = "smtp.gmail.com"
-    smtpuser = dennisszhou@gmail.com
-    smtpserverport = 587
+    smtpserver     = mail.kernel.org
+    smtpserverport = 465
+    smtpencryption = ssl
+    from           = dennis@kernel.org
+    smtpuser       = dennis
+    smtppass       = PASSWORD
 
 [url "ssh://git@gitolite.kernel.org"]
     insteadOf = https://git.kernel.org
