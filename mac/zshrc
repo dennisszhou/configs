@@ -1,0 +1,7 @@
+[[ -e ~/.profile  ]] && emulate sh -c 'source ~/.profile'
+
+# Make Backspace work (both encodings) in all maps
+bindkey '^?' backward-delete-char
+bindkey '^H' backward-delete-char
+bindkey -M viins '^?' backward-delete-char
+bindkey -M viins '^H' backward-delete-char

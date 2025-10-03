@@ -4,6 +4,10 @@ export LSCOLORS=ExFxCxDxBxegedabagacad
 export PS1="%F{green}%n@%m %F{blue}%C%F{black}$ "
 # export PS1="\[\033[0;32m\]\u@\h\[$(tput sgr0)\] \[\033[0;34m\]\W\[$(tput sgr0)\]\$ "
 
+# disable ctrl-d
+setopt IGNOREEOF
+# don't eat ^O
+stty discard undef
+
 # homebrew
-export PATH=/usr/local/bin:$PATH
-# export PATH=/opt/homebrew/bin:$PATH
+export PATH="$(brew --prefix python)/libexec/bin:$PATH"
