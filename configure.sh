@@ -1,32 +1,62 @@
 #/bin/bash
 
-setup_configs() {
-    # bashrc
+mac_zshrc() {
+    if [[ -e $HOME/.zshrc ]]; then
+	    cp $HOME/.zshrc $HOME/.zshrc.old
+    fi
+    if [[ -e $HOME/.zprofile ]]; then
+        cp $HOME/.zprofile $HOME/.zprofile.old
+    fi
+    if [[ -e $HOME/.profile ]]; then
+        cp $HOME/.profile $HOME/.profile.old
+    fi
+
+    cp mac/zshrc $HOME/.zshrc
+    cp mac/zprofile $HOME/.zprofile
+
+    cp mac/profile $HOME/.profile
+    echo -ne "\n" >> $HOME/.profile
+    cat common/profile >> $HOME/.profile
+}
+
+linux_bashrc() {
     if [[ -e $HOME/.bashrc ]]; then
 	    cp $HOME/.bashrc $HOME/.bashrc.old
-    fi
-    if [[ -e $HOME/.bash_aliases ]]; then
-        cp $HOME/.bash_aliases $HOME/.bash_aliases.old
     fi
     if [[ -e $HOME/.bash_profile ]]; then
         cp $HOME/.bash_profile $HOME/.bash_profile.old
     fi
-    if [[ $PLATFORM = "mac" ]]; then
-        cp mac/bashrc $HOME/.bashrc
-    else
-        cp linux/bashrc $HOME/.bashrc
+    if [[ -e $HOME/.profile ]]; then
+        cp $HOME/.profile $HOME/.profile.old
     fi
-    echo -ne "\n" >> $HOME/.bashrc
-    cat common/bashrc >> $HOME/.bashrc
-    cat common/bash_aliases >> $HOME/.bash_aliases
-    cat common/bash_profile >> $HOME/.bash_profile
 
-    # bash_helpers
-    if [[ -e $HOME/.bash_helpers ]]; then
-	    rm -rf $HOME/.bash_helpers.old
-	    mv $HOME/.bash_helpers $HOME/.bash_helpers.old
+    cp linux/bashrc $HOME/.bashrc
+    cp linux/bash_profile $HOME/.bash_profile
+
+    cp linux/profile $HOME/.profile
+    echo -ne "\n" >> $HOME/.profile
+    cat common/profile >> $HOME/.profile
+}
+
+setup_configs() {
+    # aliases
+    if [[ -e $HOME/.sh_aliases ]]; then
+        cp $HOME/.sh_aliases $HOME/.sh_aliases.old
     fi
-    cp -r common/bash_helpers $HOME/.bash_helpers
+    cp common/sh_aliases $HOME/.bash_aliases
+
+    # helpers
+    if [[ -e $HOME/.sh_helpers ]]; then
+	    mv $HOME/.sh_helpers $HOME/.sh_helpers.old
+    fi
+    cp -r common/sh_helpers $HOME/.sh_helpers
+
+    # rc files 
+    if [[ $PLATFORM = "mac" ]]; then
+        mac_zshrc
+    else
+        linux_bashrc
+    fi
 
     # tmux
     if [[ -e $HOME/.tmux.conf ]]; then
