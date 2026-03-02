@@ -17,9 +17,9 @@ if [ -d "$SHELL_CONFIG_HOME/functions" ]; then
 fi
 
 # --- BASH SPECIFIC SETTINGS ---
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+export PS1="\[\033[0;32m\]\u@\h\[$(tput sgr0)\] \[\033[0;34m\]\W\[$(tput sgr0)\]\$ "
 
 set -o ignoreeof
 shopt -s cmdhist
 
-export PS1="\[\033[0;32m\]\u@\h\[$(tput sgr0)\] \[\033[0;34m\]\W\[$(tput sgr0)\]\$ "
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

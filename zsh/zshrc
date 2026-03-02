@@ -17,7 +17,7 @@ if [ -d "$SHELL_CONFIG_HOME/functions" ]; then
 fi
 
 # --- ZSH SPECIFIC SETTINGS ---
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export PS1="%F{green}%n@%m %F{blue}%C%F{black}$ "
 
 bindkey '^?' backward-delete-char
 bindkey '^H' backward-delete-char
@@ -26,4 +26,4 @@ bindkey -M viins '^H' backward-delete-char
 
 setopt IGNOREEOF
 
-export PS1="%F{green}%n@%m %F{blue}%C%F{black}$ "
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
