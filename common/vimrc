@@ -51,11 +51,10 @@ set tabstop=4
 set shiftwidth=4
 set expandtab
 set smarttab
+set showtabline=2
 
 " c.vim
 let g:c_repo_whitelist = ['workplace/percpu', 'workplace/drgn']
-
-set showtabline=2
 
 " pane management
 set splitbelow
