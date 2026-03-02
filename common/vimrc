@@ -1,29 +1,27 @@
 set nocompatible              " be iMproved, required
-filetype off                  " required
 
-" Vundle 
-" set the runtime path to include Vundle and initialize
+" vim-plug
+call plug#begin('~/.vim/plugged')
 
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+" Plug 'Valloric/YouCompleteMe'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'itchyny/lightline.vim'
+Plug 'jiangmiao/auto-pairs'
+Plug 'preservim/nerdtree'
+Plug 'will133/vim-dirdiff'
 
-Plugin 'VundleVim/Vundle.vim'
-" Plugin 'Valloric/YouCompleteMe'
-Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'itchyny/lightline.vim'
-Plugin 'jiangmiao/auto-pairs'
-Plugin 'preservim/nerdtree'
-Plugin 'will133/vim-dirdiff'
+call plug#end()
 
-call vundle#end()            " required
-filetype plugin indent on    " required
+" Enable 256-color mode
+function! Setup256ColorDiff()
+    set t_Co=256
+    hi DiffAdd    ctermfg=NONE ctermbg=194
+    hi DiffDelete ctermfg=224  ctermbg=224
+    hi DiffChange ctermfg=NONE ctermbg=189
+    hi DiffText   ctermfg=NONE ctermbg=153 cterm=bold
+endfunction
 
-" dirdiff settings
-set t_Co=256
-hi DiffAdd       ctermfg=0	ctermbg=41	cterm=NONE
-hi DiffChange    ctermfg=0	ctermbg=38	cterm=NONE
-hi DiffDelete    ctermfg=0	ctermbg=167	cterm=NONE
-hi DiffText      ctermfg=16	ctermbg=221	cterm=NONE
+call Setup256ColorDiff()
 
 " remember last position
 if has("autocmd")
@@ -114,3 +112,26 @@ set laststatus=2
 let g:lightline = {
       \ 'colorscheme': 'solarized'
       \ }
+
+
+" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+" Gemini CLI Cleanup: Beat the Hijack
+" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+augroup GeminiOverride
+    autocmd!
+    " This triggers specifically for Gemini's temp directory on macOS
+    autocmd VimEnter */T/gemini-cli-tool-modify* call CleanGeminiMess()
+augroup END
+
+function! CleanGeminiMess()
+    call Setup256ColorDiff()
+
+    " 4. Fix the statusline 'OLD FILE' hijacking
+    " This forces Vim to use its standard statusline again
+    setlocal statusline=
+endfunction
+
+" Fix the :È...É characters (Bracketed Paste Mode)
+if &term =~ "xterm" || &term =~ "screen" || &term =~ "tmux"
+    set t_BE=
+endif

@@ -5,6 +5,7 @@ tmux
 fzf
 ripgrep
 fd             | fd         | fd-find      | fd-find
+curl
 coreutils
 cmake
 python         | python     | python3      | python3

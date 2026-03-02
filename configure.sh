@@ -137,7 +137,7 @@ install_packages() {
     fi
 }
 
-# Installs plugin managers and plugins for Tmux (TPM) and Vim (Vundle).
+# Installs plugin managers and plugins for Tmux (TPM) and Vim (vim-plug).
 install_plugins() {
     echo "Installing plugins..."
     
@@ -151,12 +151,10 @@ install_plugins() {
     fi
     "$tmux_tpm/bin/install_plugins"
 
-    # Vim Vundle
-    local vim_vundle="$HOME/.vim/bundle/Vundle.vim"
-    if [ ! -d "$vim_vundle" ]; then
-        git clone https://github.com/VundleVim/Vundle.vim.git "$vim_vundle"
-    fi
-    vim +PluginInstall +qall
+    # Vim vim-plug
+    curl -fLo "$HOME/.vim/autoload/plug.vim" --create-dirs \
+        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    vim +PlugInstall +qall
 }
 
 # --- Main Execution ---
