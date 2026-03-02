@@ -24,10 +24,13 @@ endfunction
 call Setup256ColorDiff()
 
 " remember last position
-if has("autocmd")
-    au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
-                \| exe "normal! g'\"" | endif
-endif
+augroup RestoreCursor
+    autocmd!
+    autocmd BufReadPost *
+        \ if line("'\"") >= 1 && line("'\"") <= line("$") && &filetype !~# 'commit' |
+        \   exe "normal! g`\"" |
+        \ endif
+augroup END
 
 " persistent undo
 set undodir=~/.vim/undodir
