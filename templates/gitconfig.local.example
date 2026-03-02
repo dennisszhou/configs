@@ -1,0 +1,5 @@
+[sendemail]
+	# smtppass = your-primary-password
+
+[mutt "gmail"]
+	# pass = your-gmail-app-password

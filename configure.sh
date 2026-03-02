@@ -58,6 +58,23 @@ setup_other_configs() {
     install_file "common/gitconfig" "$HOME/.gitconfig"
 }
 
+# Sets up local configuration files by copying templates if they don't exist.
+setup_local_configs() {
+    echo "Checking for local configuration files..."
+
+    if [[ ! -f "$HOME/.gitconfig.local" ]]; then
+        echo "Creating ~/.gitconfig.local from template..."
+        cp "templates/gitconfig.local.example" "$HOME/.gitconfig.local"
+        echo "PLEASE EDIT ~/.gitconfig.local WITH YOUR SECRETS!"
+    fi
+
+    if [[ ! -f "$HOME/.shrc.local" ]]; then
+        echo "Creating ~/.shrc.local from template..."
+        cp "templates/shrc.local.example" "$HOME/.shrc.local"
+        echo "PLEASE EDIT ~/.shrc.local WITH YOUR LOCAL SETTINGS!"
+    fi
+}
+
 # Installs core packages by parsing packages.list and choosing the right name for the platform.
 install_packages() {
     local platform="$1"
@@ -179,6 +196,7 @@ main() {
         install_packages "$platform"
         setup_shell_config "$platform"
         setup_other_configs
+        setup_local_configs
     fi
 
     # 5. Plugins

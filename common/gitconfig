@@ -9,9 +9,11 @@
     smtpencryption = ssl
     from           = dennis@kernel.org
     smtpuser       = dennis
-    smtppass       = PASSWORD
 
 [url "ssh://git@gitolite.kernel.org"]
     insteadOf = https://git.kernel.org
     insteadOf = http://git.kernel.org
     # insteadOf = git://git.kernel.org
+
+[include]
+	path = ~/.gitconfig.local
