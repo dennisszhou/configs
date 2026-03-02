@@ -1,9 +1,11 @@
-#!/bin/bash
-
 function cu() {
 	dir="workplace"
 	if [[ -n "$1" ]]; then dir=$1; fi
-	IFS="/" read -ra working_dirs <<< "$(pwd)"
+	if [[ -n "$ZSH_VERSION" ]]; then
+		working_dirs=("${(s:/:)PWD}")
+	else
+		IFS="/" read -ra working_dirs <<< "$(pwd)"
+	fi
 	if [[ " ${working_dirs[@]} " =~ " $dir " ]]; then
 		for (( i = ${#working_dirs[@]}-1 ; i >= 0 ; i-- )) ; do
 			if [[ "${working_dirs[i]}" = "$dir" ]]; then
