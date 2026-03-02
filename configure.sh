@@ -161,46 +161,66 @@ install_plugins() {
 
 # --- Main Execution ---
 
+usage() {
+    echo "Usage: $0 [all|packages|configs|plugins]"
+    echo "  all      - Install packages, set up configs, and install plugins (default)"
+    echo "  packages - Install packages only"
+    echo "  configs  - Set up configurations only"
+    echo "  plugins  - Install plugins only"
+    exit 1
+}
+
 main() {
+    local target="all"
     local platform=""
-    local install_only=false
-    local detected_platform=""
 
     # 1. Platform Detection
     case "$(uname -s)" in
-        Darwin*)  detected_platform="mac";;
-        Linux*)   detected_platform="linux";;
+        Darwin*)  platform="mac";;
+        Linux*)   platform="linux";;
         *)        echo "Unsupported OS"; exit 1;;
     esac
 
     # 2. Argument Parsing
-    while [ "$#" -gt 0 ]; do
+    if [[ $# -gt 0 ]]; then
         case "$1" in
-            -p) platform="$2"; shift 2;;
-            --platform=*) platform="${1#*=}"; shift 1;;
-            --install-only) install_only=true; shift 1;;
-            *) echo "Unknown option: $1"; exit 1;;
+            all|packages|configs|plugins)
+                target="$1"
+                ;;
+            -h|--help)
+                usage
+                ;;
+            *)
+                echo "Unknown target: $1"
+                usage
+                ;;
         esac
-    done
-
-    # 3. Validation
-    if [[ -n "$platform" && "$platform" != "$detected_platform" ]]; then
-        echo "Error: You specified '$platform' but I detected '$detected_platform'."
-        exit 1
-    fi
-    platform=$detected_platform
-    echo "Configuring for platform: $platform"
-
-    # 4. Implementation
-    if [[ "$install_only" = false ]]; then
-        install_packages "$platform"
-        setup_shell_config "$platform"
-        setup_other_configs
-        setup_local_configs
     fi
 
-    # 5. Plugins
-    install_plugins
+    echo "Configuring for platform: $platform (Target: $target)"
+
+    # 3. Execution based on target
+    case "$target" in
+        all)
+            install_packages "$platform"
+            setup_shell_config "$platform"
+            setup_other_configs
+            setup_local_configs
+            install_plugins
+            ;;
+        packages)
+            install_packages "$platform"
+            ;;
+        configs)
+            setup_shell_config "$platform"
+            setup_other_configs
+            setup_local_configs
+            ;;
+        plugins)
+            install_plugins
+            ;;
+    esac
+
     echo "Configuration complete!"
 }
 
