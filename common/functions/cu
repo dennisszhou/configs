@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function cu() {
-	dir="google3"
+	dir="workplace"
 	if [[ -n "$1" ]]; then dir=$1; fi
 	IFS="/" read -ra working_dirs <<< "$(pwd)"
 	if [[ " ${working_dirs[@]} " =~ " $dir " ]]; then
@@ -12,6 +12,6 @@ function cu() {
 			cd ..
 		done
 	else
-		echo "No google3 dir found in path."
+		echo "No workplace dir found in path."
 	fi
 }

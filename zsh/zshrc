@@ -1,0 +1,29 @@
+export SHELL_CONFIG_HOME="$HOME/.shell_config"
+
+# 1. Load OS-specific Configuration
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    [ -f "$SHELL_CONFIG_HOME/os/mac" ] && source "$SHELL_CONFIG_HOME/os/mac"
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    [ -f "$SHELL_CONFIG_HOME/os/linux" ] && source "$SHELL_CONFIG_HOME/os/linux"
+fi
+
+# 2. Load Common Configuration, Aliases, and Functions
+[ -f "$SHELL_CONFIG_HOME/shrc" ] && source "$SHELL_CONFIG_HOME/shrc"
+[ -f "$SHELL_CONFIG_HOME/aliases" ] && source "$SHELL_CONFIG_HOME/aliases"
+if [ -d "$SHELL_CONFIG_HOME/functions" ]; then
+    for func in "$SHELL_CONFIG_HOME/functions/"*; do
+        [ -f "$func" ] && source "$func"
+    done
+fi
+
+# --- ZSH SPECIFIC SETTINGS ---
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+bindkey '^?' backward-delete-char
+bindkey '^H' backward-delete-char
+bindkey -M viins '^?' backward-delete-char
+bindkey -M viins '^H' backward-delete-char
+
+setopt IGNOREEOF
+
+export PS1="%F{green}%n@%m %F{blue}%C%F{black}$ "

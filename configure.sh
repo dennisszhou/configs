@@ -1,122 +1,124 @@
-#/bin/bash
+#!/bin/bash
 
-mac_zshrc() {
-    if [[ -e $HOME/.zshrc ]]; then
-	    cp $HOME/.zshrc $HOME/.zshrc.old
-    fi
-    if [[ -e $HOME/.zprofile ]]; then
-        cp $HOME/.zprofile $HOME/.zprofile.old
-    fi
-    if [[ -e $HOME/.profile ]]; then
-        cp $HOME/.profile $HOME/.profile.old
-    fi
+# --- Helper Functions ---
 
-    cp mac/zshrc $HOME/.zshrc
-    cp mac/zprofile $HOME/.zprofile
-
-    cp mac/profile $HOME/.profile
-    echo -ne "\n" >> $HOME/.profile
-    cat common/profile >> $HOME/.profile
+# Backs up a file to .old if it exists, then copies the source to destination.
+install_file() {
+    local src="$1"
+    local dest="$2"
+    if [[ -e "$dest" ]]; then
+        echo "Backing up $dest to $dest.old"
+        cp "$dest" "$dest.old"
+    fi
+    cp "$src" "$dest"
 }
 
-linux_bashrc() {
-    if [[ -e $HOME/.bashrc ]]; then
-	    cp $HOME/.bashrc $HOME/.bashrc.old
-    fi
-    if [[ -e $HOME/.bash_profile ]]; then
-        cp $HOME/.bash_profile $HOME/.bash_profile.old
-    fi
-    if [[ -e $HOME/.profile ]]; then
-        cp $HOME/.profile $HOME/.profile.old
-    fi
+# Deploys modular shell components to ~/.shell_config and sets up shell entry points.
+setup_shell_config() {
+    local platform="$1"
+    local CONFIG_HOME="$HOME/.shell_config"
+    mkdir -p "$CONFIG_HOME/os"
+    mkdir -p "$CONFIG_HOME/functions"
 
-    cp linux/bashrc $HOME/.bashrc
-    cp linux/bash_profile $HOME/.bash_profile
+    echo "Deploying modular shell components to $CONFIG_HOME..."
+    install_file "common/shrc"    "$CONFIG_HOME/shrc"
+    install_file "common/aliases" "$CONFIG_HOME/aliases"
+    cp common/functions/* "$CONFIG_HOME/functions/"
 
-    cp linux/profile $HOME/.profile
-    echo -ne "\n" >> $HOME/.profile
-    cat common/profile >> $HOME/.profile
-}
-
-setup_configs() {
-    # aliases
-    if [[ -e $HOME/.sh_aliases ]]; then
-        cp $HOME/.sh_aliases $HOME/.sh_aliases.old
-    fi
-    cp common/sh_aliases $HOME/.sh_aliases
-
-    # helpers
-    if [[ -e $HOME/.sh_helpers ]]; then
-	    mv $HOME/.sh_helpers $HOME/.sh_helpers.old
-    fi
-    cp -r common/sh_helpers $HOME/.sh_helpers
-
-    # rc files 
-    if [[ $PLATFORM = "mac" ]]; then
-        mac_zshrc
+    if [[ "$platform" == "mac" ]]; then
+        install_file "os/mac"       "$CONFIG_HOME/os/mac"
+        install_file "zsh/zshrc"    "$HOME/.zshrc"
+        install_file "zsh/zprofile" "$HOME/.zprofile"
+        [[ -e "$HOME/.profile" ]] && mv "$HOME/.profile" "$HOME/.profile.old"
     else
-        linux_bashrc
+        install_file "os/linux"          "$CONFIG_HOME/os/linux"
+        install_file "bash/bashrc"       "$HOME/.bashrc"
+        install_file "bash/bash_profile" "$HOME/.bash_profile"
+        [[ -e "$HOME/.profile" ]] && mv "$HOME/.profile" "$HOME/.profile.old"
     fi
-
-    # tmux
-    if [[ -e $HOME/.tmux.conf ]]; then
-        cp $HOME/.tmux.conf $HOME/.tmux.conf.old
-    fi
-    cp common/tmux $HOME/.tmux.conf
-
-    # vim
-    if [[ -e $HOME/.vimrc ]]; then
-        cp $HOME/.vimrc $HOME/.vimrc.old
-    fi
-    cp common/vimrc $HOME/.vimrc
-    mkdir -p $HOME/.vim/ftplugin
-    cp common/vim/c.vim $HOME/.vim/ftplugin/
-    # vim persistent undo
-    mkdir -p $HOME/.vim/undodir
-
-    # git
-    if [[ -e $HOME/.gitconfig ]]; then
-        cp $HOME/.gitconfig $HOME/.gitconfig.old
-    fi
-    cp common/gitconfig $HOME/.gitconfig
 }
 
+# Sets up configuration for Vim, Tmux, and Git.
+setup_other_configs() {
+    echo "Setting up Vim, Tmux, and Git..."
+    
+    # Tmux
+    install_file "common/tmux" "$HOME/.tmux.conf"
+
+    # Vim
+    install_file "common/vimrc" "$HOME/.vimrc"
+    mkdir -p "$HOME/.vim/ftplugin"
+    cp common/vim/c.vim "$HOME/.vim/ftplugin/"
+    mkdir -p "$HOME/.vim/undodir"
+
+    # Git
+    install_file "common/gitconfig" "$HOME/.gitconfig"
+}
+
+# Installs plugin managers and plugins for Tmux (TPM) and Vim (Vundle).
 install_plugins() {
-    # tmux tpm
+    echo "Installing plugins..."
+    
+    # Tmux TPM
     if [[ -e $HOME/.tmux ]]; then
         rm -rf $HOME/.tmux
     fi
-    install_dir="$HOME/.tmux/plugins/tpm"
-    if [ ! -d $install_dir ]; then
-        git clone https://github.com/tmux-plugins/tpm $install_dir
+    local tmux_tpm="$HOME/.tmux/plugins/tpm"
+    if [ ! -d "$tmux_tpm" ]; then
+        git clone https://github.com/tmux-plugins/tpm "$tmux_tpm"
     fi
-    $HOME/.tmux/plugins/tpm/bin/install_plugins
+    "$tmux_tpm/bin/install_plugins"
 
-    # vim
-    install_dir="$HOME/.vim/bundle/Vundle.vim"
-    if [ ! -d $install_dir ]; then
-        echo $install_dir
-        git clone https://github.com/VundleVim/Vundle.vim.git $install_dir
+    # Vim Vundle
+    local vim_vundle="$HOME/.vim/bundle/Vundle.vim"
+    if [ ! -d "$vim_vundle" ]; then
+        git clone https://github.com/VundleVim/Vundle.vim.git "$vim_vundle"
     fi
     vim +PluginInstall +qall
 }
 
-while [ "$#" -gt 0 ]; do
-    case "$1" in
-        -p) PLATFORM="$2"; shift 2;;
-        --platform=*) PLATFORM="${1#*=}"; shift 1;;
-        --install-only) INSTALL_ONLY=true; shift 1;;
+# --- Main Execution ---
+
+main() {
+    local platform=""
+    local install_only=false
+    local detected_platform=""
+
+    # 1. Platform Detection
+    case "$(uname -s)" in
+        Darwin*)  detected_platform="mac";;
+        Linux*)   detected_platform="linux";;
+        *)        echo "Unsupported OS"; exit 1;;
     esac
-done
 
-if [[ -z "$PLATFORM" ]]; then
-    echo "set platform -p or --platform=<linux|mac>"
-    exit 1
-fi
+    # 2. Argument Parsing
+    while [ "$#" -gt 0 ]; do
+        case "$1" in
+            -p) platform="$2"; shift 2;;
+            --platform=*) platform="${1#*=}"; shift 1;;
+            --install-only) install_only=true; shift 1;;
+            *) echo "Unknown option: $1"; exit 1;;
+        esac
+    done
 
-# should I configure?
-if [[ -z "$INSTALL_ONLY" ]]; then
-    setup_configs
-fi
+    # 3. Validation
+    if [[ -n "$platform" && "$platform" != "$detected_platform" ]]; then
+        echo "Error: You specified '$platform' but I detected '$detected_platform'."
+        exit 1
+    fi
+    platform=$detected_platform
+    echo "Configuring for platform: $platform"
 
-install_plugins
+    # 4. Implementation
+    if [[ "$install_only" = false ]]; then
+        setup_shell_config "$platform"
+        setup_other_configs
+    fi
+
+    # 5. Plugins
+    install_plugins
+    echo "Configuration complete!"
+}
+
+# Execute main with all passed arguments
+main "$@"
