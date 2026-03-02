@@ -1,17 +1,18 @@
-export SHELL_CONFIG_HOME="$HOME/.shell_config"
+# Find the root of the configs repo
+export CONFIGS_DIR=${${(%):-%N}:A:h:h}
 
 # 1. Load OS-specific Configuration
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    [ -f "$SHELL_CONFIG_HOME/os/mac" ] && source "$SHELL_CONFIG_HOME/os/mac"
+    [ -f "$CONFIGS_DIR/os/mac" ] && source "$CONFIGS_DIR/os/mac"
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    [ -f "$SHELL_CONFIG_HOME/os/linux" ] && source "$SHELL_CONFIG_HOME/os/linux"
+    [ -f "$CONFIGS_DIR/os/linux" ] && source "$CONFIGS_DIR/os/linux"
 fi
 
 # 2. Load Common Configuration, Aliases, and Functions
-[ -f "$SHELL_CONFIG_HOME/shrc" ] && source "$SHELL_CONFIG_HOME/shrc"
-[ -f "$SHELL_CONFIG_HOME/aliases" ] && source "$SHELL_CONFIG_HOME/aliases"
-if [ -d "$SHELL_CONFIG_HOME/functions" ]; then
-    for func in "$SHELL_CONFIG_HOME/functions/"*; do
+[ -f "$CONFIGS_DIR/common/shrc" ] && source "$CONFIGS_DIR/common/shrc"
+[ -f "$CONFIGS_DIR/common/aliases" ] && source "$CONFIGS_DIR/common/aliases"
+if [ -d "$CONFIGS_DIR/common/functions" ]; then
+    for func in "$CONFIGS_DIR/common/functions/"*; do
         [ -f "$func" ] && source "$func"
     done
 fi

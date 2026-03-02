@@ -1,2 +1,5 @@
+# Find the root of the configs repo
+export CONFIGS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
 # Ensure interactive session setup
 [ -f "$HOME/.bashrc" ] && source "$HOME/.bashrc"

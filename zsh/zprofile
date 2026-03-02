@@ -1,2 +1,4 @@
+export CONFIGS_DIR=${${(%):-%N}:A:h:h}
+
 # Ensure interactive session setup
 [ -f "$HOME/.zshrc" ] && source "$HOME/.zshrc"
