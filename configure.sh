@@ -55,6 +55,68 @@ setup_other_configs() {
     install_file "common/gitconfig" "$HOME/.gitconfig"
 }
 
+# Installs core packages by parsing packages.list and choosing the right name for the platform.
+install_packages() {
+    local platform="$1"
+    local pkgs=()
+    local col=1
+
+    if [[ "$platform" == "mac" ]]; then
+        col=2
+    elif command -v apt-get &> /dev/null; then
+        col=3
+    elif command -v dnf &> /dev/null; then
+        col=4
+    fi
+
+    echo "Building package list for $platform..."
+    if [[ ! -f packages.list ]]; then
+        echo "Error: packages.list not found."
+        return 1
+    fi
+
+    while IFS='|' read -r generic mac apt dnf || [ -n "$generic" ]; do
+        # Skip comments and empty lines
+        [[ "$generic" =~ ^[[:space:]]*#.*$ || -z "${generic// /}" ]] && continue
+        
+        # Trim whitespace
+        generic=$(echo "$generic" | xargs)
+        mac=$(echo "$mac" | xargs)
+        apt=$(echo "$apt" | xargs)
+        dnf=$(echo "$dnf" | xargs)
+
+        local name=""
+        case "$col" in
+            2) name="${mac:-$generic}" ;;
+            3) name="${apt:-$generic}" ;;
+            4) name="${dnf:-$generic}" ;;
+            *) name="$generic" ;;
+        esac
+        pkgs+=("$name")
+    done < packages.list
+
+    if [[ ${#pkgs[@]} -eq 0 ]]; then
+        echo "No packages found to install."
+        return
+    fi
+
+    echo "Installing: ${pkgs[*]}"
+    if [[ "$platform" == "mac" ]]; then
+        if ! command -v brew &> /dev/null; then
+            echo "Installing Homebrew..."
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            eval "$(/opt/homebrew/bin/brew shellenv)"
+        fi
+        brew install "${pkgs[@]}"
+    elif command -v apt-get &> /dev/null; then
+        sudo apt-get update && sudo apt-get install -y "${pkgs[@]}"
+    elif command -v dnf &> /dev/null; then
+        sudo dnf install -y "${pkgs[@]}"
+    else
+        echo "Warning: No supported package manager found. Please install: ${pkgs[*]}"
+    fi
+}
+
 # Installs plugin managers and plugins for Tmux (TPM) and Vim (Vundle).
 install_plugins() {
     echo "Installing plugins..."
@@ -111,6 +173,7 @@ main() {
 
     # 4. Implementation
     if [[ "$install_only" = false ]]; then
+        install_packages "$platform"
         setup_shell_config "$platform"
         setup_other_configs
     fi
