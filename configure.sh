@@ -141,11 +141,12 @@ install_plugins() {
     echo "Installing plugins..."
     
     # Tmux TPM
-    if [[ -e $HOME/.tmux ]]; then
-        rm -rf $HOME/.tmux
-    fi
     local tmux_tpm="$HOME/.tmux/plugins/tpm"
+    if [[ -f "$HOME/.tmux" ]]; then
+        rm "$HOME/.tmux"
+    fi
     if [ ! -d "$tmux_tpm" ]; then
+        mkdir -p "$HOME/.tmux/plugins"
         git clone https://github.com/tmux-plugins/tpm "$tmux_tpm"
     fi
     "$tmux_tpm/bin/install_plugins"
