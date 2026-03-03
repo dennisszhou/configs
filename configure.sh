@@ -33,12 +33,6 @@ setup_shell_config() {
         install_file "bash/bashrc"       "$HOME/.bashrc"
         [[ -e "$HOME/.profile" ]] && mv "$HOME/.profile" "$HOME/.profile.old"
     fi
-
-    # Clean up old modular directory if it exists
-    if [[ -d "$HOME/.shell_config" ]]; then
-        echo "Removing old ~/.shell_config directory..."
-        rm -rf "$HOME/.shell_config"
-    fi
 }
 
 # Sets up configuration for Vim, Tmux, and Git.
