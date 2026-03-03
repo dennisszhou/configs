@@ -14,5 +14,7 @@ export FZF_DEFAULT_OPTS="--height 40%"
 # --- Shared Colors ---
 export CLICOLOR=1
 
+export PATH="$HOME/.local/bin:$PATH"
+
 # --- Local Overrides ---
 [ -f ~/.shrc.local ] && source ~/.shrc.local
