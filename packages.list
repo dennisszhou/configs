@@ -1,6 +1,7 @@
 # Package Name  | Mac (Brew) | Debian (Apt) | RedHat (Dnf)
 git
 vim
+neovim
 tmux
 fzf
 ripgrep

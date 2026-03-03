@@ -44,7 +44,7 @@ setup_shell_config() {
 # Sets up configuration for Vim, Tmux, and Git.
 setup_other_configs() {
     echo "Setting up Vim, Tmux, and Git..."
-    
+
     # Tmux
     install_file "common/tmux" "$HOME/.tmux.conf"
 
@@ -53,6 +53,10 @@ setup_other_configs() {
     mkdir -p "$HOME/.vim/ftplugin"
     install_file "common/vim/c.vim" "$HOME/.vim/ftplugin/c.vim"
     mkdir -p "$HOME/.vim/undodir"
+
+    # Neovim
+    mkdir -p "$HOME/.config"
+    install_file "neovim" "$HOME/.config/nvim"
 
     # Git
     install_file "common/gitconfig" "$HOME/.gitconfig"
@@ -98,7 +102,7 @@ install_packages() {
     while IFS='|' read -r generic mac apt dnf || [ -n "$generic" ]; do
         # Skip comments and empty lines
         [[ "$generic" =~ ^[[:space:]]*#.*$ || -z "${generic// /}" ]] && continue
-        
+
         # Trim whitespace
         generic=$(echo "$generic" | xargs)
         mac=$(echo "$mac" | xargs)
