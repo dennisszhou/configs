@@ -139,6 +139,7 @@ install_packages() {
 
 # Installs plugin managers and plugins for Tmux (TPM) and Vim (vim-plug).
 install_plugins() {
+    local platform="$1"
     echo "Installing plugins..."
     
     # Tmux TPM
@@ -155,6 +156,19 @@ install_plugins() {
     curl -fLo "$HOME/.vim/autoload/plug.vim" --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     vim +PlugInstall +qall
+
+    # fzf shell integration (generates ~/.fzf.zsh / ~/.fzf.bash)
+    if command -v fzf &>/dev/null; then
+        local fzf_install
+        if [[ "$platform" == "mac" ]]; then
+            fzf_install="$(brew --prefix)/opt/fzf/install"
+        else
+            fzf_install="$HOME/.fzf/install"
+        fi
+        if [[ -x "$fzf_install" ]]; then
+            "$fzf_install" --key-bindings --completion --no-update-rc
+        fi
+    fi
 }
 
 # --- Main Execution ---
@@ -204,7 +218,7 @@ main() {
             setup_shell_config "$platform"
             setup_other_configs
             setup_local_configs
-            install_plugins
+            install_plugins "$platform"
             ;;
         packages)
             install_packages "$platform"
@@ -215,7 +229,7 @@ main() {
             setup_local_configs
             ;;
         plugins)
-            install_plugins
+            install_plugins "$platform"
             ;;
     esac
 
