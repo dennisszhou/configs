@@ -1,4 +1,7 @@
 set -g prefix C-a
+set -g extended-keys on
+set -as terminal-features 'xterm*:extkeys'
+
 setw -g mode-keys vi
 
 unbind-key C-b
