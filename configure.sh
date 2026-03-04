@@ -210,7 +210,14 @@ main() {
 
     echo "Configuring for platform: $platform (Target: $target)"
 
-    # 3. Execution based on target
+    # 3. Pre-flight checks
+    if [[ -z "$(ls -A neovim 2>/dev/null)" || ! -f "neovim/init.lua" ]]; then
+        echo "ERROR: neovim submodule is not initialized. Did you run ./setup.sh first?"
+        echo "  git submodule update --init --recursive"
+        exit 1
+    fi
+
+    # 4. Execution based on target
     case "$target" in
         all)
             install_packages "$platform"
