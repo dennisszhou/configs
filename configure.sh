@@ -54,6 +54,10 @@ setup_other_configs() {
 
     # Git
     install_file "common/gitconfig" "$HOME/.gitconfig"
+
+    # Claude Code
+    mkdir -p "$HOME/.claude"
+    install_file "common/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 }
 
 # Sets up local configuration files by copying templates if they don't exist.
