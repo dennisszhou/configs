@@ -18,6 +18,7 @@
 - Never use `--no-verify` when committing.
 - Commit messages: kernel style. Subject line is `subsystem: short description`, body explains *why* the change was made, not what. Wrap at 72 columns.
 - Before committing: show the staged diff and proposed commit message for review. Don't commit until approved.
+- Do not append `Co-Authored-By: Claude` to commit messages.
 - Prefer small, isolated commits — one logical change per commit. This makes history easier to bisect, blame, and revert when tracking down bugs or understanding how things evolved.
 
 ## Code Philosophy
