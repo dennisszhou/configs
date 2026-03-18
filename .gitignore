@@ -1,2 +1,5 @@
 # Local configuration overrides
 *.local
+
+# mac files
+.DS_Store
