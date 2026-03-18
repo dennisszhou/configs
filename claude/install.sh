@@ -134,7 +134,32 @@ mkdir -p "$CLAUDE_HOME"
 install_link "$SCRIPT_DIR/CLAUDE.md" "$CLAUDE_HOME/CLAUDE.md"
 
 # =====================
-# 2. ECC integration
+# 2. User skills
+# =====================
+mkdir -p "$CLAUDE_HOME/skills"
+if [ -d "$SCRIPT_DIR/skills" ]; then
+    wanted_user_skills=""
+    for src in "$SCRIPT_DIR/skills"/*/; do
+        [ -d "$src" ] || continue
+        skill=$(basename "$src")
+        install_link "$src" "$CLAUDE_HOME/skills/$skill"
+        wanted_user_skills="$wanted_user_skills $skill"
+    done
+    # Cleanup stale user skill symlinks
+    for link in "$CLAUDE_HOME/skills"/*; do
+        [ -L "$link" ] || continue
+        case "$(readlink "$link")" in
+            "$SCRIPT_DIR/skills/"*)
+                base=$(basename "$link")
+                found=0
+                for w in $wanted_user_skills; do [ "$w" = "$base" ] && found=1 && break; done
+                [ "$found" -eq 0 ] && echo "Removing stale user skill: $link" && rm "$link" ;;
+        esac
+    done
+fi
+
+# =====================
+# 3. ECC integration
 # =====================
 if [ ! -d "$ECC_DIR/agents" ]; then
     echo "Note: ECC submodule not initialized, skipping. Run: git submodule update --init"
