@@ -9,7 +9,7 @@ ECC_DIR="$REPO_DIR/everything-claude-code"
 MANIFEST="$SCRIPT_DIR/manifest.conf"
 CLAUDE_HOME="$HOME/.claude"
 
-# --- install_link: symlink with backup (mirrors install_file pattern) ---
+# --- install_link: symlink with backup ---
 install_link() {
     src="$1"; dest="$2"
     if [ -L "$dest" ]; then
@@ -38,7 +38,9 @@ parse_section() {
     done < "$MANIFEST"
 }
 
-# --- cleanup_stale: remove ECC symlinks not in wanted list ---
+# --- cleanup_stale: remove ECC symlinks in target_dir not in wanted list ---
+# Only removes symlinks whose target contains everything-claude-code/$ecc_subpath,
+# so user-owned symlinks in the same directory are never touched.
 cleanup_stale() {
     target_dir="$1"; ecc_subpath="$2"; shift 2
     wanted="$*"
@@ -59,6 +61,72 @@ cleanup_stale() {
     done
 }
 
+# --- migrate_old_symlinks: remove pre-namespace ECC symlinks ---
+# Handles the transition from whole-dir symlinks and un-namespaced per-file
+# symlinks to the ecc/ subdirectory namespace. Idempotent.
+migrate_old_symlinks() {
+    # Convert whole-dir symlinks to real directories
+    for dir in commands agents; do
+        target="$CLAUDE_HOME/$dir"
+        if [ -L "$target" ]; then
+            case "$(readlink "$target")" in
+                *everything-claude-code*)
+                    echo "Migrating $target: whole-dir symlink -> directory"
+                    rm "$target"
+                    mkdir -p "$target"
+                    ;;
+            esac
+        fi
+    done
+
+    # Remove un-namespaced ECC symlinks from commands/ and agents/
+    for dir in commands agents; do
+        [ -d "$CLAUDE_HOME/$dir" ] || continue
+        for link in "$CLAUDE_HOME/$dir"/*.md; do
+            [ -L "$link" ] || continue
+            case "$(readlink "$link")" in
+                *everything-claude-code/$dir/*)
+                    echo "Removing un-namespaced symlink: $link"
+                    rm "$link" ;;
+            esac
+        done
+    done
+
+    # Remove un-namespaced ECC skill symlinks (direct children of skills/, not ecc/)
+    if [ -d "$CLAUDE_HOME/skills" ]; then
+        for entry in "$CLAUDE_HOME/skills"/*; do
+            [ -L "$entry" ] || continue
+            case "$(readlink "$entry")" in
+                *everything-claude-code/skills/*)
+                    echo "Removing un-namespaced skill symlink: $entry"
+                    rm "$entry" ;;
+            esac
+        done
+    fi
+
+    # Remove un-namespaced ECC rule symlinks (rules/category/*.md, skipping rules/ecc/)
+    if [ -d "$CLAUDE_HOME/rules" ]; then
+        for category_dir in "$CLAUDE_HOME/rules"/*/; do
+            [ -d "$category_dir" ] || continue
+            category=$(basename "$category_dir")
+            [ "$category" = "ecc" ] && continue
+            for link in "$category_dir"*.md; do
+                [ -L "$link" ] || continue
+                case "$(readlink "$link")" in
+                    *everything-claude-code/rules/*)
+                        echo "Removing un-namespaced rule symlink: $link"
+                        rm "$link" ;;
+                esac
+            done
+            # Remove category dir if now empty
+            if [ -z "$(ls -A "$category_dir" 2>/dev/null)" ]; then
+                rmdir "$category_dir"
+                echo "Removed empty dir: $category_dir"
+            fi
+        done
+    fi
+}
+
 # =====================
 # 1. Core: CLAUDE.md
 # =====================
@@ -73,39 +141,57 @@ if [ ! -d "$ECC_DIR/agents" ]; then
     exit 0
 fi
 
-# Agents: whole-directory symlink
-install_link "$ECC_DIR/agents" "$CLAUDE_HOME/agents"
+migrate_old_symlinks
 
-# Commands: whole-directory symlink
-install_link "$ECC_DIR/commands" "$CLAUDE_HOME/commands"
+# Agents: all ECC agents under agents/ecc/ (invoked as ecc:agent-name)
+mkdir -p "$CLAUDE_HOME/agents/ecc"
+wanted_agents=""
+for src in "$ECC_DIR/agents"/*.md; do
+    [ -f "$src" ] || continue
+    base=$(basename "$src")
+    install_link "$src" "$CLAUDE_HOME/agents/ecc/$base"
+    wanted_agents="$wanted_agents $base"
+done
+cleanup_stale "$CLAUDE_HOME/agents/ecc" "agents" $wanted_agents
 
-# Skills: selective per-item symlinks
-mkdir -p "$CLAUDE_HOME/skills"
+# Commands: all ECC commands under commands/ecc/ (invoked as /ecc:command-name)
+mkdir -p "$CLAUDE_HOME/commands/ecc"
+wanted_commands=""
+for src in "$ECC_DIR/commands"/*.md; do
+    [ -f "$src" ] || continue
+    base=$(basename "$src")
+    install_link "$src" "$CLAUDE_HOME/commands/ecc/$base"
+    wanted_commands="$wanted_commands $base"
+done
+cleanup_stale "$CLAUDE_HOME/commands/ecc" "commands" $wanted_commands
+
+# Skills: selective per-item symlinks under skills/ecc/ (invoked as /ecc:skill-name)
+mkdir -p "$CLAUDE_HOME/skills/ecc"
 wanted_skills=""
 for skill in $(parse_section skills); do
     if [ -d "$ECC_DIR/skills/$skill" ]; then
-        install_link "$ECC_DIR/skills/$skill" "$CLAUDE_HOME/skills/$skill"
+        install_link "$ECC_DIR/skills/$skill" "$CLAUDE_HOME/skills/ecc/$skill"
         wanted_skills="$wanted_skills $skill"
     else
         echo "Warning: skill '$skill' not found in ECC, skipping"
     fi
 done
-cleanup_stale "$CLAUDE_HOME/skills" "skills" $wanted_skills
+cleanup_stale "$CLAUDE_HOME/skills/ecc" "skills" $wanted_skills
 
-# Rules: selective per-item symlinks (category/filename format)
+# Rules: selective per-item symlinks under rules/ecc/category/
 for rule_entry in $(parse_section rules); do
     category=$(dirname "$rule_entry")
     filename=$(basename "$rule_entry")
     src="$ECC_DIR/rules/$category/${filename}.md"
     if [ -f "$src" ]; then
-        mkdir -p "$CLAUDE_HOME/rules/$category"
-        install_link "$src" "$CLAUDE_HOME/rules/$category/${filename}.md"
+        mkdir -p "$CLAUDE_HOME/rules/ecc/$category"
+        install_link "$src" "$CLAUDE_HOME/rules/ecc/$category/${filename}.md"
     else
         echo "Warning: rule '$rule_entry' not found in ECC, skipping"
     fi
 done
-# Cleanup stale rules per category
-for category_dir in "$CLAUDE_HOME/rules"/*/; do
+# Cleanup stale rules per category under rules/ecc/
+for category_dir in "$CLAUDE_HOME/rules/ecc"/*/; do
     [ -d "$category_dir" ] || continue
     category=$(basename "$category_dir")
     wanted_rules=""
@@ -114,6 +200,11 @@ for category_dir in "$CLAUDE_HOME/rules"/*/; do
         [ "$rc" = "$category" ] && wanted_rules="$wanted_rules ${rf}.md"
     done
     cleanup_stale "$category_dir" "rules/$category" $wanted_rules
+    # Remove category dir if now empty
+    if [ -z "$(ls -A "$category_dir" 2>/dev/null)" ]; then
+        rmdir "$category_dir"
+        echo "Removed empty dir: $category_dir"
+    fi
 done
 
 echo "Claude Code setup complete."
