@@ -8,6 +8,11 @@ Personal dotfiles and system configuration repo. Symlinks config files into `$HO
 |---|---|
 | `configure.sh` | Main install script — idempotent, symlinks files, installs packages & plugins |
 | `setup.sh` | Bootstrap: runs `git submodule update --init` before anything else |
+| `claude/` | All Claude Code config — CLAUDE.md, ECC manifest, install script |
+| `claude/CLAUDE.md` | Global Claude Code instructions (symlinked to `~/.claude/CLAUDE.md`) |
+| `claude/manifest.conf` | Which ECC agents/commands/skills/rules to enable |
+| `claude/install.sh` | Symlinks Claude config + ECC items into `~/.claude/` |
+| `everything-claude-code/` | Git submodule → fork of `affaan-m/everything-claude-code` |
 | `common/shrc` | Shared env vars (editor, history, FZF, PATH) sourced by all shells |
 | `common/aliases` | Shell aliases shared across bash/zsh |
 | `common/tmux` | tmux config (prefix `C-a`, vi keys, TPM plugins) |
