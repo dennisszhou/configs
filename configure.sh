@@ -56,8 +56,10 @@ setup_other_configs() {
     install_file "common/gitconfig" "$HOME/.gitconfig"
 
     # Claude Code
-    mkdir -p "$HOME/.claude"
-    install_file "claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+    if [ -f "claude/install.sh" ]; then
+        echo "Setting up Claude Code..."
+        sh claude/install.sh
+    fi
 }
 
 # Sets up local configuration files by copying templates if they don't exist.
@@ -219,6 +221,11 @@ main() {
         echo "ERROR: neovim submodule is not initialized. Did you run ./setup.sh first?"
         echo "  git submodule update --init --recursive"
         exit 1
+    fi
+
+    if [[ -z "$(ls -A everything-claude-code 2>/dev/null)" ]]; then
+        echo "Note: everything-claude-code submodule not initialized. ECC setup will be skipped."
+        echo "  To enable: git submodule update --init everything-claude-code"
     fi
 
     # 4. Execution based on target
