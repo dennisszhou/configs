@@ -6,6 +6,7 @@ alias gri='grep -ri'
 
 alias ggi='git grep -i'
 alias gs='git branch -vv && git status'
+alias gt='git ls-tree -r --name-only HEAD | tree --fromfile'
 
 alias ta='tmux attach -t'
 alias td='tmux detach'
