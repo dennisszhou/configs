@@ -32,7 +32,7 @@ If no plan exists yet, ask the user to describe what they're building before gen
 Produce a numbered commit plan. Each commit entry has these fields:
 
 ```
-Commit N/Total: <conventional commit message>
+Commit N/Total: <subsystem: description>
 
   Summary:      1-2 sentence plain English description of the change
   Files:        explicit list of files created or modified
@@ -45,7 +45,7 @@ Commit N/Total: <conventional commit message>
 
 ### Field guidance
 
-**Commit message**: Use conventional commits (`feat`, `fix`, `refactor`, `test`, `docs`, `chore`). Include a scope when the project has clear modules, e.g., `feat(driver): add PCI probe skeleton`. The message should be the actual message that will be used — not a placeholder.
+**Commit message**: Use the format `subsystem: description` where the subsystem is the main area of the codebase being changed, and the description says what the commit does starting with a lowercase verb. Examples: `asic_eth: add PCI probe skeleton`, `dma: allocate coherent ring buffers`, `build: add Kbuild and Kconfig for asic_eth`. The message should be the actual message that will be used — not a placeholder.
 
 **Summary**: Brief plain English so someone skimming the plan can understand the arc without reading every field.
 
@@ -89,7 +89,7 @@ Follow this process:
 Given a plan to "build a PCI device driver with zero-copy mmap userspace interface":
 
 ```
-Commit 1/6: chore(driver): add module skeleton with Kbuild and Kconfig
+Commit 1/6: asic_eth: add module skeleton with Kbuild and Kconfig
 
   Summary:      Empty loadable kernel module with build system integration.
   Files:        drivers/net/asic_eth/asic_eth.c (new),
@@ -105,7 +105,7 @@ Commit 1/6: chore(driver): add module skeleton with Kbuild and Kconfig
   Not included: no PCI registration, no device operations, no headers
   Depends on:   none
 
-Commit 2/6: feat(driver): add PCI probe/remove with device ID table
+Commit 2/6: asic_eth: add PCI probe/remove with device ID table
 
   Summary:      Register as a PCI driver, bind to the ASIC's vendor/device ID,
                 map BAR0 in probe.
@@ -120,7 +120,7 @@ Commit 2/6: feat(driver): add PCI probe/remove with device ID table
   Not included: no DMA allocation, no char device, no interrupt setup
   Depends on:   1
 
-Commit 3/6: feat(driver): allocate DMA coherent ring buffers
+Commit 3/6: dma: allocate coherent ring buffers
 
   Summary:      Allocate TX and RX descriptor rings and data buffers using
                 dma_alloc_coherent in probe, free in remove.
@@ -136,7 +136,7 @@ Commit 3/6: feat(driver): allocate DMA coherent ring buffers
                 no mmap support
   Depends on:   2
 
-Commit 4/6: feat(driver): add char device with open/release
+Commit 4/6: asic_eth: add char device with open/release
 
   Summary:      Register a misc char device so userspace can open a file
                 descriptor to the driver. No operations beyond open/release.
@@ -151,7 +151,7 @@ Commit 4/6: feat(driver): add char device with open/release
   Not included: no mmap, no ioctl, no read/write operations
   Depends on:   2 (independent of 3 — can be reordered)
 
-Commit 5/6: feat(driver): implement mmap for DMA ring buffers
+Commit 5/6: mmap: implement DMA ring buffer mapping to userspace
 
   Summary:      Add mmap file operation that maps the DMA ring buffers into
                 userspace using remap_pfn_range. Userspace gets direct access
@@ -167,7 +167,7 @@ Commit 5/6: feat(driver): implement mmap for DMA ring buffers
                 notification
   Depends on:   3, 4
 
-Commit 6/6: feat(driver): add doorbell write and MSI-based eventfd completion
+Commit 6/6: tx: add doorbell write and MSI-based eventfd completion
 
   Summary:      Wire up the TX doorbell (MMIO write to BAR0 offset), descriptor
                 ring head/tail management, and MSI interrupt that signals an
