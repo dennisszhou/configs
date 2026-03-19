@@ -26,6 +26,7 @@
 - Data structures first — model the problem, then write the functions.
 - Build what's needed now, but design so it's easy to extend later. Don't implement speculative features, but don't paint yourself into a corner either.
 - Prefer explicit over implicit; established over custom; extensible over clever.
+- Design docs describe intent, not proof. Implement cohesive abstractions that own their invariants — don't scatter logic across call sites and assume correctness because it matches the doc. If the spec is ambiguous, surface it as a design question — don't pick a default silently.
 
 ## Error Handling
 - Raise errors explicitly with full context (params, status, response body).
