@@ -60,6 +60,12 @@ setup_other_configs() {
         echo "Setting up Claude Code..."
         sh claude/install.sh
     fi
+
+    # Codex
+    if [ -f "codex/install.sh" ]; then
+        echo "Setting up Codex..."
+        sh codex/install.sh
+    fi
 }
 
 # Sets up local configuration files by copying templates if they don't exist.
