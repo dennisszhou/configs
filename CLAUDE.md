@@ -37,13 +37,15 @@ Personal dotfiles and system configuration repo. Symlinks config files into `$HO
 ## How `configure.sh` works
 
 ```
-./configure.sh [all|packages|configs|plugins]
+./configure.sh [all|packages|configs|plugins|claude|codex]
 ```
 
 - **packages** — installs from `packages.list` using brew/apt/dnf
-- **configs** — symlinks shell, vim, tmux, git, neovim, Claude, and Codex configs; copies local config templates if absent
+- **configs** — symlinks shell, vim, tmux, git, and neovim configs; copies local config templates if absent
 - **plugins** — installs TPM (tmux), vim-plug, fzf shell integration
-- **all** (default) — runs all three in order
+- **claude** — installs only Claude Code config into `~/.claude/`
+- **codex** — installs only Codex config into `~/.codex/` and `~/.agents/skills/`
+- **all** (default) — runs packages, base configs, local templates, and plugins
 
 Pre-flight check: aborts if `neovim/` submodule is empty (run `./setup.sh` first).
 

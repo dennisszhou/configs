@@ -35,8 +35,8 @@ setup_shell_config() {
     fi
 }
 
-# Sets up configuration for Vim, Tmux, and Git.
-setup_other_configs() {
+# Sets up configuration for Vim, Tmux, Git, and Neovim.
+setup_base_configs() {
     echo "Setting up Vim, Tmux, and Git..."
 
     # Tmux
@@ -57,16 +57,23 @@ setup_other_configs() {
     install_file "common/gitignore.global" "$HOME/.gitignore.global"
     git config --global core.excludesfile "$HOME/.gitignore.global"
 
-    # Claude Code
+}
+
+setup_claude_config() {
     if [ -f "claude/install.sh" ]; then
         echo "Setting up Claude Code..."
         sh claude/install.sh
+    else
+        echo "Claude installer not found; skipping."
     fi
+}
 
-    # Codex
+setup_codex_config() {
     if [ -f "codex/install.sh" ]; then
         echo "Setting up Codex..."
         sh codex/install.sh
+    else
+        echo "Codex installer not found; skipping."
     fi
 }
 
@@ -187,11 +194,13 @@ install_plugins() {
 # --- Main Execution ---
 
 usage() {
-    echo "Usage: $0 [all|packages|configs|plugins]"
-    echo "  all      - Install packages, set up configs, and install plugins (default)"
+    echo "Usage: $0 [all|packages|configs|plugins|claude|codex]"
+    echo "  all      - Install packages, base configs, local templates, and plugins (default)"
     echo "  packages - Install packages only"
-    echo "  configs  - Set up configurations only"
+    echo "  configs  - Set up shell/base configs and local templates only"
     echo "  plugins  - Install plugins only"
+    echo "  claude   - Install Claude Code config only"
+    echo "  codex    - Install Codex config only"
     exit 1
 }
 
@@ -209,7 +218,7 @@ main() {
     # 2. Argument Parsing
     if [[ $# -gt 0 ]]; then
         case "$1" in
-            all|packages|configs|plugins)
+            all|packages|configs|plugins|claude|codex)
                 target="$1"
                 ;;
             -h|--help)
@@ -225,13 +234,17 @@ main() {
     echo "Configuring for platform: $platform (Target: $target)"
 
     # 3. Pre-flight checks
-    if [[ -z "$(ls -A neovim 2>/dev/null)" || ! -f "neovim/init.lua" ]]; then
-        echo "ERROR: neovim submodule is not initialized. Did you run ./setup.sh first?"
-        echo "  git submodule update --init --recursive"
-        exit 1
-    fi
+    case "$target" in
+        all|configs)
+            if [[ -z "$(ls -A neovim 2>/dev/null)" || ! -f "neovim/init.lua" ]]; then
+                echo "ERROR: neovim submodule is not initialized. Did you run ./setup.sh first?"
+                echo "  git submodule update --init --recursive"
+                exit 1
+            fi
+            ;;
+    esac
 
-    if [[ -z "$(ls -A everything-claude-code 2>/dev/null)" ]]; then
+    if [[ "$target" == "claude" ]] && [[ -z "$(ls -A everything-claude-code 2>/dev/null)" ]]; then
         echo "Note: everything-claude-code submodule not initialized. ECC setup will be skipped."
         echo "  To enable: git submodule update --init everything-claude-code"
     fi
@@ -241,7 +254,7 @@ main() {
         all)
             install_packages "$platform"
             setup_shell_config "$platform"
-            setup_other_configs
+            setup_base_configs
             setup_local_configs
             install_plugins "$platform"
             ;;
@@ -250,11 +263,17 @@ main() {
             ;;
         configs)
             setup_shell_config "$platform"
-            setup_other_configs
+            setup_base_configs
             setup_local_configs
             ;;
         plugins)
             install_plugins "$platform"
+            ;;
+        claude)
+            setup_claude_config
+            ;;
+        codex)
+            setup_codex_config
             ;;
     esac
 
