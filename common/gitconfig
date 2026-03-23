@@ -7,7 +7,7 @@
     smtpserver     = mail.kernel.org
     smtpserverport = 465
     smtpencryption = ssl
-    from           = dennis@kernel.org
+    from           = Dennis Zhou <dennis@kernel.org>
     smtpuser       = dennis
 
 [url "ssh://git@gitolite.kernel.org"]
@@ -17,3 +17,5 @@
 
 [include]
 	path = ~/.gitconfig.local
+[core]
+	excludesfile = /Users/dennis/.gitignore.global

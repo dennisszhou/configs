@@ -54,6 +54,8 @@ setup_other_configs() {
 
     # Git
     install_file "common/gitconfig" "$HOME/.gitconfig"
+    install_file "common/gitignore.global" "$HOME/.gitignore.global"
+    git config --global core.excludesfile "$HOME/.gitignore.global"
 
     # Claude Code
     if [ -f "claude/install.sh" ]; then
