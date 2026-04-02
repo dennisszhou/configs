@@ -15,7 +15,7 @@ Personal dotfiles and system configuration repo. Symlinks config files into `$HO
 | `codex/` | Generic Codex config — `~/.codex` files plus user skills, install script |
 | `codex/AGENTS.md` | Global Codex instructions (symlinked to `~/.codex/AGENTS.md`) |
 | `codex/install.sh` | Symlinks Codex config into `~/.codex/` and skills into `~/.agents/skills/` |
-| `everything-claude-code/` | Git submodule → fork of `affaan-m/everything-claude-code` |
+| `vendor/everything-claude-code/` | Git submodule → fork of `affaan-m/everything-claude-code` |
 | `common/shrc` | Shared env vars (editor, history, FZF, PATH) sourced by all shells |
 | `common/aliases` | Shell aliases shared across bash/zsh |
 | `common/tmux` | tmux config (prefix `C-a`, vi keys, TPM plugins) |

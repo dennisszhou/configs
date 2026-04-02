@@ -5,7 +5,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-ECC_DIR="$REPO_DIR/everything-claude-code"
+ECC_DIR="$REPO_DIR/vendor/everything-claude-code"
 MANIFEST="$SCRIPT_DIR/manifest.conf"
 CLAUDE_HOME="$HOME/.claude"
 
@@ -39,7 +39,7 @@ parse_section() {
 }
 
 # --- cleanup_stale: remove ECC symlinks in target_dir not in wanted list ---
-# Only removes symlinks whose target contains everything-claude-code/$ecc_subpath,
+# Only removes symlinks whose target contains vendor/everything-claude-code/$ecc_subpath,
 # so user-owned symlinks in the same directory are never touched.
 cleanup_stale() {
     target_dir="$1"; ecc_subpath="$2"; shift 2
@@ -49,7 +49,7 @@ cleanup_stale() {
         [ -L "$link" ] || continue
         link_target=$(readlink "$link")
         case "$link_target" in
-            *everything-claude-code/$ecc_subpath*)
+            *vendor/everything-claude-code/$ecc_subpath*)
                 base=$(basename "$link")
                 found=0
                 for w in $wanted; do [ "$w" = "$base" ] && found=1 && break; done
@@ -70,7 +70,7 @@ migrate_old_symlinks() {
         target="$CLAUDE_HOME/$dir"
         if [ -L "$target" ]; then
             case "$(readlink "$target")" in
-                *everything-claude-code*)
+                *everything-claude-code*|*vendor/everything-claude-code*)
                     echo "Migrating $target: whole-dir symlink -> directory"
                     rm "$target"
                     mkdir -p "$target"
@@ -85,7 +85,7 @@ migrate_old_symlinks() {
         for link in "$CLAUDE_HOME/$dir"/*.md; do
             [ -L "$link" ] || continue
             case "$(readlink "$link")" in
-                *everything-claude-code/$dir/*)
+                *everything-claude-code/$dir/*|*vendor/everything-claude-code/$dir/*)
                     echo "Removing un-namespaced symlink: $link"
                     rm "$link" ;;
             esac
@@ -97,7 +97,7 @@ migrate_old_symlinks() {
         for entry in "$CLAUDE_HOME/skills"/*; do
             [ -L "$entry" ] || continue
             case "$(readlink "$entry")" in
-                *everything-claude-code/skills/*)
+                *everything-claude-code/skills/*|*vendor/everything-claude-code/skills/*)
                     echo "Removing un-namespaced skill symlink: $entry"
                     rm "$entry" ;;
             esac
@@ -113,7 +113,7 @@ migrate_old_symlinks() {
             for link in "$category_dir"*.md; do
                 [ -L "$link" ] || continue
                 case "$(readlink "$link")" in
-                    *everything-claude-code/rules/*)
+                    *everything-claude-code/rules/*|*vendor/everything-claude-code/rules/*)
                         echo "Removing un-namespaced rule symlink: $link"
                         rm "$link" ;;
                 esac

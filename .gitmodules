@@ -2,7 +2,7 @@
 	path = neovim
 	url = https://github.com/dennisszhou/kickstart.nvim
 [submodule "everything-claude-code"]
-	path = everything-claude-code
+	path = vendor/everything-claude-code
 	url = git@github.com:dennisszhou/everything-claude-code.git
 [submodule "vendor/superpowers"]
 	path = vendor/superpowers

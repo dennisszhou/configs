@@ -244,9 +244,9 @@ main() {
             ;;
     esac
 
-    if [[ "$target" == "claude" ]] && [[ -z "$(ls -A everything-claude-code 2>/dev/null)" ]]; then
-        echo "Note: everything-claude-code submodule not initialized. ECC setup will be skipped."
-        echo "  To enable: git submodule update --init everything-claude-code"
+    if [[ "$target" == "claude" ]] && [[ -z "$(ls -A vendor/everything-claude-code 2>/dev/null)" ]]; then
+        echo "Note: vendor/everything-claude-code submodule not initialized. ECC setup will be skipped."
+        echo "  To enable: git submodule update --init vendor/everything-claude-code"
     fi
 
     # 4. Execution based on target

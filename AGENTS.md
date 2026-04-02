@@ -28,7 +28,7 @@ This file supplements broader global defaults. Follow the nearest applicable
   without containing secrets.
 - `neovim/` is a git submodule and should be treated as an external pinned tree
   unless the task is explicitly to update or modify that submodule.
-- `everything-claude-code/` is a git submodule used by `claude/install.sh`.
+- `vendor/everything-claude-code/` is a git submodule used by `claude/install.sh`.
 - `codex/` contains the generic `~/.codex` payload plus user skills; keep both
   symlink-based so local repo edits reflect immediately.
 - `kernel/`, `patches/`, and `iterm/` are supporting config assets, not general
