@@ -1,0 +1,18 @@
+# Curated upstream Superpowers skills to expose under ~/.agents/skills/superpowers/
+# Enabled skills use the plain upstream directory name.
+# Reviewed-but-disabled skills are tracked with a leading "- " so drift checks stay useful.
+
+using-superpowers
+brainstorming
+writing-plans
+using-git-worktrees
+executing-plans
+requesting-code-review
+receiving-code-review
+systematic-debugging
+test-driven-development
+verification-before-completion
+finishing-a-development-branch
+- dispatching-parallel-agents
+- subagent-driven-development
+- writing-skills

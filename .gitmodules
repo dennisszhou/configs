@@ -4,3 +4,6 @@
 [submodule "everything-claude-code"]
 	path = everything-claude-code
 	url = git@github.com:dennisszhou/everything-claude-code.git
+[submodule "vendor/superpowers"]
+	path = vendor/superpowers
+	url = git@github.com:dennisszhou/superpowers.git
