@@ -329,6 +329,10 @@ For concurrent, async, queued, or retried code:
 - Write docs for substantial new features, major behavior changes, and important
   architectural additions.
 - Add docs when the feature is introduced or in the same change series.
+- Do not defer documentation updates to a final docs-only commit when earlier
+  commits change the user-facing behavior, API, workflow, or mental model.
+- Update documentation alongside the commit that introduces the behavior so any
+  single checked-out commit remains internally consistent and correct.
 - Large concepts spanning multiple modules should have a dedicated doc.
 - Keep one authoritative place per concept; avoid duplicated documentation that
   can drift.
