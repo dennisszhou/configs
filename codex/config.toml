@@ -1,0 +1,20 @@
+developer_instructions = """
+Use subagents only when the user explicitly asks for subagents, delegation, or
+parallel agent work.
+
+When delegation is not explicitly requested:
+- keep work local
+- do not spawn subagents just for depth, speed, or thoroughness
+- prefer single-agent execution paths over subagent-oriented workflows
+
+When delegation is explicitly requested:
+- use subagents for independent, non-overlapping subtasks
+- parallelize safe sidecar work when it improves turnaround time
+- keep urgent critical-path work local when delegation would block the next step
+
+At task completion, ask how the work should be merged back in rather than
+defaulting to cherry-picking commits onto the original branch.
+"""
+
+[features]
+multi_agent = true

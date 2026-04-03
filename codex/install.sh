@@ -1,5 +1,5 @@
 #!/bin/sh
-# codex/install.sh — symlink Codex config into ~/.codex and curated skills into ~/.agents/skills
+# codex/install.sh — symlink Codex AGENTS.md into ~/.codex and curated skills into ~/.agents/skills
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -107,19 +107,10 @@ ensure_directory() {
 mkdir -p "$CODEX_HOME"
 mkdir -p "$SKILLS_HOME"
 
-wanted_codex_entries=""
+wanted_codex_entries=" AGENTS.md"
 wanted_skill_entries=""
 
-for src in "$SCRIPT_DIR"/*; do
-    [ -e "$src" ] || continue
-
-    base=$(basename "$src")
-    [ "$base" = "install.sh" ] && continue
-    [ "$base" = "skills" ] && continue
-
-    install_link "$src" "$CODEX_HOME/$base"
-    wanted_codex_entries="$wanted_codex_entries $base"
-done
+install_link "$SCRIPT_DIR/AGENTS.md" "$CODEX_HOME/AGENTS.md"
 
 if [ -d "$SKILLS_DIR" ]; then
     for src in "$SKILLS_DIR"/*; do

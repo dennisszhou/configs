@@ -72,6 +72,11 @@ setup_codex_config() {
     if [ -f "codex/install.sh" ]; then
         echo "Setting up Codex..."
         sh codex/install.sh
+        if [ -f "codex/sync-config.sh" ]; then
+            sh codex/sync-config.sh
+        else
+            echo "Codex config sync script not found; skipping."
+        fi
     else
         echo "Codex installer not found; skipping."
     fi
