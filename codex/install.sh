@@ -1,5 +1,5 @@
 #!/bin/sh
-# codex/install.sh — symlink Codex AGENTS.md into ~/.codex and curated skills into ~/.agents/skills
+# codex/install.sh — symlink Codex AGENTS.md into ~/.codex and user skills into ~/.agents/skills
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -8,10 +8,6 @@ CODEX_HOME="$HOME/.codex"
 AGENTS_HOME="$HOME/.agents"
 SKILLS_HOME="$AGENTS_HOME/skills"
 SKILLS_DIR="$SCRIPT_DIR/skills"
-SUPERPOWERS_DIR="$REPO_DIR/vendor/superpowers"
-SUPERPOWERS_SKILLS_DIR="$SUPERPOWERS_DIR/skills"
-SUPERPOWERS_MANIFEST="$SCRIPT_DIR/superpowers.manifest"
-SUPERPOWERS_NAMESPACE_DIR="$SKILLS_HOME/superpowers"
 
 install_link() {
     src="$1"
@@ -58,50 +54,16 @@ is_skill_dir() {
     [ -f "$dir/SKILL.md" ]
 }
 
-parse_manifest_entries() {
-    manifest="$1"
+remove_path_if_exists() {
+    target="$1"
 
-    [ -f "$manifest" ] || return 0
-
-    while IFS= read -r line || [ -n "$line" ]; do
-        line=$(printf '%s' "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-        [ -z "$line" ] && continue
-        case "$line" in
-            \#*) continue ;;
-            -[[:space:]]*) line=${line#- } ;;
-        esac
-        echo "$line"
-    done < "$manifest"
-}
-
-parse_enabled_manifest() {
-    manifest="$1"
-
-    [ -f "$manifest" ] || return 0
-
-    while IFS= read -r line || [ -n "$line" ]; do
-        line=$(printf '%s' "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-        [ -z "$line" ] && continue
-        case "$line" in
-            \#*) continue ;;
-            -*) continue ;;
-        esac
-        echo "$line"
-    done < "$manifest"
-}
-
-ensure_directory() {
-    dest="$1"
-
-    if [ -L "$dest" ]; then
-        echo "Removing symlink to create directory: $dest"
-        rm "$dest"
-    elif [ -e "$dest" ] && [ ! -d "$dest" ]; then
-        echo "Backing up $dest to $dest.old"
-        mv "$dest" "$dest.old"
+    if [ -L "$target" ]; then
+        echo "Removing symlink: $target"
+        rm "$target"
+    elif [ -d "$target" ]; then
+        echo "Removing directory: $target"
+        rm -rf "$target"
     fi
-
-    mkdir -p "$dest"
 }
 
 mkdir -p "$CODEX_HOME"
@@ -123,28 +85,7 @@ if [ -d "$SKILLS_DIR" ]; then
     done
 fi
 
-ensure_directory "$SUPERPOWERS_NAMESPACE_DIR"
-
-if [ ! -f "$SUPERPOWERS_MANIFEST" ]; then
-    echo "Note: no Superpowers manifest found at $SUPERPOWERS_MANIFEST, skipping curated upstream skills."
-elif [ ! -d "$SUPERPOWERS_SKILLS_DIR" ]; then
-    echo "Note: Superpowers submodule not initialized at $SUPERPOWERS_DIR, skipping curated upstream skills."
-    echo "  To enable: git submodule update --init vendor/superpowers"
-else
-    wanted_superpowers_entries=""
-
-    for skill in $(parse_enabled_manifest "$SUPERPOWERS_MANIFEST"); do
-        src="$SUPERPOWERS_SKILLS_DIR/$skill"
-        if is_skill_dir "$src"; then
-            install_link "$src" "$SUPERPOWERS_NAMESPACE_DIR/$skill"
-            wanted_superpowers_entries="$wanted_superpowers_entries $skill"
-        else
-            echo "Warning: superpowers skill '$skill' not found, skipping"
-        fi
-    done
-
-    cleanup_stale "$SUPERPOWERS_NAMESPACE_DIR" "$SUPERPOWERS_SKILLS_DIR" $wanted_superpowers_entries
-fi
+remove_path_if_exists "$SKILLS_HOME/superpowers"
 
 cleanup_stale "$CODEX_HOME" "$SCRIPT_DIR" $wanted_codex_entries
 cleanup_stale "$SKILLS_HOME" "$SKILLS_DIR" $wanted_skill_entries
