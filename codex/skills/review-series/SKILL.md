@@ -11,6 +11,10 @@ defend it.
 This skill is for checking whether a risky or semantic change actually matches
 the approved contract and whether its evidence is strong enough.
 
+For larger or riskier series, this skill may recommend escalating to
+`series-reviewer` so correctness and operations can be reviewed through
+separate lenses.
+
 ## When to use this
 Use this skill when:
 - a series plan marks a step with `Review gate: code`
@@ -68,6 +72,9 @@ testing gap.
 
 6. Return a verdict
 - Findings, open questions, and residual risk.
+- If the series is broad enough that one review pass is likely too coarse, say
+  that it is a good candidate for `series-reviewer` and explicitly tell the user
+  to run `series-reviewer` if they want the parallel reviewer path.
 
 ## Output format
 
@@ -98,3 +105,4 @@ Verdict
 - It does not produce a series plan.
 - It does not require review on every commit.
 - It does not block on style nits when the real issue is correctness.
+- It does not silently escalate into `series-reviewer`.

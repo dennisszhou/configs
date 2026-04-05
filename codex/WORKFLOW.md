@@ -91,6 +91,13 @@ For high-risk bugfixes, use the full feature/refactor lane.
 - Optional by default; use it selectively where the series plan calls for a
   review gate.
 
+`$series-reviewer`
+- Optional advanced review mode for larger or riskier series.
+- Synthesizes a small set of focused reviewer lenses, currently correctness,
+  runtime, and performance when relevant.
+- Invocation of this skill authorizes the reviewer subagents it needs.
+- Not part of the default workflow.
+
 `$polish-series`
 - Optional local-history cleanup after execution is stable.
 - Can fold later `docs/plans` update commits back into one clean docs/plans
