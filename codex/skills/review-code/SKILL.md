@@ -13,7 +13,7 @@ the approved contract and whether its evidence is strong enough.
 
 ## When to use this
 Use this skill when:
-- a commit plan marks a step with `Review gate: code`
+- a series plan marks a step with `Review gate: code`
 - a commit changes semantics, optimization behavior, reliability, or migration
   behavior
 - the user explicitly requests skeptical code review
@@ -21,7 +21,7 @@ Use this skill when:
 Do not use this skill for:
 - routine preparatory commits with no meaningful semantic risk
 - architecture design before implementation
-- commit planning
+- series planning
 
 ## Review questions
 
@@ -95,6 +95,6 @@ Verdict
 
 ## What this skill does not do
 - It does not redesign the feature from scratch.
-- It does not produce a commit plan.
+- It does not produce a series plan.
 - It does not require review on every commit.
 - It does not block on style nits when the real issue is correctness.

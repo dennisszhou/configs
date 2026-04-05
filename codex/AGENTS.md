@@ -49,11 +49,11 @@ applicable `AGENTS.md` first.
   4. `$review-structures`
   5. approval
   6. turn plan mode off
-  7. `$plan-commits`
+  7. `$plan-series`
   8. approval
-  9. `$do-commits`
+  9. `$impl-series`
 - For trivial work where design is already clear, skip straight to
-  `$plan-commits` and then `$do-commits`.
+  `$plan-series` and then `$impl-series`.
 - For bugfixes, reproduce the bug or define regression evidence first; use a
   short design note only when the fix shape is not obvious.
 
@@ -121,19 +121,19 @@ Execution planning is about:
 - making the work reviewable and bisectable
 - choosing the order of implementation
 
-`$plan-commits` is an execution-planning step, not an architecture-planning
+`$plan-series` is a series-planning step, not an architecture-planning
 step.
 
 Native plan mode belongs to design work, not commit execution. Keep native plan
 mode on through design and structure review, then turn it off before
-`$plan-commits` and `$do-commits`.
+`$plan-series` and `$impl-series`.
 
-Use `$plan-commits` only after one of these is true:
+Use `$plan-series` only after one of these is true:
 - the design is already clear from the task and existing code
 - a design discussion has already settled the approach
 - a design doc under `docs/plans/` already exists
 
-If the architecture is still unclear, do not jump straight to `$plan-commits`.
+If the architecture is still unclear, do not jump straight to `$plan-series`.
 First do design planning.
 
 ## Planning workflow
@@ -141,15 +141,15 @@ Use this workflow for non-trivial work:
 
 1. Determine whether architecture/design planning is needed.
 2. If needed, create or update a design doc under `docs/plans/`.
-3. Once the solution shape is clear, use `$plan-commits` to produce the commit
+3. Once the solution shape is clear, use `$plan-series` to produce the commit
    sequence.
 4. Review and approve the execution plan.
-5. Use `$do-commits` to implement the approved commit sequence.
+5. Use `$impl-series` to implement the approved commit sequence.
 6. If implementation reveals that the design or execution plan is wrong, stop,
    update the relevant plan, and only then continue.
 
 The active `docs/plans/...` file remains mutable during design, structure
-review, and commit planning. Once `$do-commits` begins:
+review, and series planning. Once `$impl-series` begins:
 - if the active approved plan doc is not yet committed on the execution branch,
   commit it first as a docs-only commit
 - if only that initial docs/plans commit exists and no implementation commit has
@@ -160,23 +160,23 @@ review, and commit planning. Once `$do-commits` begins:
 
 ## Heuristics
 - Small, obvious tasks may not need a written design plan.
-- Non-trivial tasks should usually use `$plan-commits`.
+- Non-trivial tasks should usually use `$plan-series`.
 - Large, ambiguous, multi-step, or multi-session tasks should usually have a
-  written design plan under `docs/plans/` before `$plan-commits`.
+  written design plan under `docs/plans/` before `$plan-series`.
 
 ## Important distinction
-Do not treat commit planning as a substitute for design.
+Do not treat series planning as a substitute for design.
 
 - Design planning decides what to build.
-- `$plan-commits` decides how to stage building it.
-- `$do-commits` executes that staged implementation.
+- `$plan-series` decides how to stage building it.
+- `$impl-series` executes that staged implementation.
 
 ## Approval boundaries
 - Present a plan before non-trivial code changes when approval is expected.
 - Before committing, show the staged diff and proposed commit message when the
   workflow expects review.
 - If an explicit execution workflow has already been approved — for example an
-  approved commit plan followed by a commit-execution skill — that approval
+  approved series plan followed by a commit-execution skill — that approval
   authorizes executing the planned commits sequentially until a real question,
   failure, or plan mismatch arises.
 - Use selective review gates rather than mandatory review theater on every
@@ -188,7 +188,7 @@ Do not treat commit planning as a substitute for design.
   - unexpected files or side effects expand the scope
 
 Preserve truthful execution history while work is ongoing. Do not polish the
-branch history during `$do-commits`; later docs/plans update commits are
+branch history during `$impl-series`; later docs/plans update commits are
 acceptable when the plan changes materially.
 
 ## Core principles

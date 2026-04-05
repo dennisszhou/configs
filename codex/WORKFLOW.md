@@ -21,19 +21,19 @@ API, data model, or rollout shape is not already obvious.
 4. Run `$review-structures`.
 5. Review and approve the structure review result.
 6. Turn native plan mode off.
-7. Run `$plan-commits`.
-8. Review and approve the commit plan.
-9. Run `$do-commits`.
+7. Run `$plan-series`.
+8. Review and approve the series plan.
+9. Run `$impl-series`.
 
 ### Trivial lane
 Use this for small, obvious changes where the design and data shape are already
 clear from the task and existing code.
 
-1. Run `$plan-commits`.
-2. Review and approve the commit plan.
-3. Run `$do-commits`.
+1. Run `$plan-series`.
+2. Review and approve the series plan.
+3. Run `$impl-series`.
 
-If commit planning reveals unclear architecture, stop and move back to the
+If series planning reveals unclear architecture, stop and move back to the
 feature/refactor lane.
 
 ### Bugfix lane
@@ -41,9 +41,9 @@ Use this when the main job is to restore an existing contract.
 
 1. Reproduce the bug or define concrete regression evidence.
 2. Write a short design note only if the root cause or fix shape is not obvious.
-3. Run `$plan-commits`.
-4. Review and approve the commit plan.
-5. Run `$do-commits`.
+3. Run `$plan-series`.
+4. Review and approve the series plan.
+5. Run `$impl-series`.
 
 For high-risk bugfixes, use the full feature/refactor lane.
 
@@ -60,16 +60,16 @@ For high-risk bugfixes, use the full feature/refactor lane.
 - Skeptical review of the proposed design shape.
 - Checks source of truth, authoritative versus cached versus derived state,
   ownership, lifecycle, API boundaries, invariants, and testability.
-- Ends with either `ready for commit planning` or `needs design revision`.
+- Ends with either `ready for series planning` or `needs design revision`.
 
-`$plan-commits`
+`$plan-series`
 - Turns an approved design or otherwise settled task into atomic,
   independently-correct commits.
 - Each commit must include concrete verification, `Invariant focus`,
   `Test level`, and `Review gate`.
 
-`$do-commits`
-- Executes the approved commit plan as an execution contract.
+`$impl-series`
+- Executes the approved series plan as an execution contract.
 - Anchors an approved active `docs/plans/...` file as the first execution
   commit when one exists and is not yet committed on the branch.
 - Verifies every commit before committing.
@@ -78,7 +78,7 @@ For high-risk bugfixes, use the full feature/refactor lane.
 `$review-code`
 - Skeptical code review for risky semantic, optimization, migration, or
   reliability-sensitive commits.
-- Optional by default; use it selectively where the commit plan calls for a
+- Optional by default; use it selectively where the series plan calls for a
   review gate.
 
 `$polish-series`
@@ -95,8 +95,8 @@ Keep native plan mode on through:
 - `$review-structures`
 
 Turn native plan mode off before:
-- `$plan-commits`
-- `$do-commits`
+- `$plan-series`
+- `$impl-series`
 
 The point is simple: plan mode helps early reasoning, but approved local
 artifacts define the real contract. Once design and structure review are
@@ -106,10 +106,10 @@ approved, execution should stay tight.
 
 Approval is required after:
 - `$design`
-- `$review-structures` when it says `ready for commit planning`
-- `$plan-commits`
+- `$review-structures` when it says `ready for series planning`
+- `$plan-series`
 
-`$do-commits` may proceed through the approved stack without asking between
+`$impl-series` may proceed through the approved stack without asking between
 commits. Stop only when:
 - the plan no longer matches reality
 - verification fails in a way that needs out-of-scope changes
@@ -120,7 +120,7 @@ Use `$review-code` during execution only where the plan says a commit has a real
 review gate such as `code`, `perf`, or `migration`.
 
 If an approved active `docs/plans/...` file exists when execution starts,
-`$do-commits` begins by committing that docs/plans file as Commit 1. The plan
+`$impl-series` begins by committing that docs/plans file as Commit 1. The plan
 doc may still be amended before execution begins. Once implementation commits
 exist, meaningful plan updates should usually become new docs/plans update
 commits rather than silently rewriting the original plan commit underneath code
@@ -139,7 +139,7 @@ Design is ready to approve when:
 - rollout or migration is defined when relevant
 - the validation strategy matches the real contract
 
-Structure review is ready for commit planning when:
+Structure review is ready for series planning when:
 - authoritative, cached, and derived state are clearly separated
 - ownership and lifecycle are coherent
 - API boundaries are implementable without hidden ambiguity

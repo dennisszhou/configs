@@ -1,11 +1,11 @@
 ---
-name: do-commits
-description: Execute an approved plan-commits stack by implementing, verifying, and committing each planned step in order. Use when the user says to execute the commit plan, start implementing, resume the stack, or continue an already approved staged implementation.
+name: impl-series
+description: Execute an approved plan-series stack by implementing, verifying, and committing each planned step in order. Use when the user says to execute the series plan, start implementing, resume the stack, or continue an already approved staged implementation.
 ---
 
-# Do Commits
+# Impl Series
 
-Execute an approved commit plan one commit at a time. The git history is the
+Execute an approved series plan one commit at a time. The git history is the
 audit trail. Keep going until you hit a real question, a failure, or the plan is
 complete.
 
@@ -15,18 +15,18 @@ needed, to `$polish-series`.
 
 ## When to use this
 Use this skill when:
-- the user has already approved a commit plan
+- the user has already approved a series plan
 - the user explicitly asks to execute that plan
 - the user asks to continue or resume an in-progress commit stack
 
 If there is no approved plan, stop and ask the user to run or approve
-`$plan-commits` first.
+`$plan-series` first.
 
 Do not use this skill while native plan mode is active. Execution begins after
 design work and structure review are finished.
 
 ## Approval model
-Invocation of this skill counts as authorization to execute the approved commit
+Invocation of this skill counts as authorization to execute the approved series
 stack sequentially.
 
 Do not stop between commits to ask “should I continue?” Stop only when:
@@ -80,8 +80,8 @@ the starting point for execution history.
 
 ## Inputs
 This skill expects:
-- an approved commit plan from `$plan-commits`
-- or an equivalent numbered commit plan supplied by the user
+- an approved series plan from `$plan-series`
+- or an equivalent numbered series plan supplied by the user
 - and optionally an active approved `docs/plans/...` file for the task
 
 Each commit entry should include:
@@ -112,7 +112,7 @@ Treat deviations from the approved plan in three buckets:
 - If an extra file must change, a verify command must change, or one planned
   commit should be split for correctness or reviewability, stop and propose a
   local plan amendment before continuing.
-- Update the active plan doc or approved commit plan as needed, then continue
+- Update the active plan doc or approved series plan as needed, then continue
   after approval if the workflow calls for it.
 
 3. Structural mismatches
@@ -159,7 +159,7 @@ uncommitted state.
 
 Print progress in this shape:
 
-Commit plan progress:
+Series plan progress:
   ✅ docs/plans: ...
   ✅ 1/6: ...
   ✅ 2/6: ...
@@ -340,7 +340,7 @@ When the user says “continue”, “resume”, or invokes this skill again:
    user’s answer and finish that commit first
 
 ## What this skill does not do
-- It does not create or redesign the commit plan.
+- It does not create or redesign the series plan.
 - It does not silently skip commits.
 - It does not combine commits.
 - It does not push.

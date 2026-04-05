@@ -1,6 +1,6 @@
 ---
 name: review-structures
-description: Skeptically review an approved or near-approved design to decide whether its data model, state boundaries, ownership, and invariants are coherent enough for implementation. Use after design and before commit planning.
+description: Skeptically review an approved or near-approved design to decide whether its data model, state boundaries, ownership, and invariants are coherent enough for implementation. Use after design and before series planning.
 ---
 
 # Review Structures
@@ -15,11 +15,11 @@ to implement without hidden ambiguity.
 Use this skill when:
 - an approved or near-approved design already exists
 - the work introduces or changes data models, ownership boundaries, or APIs
-- the user wants a structure-focused review before commit planning
+- the user wants a structure-focused review before series planning
 
 Do not use this skill when:
 - there is no design artifact to review
-- the task is so small that commit planning is enough
+- the task is so small that series planning is enough
 - the user wants diff review of implemented code
 
 This skill works best while native plan mode is still on.
@@ -30,7 +30,7 @@ Answer one question:
 Is the proposed state and boundary model coherent enough to implement?
 
 The outcome must be one of:
-- `ready for commit planning`
+- `ready for series planning`
 - `needs design revision`
 
 ## Review lens
@@ -83,7 +83,7 @@ directly and point to the smallest revision needed.
   match the contract?
 
 8. Decide readiness
-- If the model is coherent, say `ready for commit planning`.
+- If the model is coherent, say `ready for series planning`.
 - Otherwise say `needs design revision` and list the blocking issues.
 
 ## Output format
@@ -122,13 +122,13 @@ Ready criteria
 - ...
 
 Result
-- `ready for commit planning` | `needs design revision`
+- `ready for series planning` | `needs design revision`
 
 Recommended next step
 - ...
 
 ## Exit criteria for “ready”
-Only return `ready for commit planning` when:
+Only return `ready for series planning` when:
 - authoritative, cached, and derived state are clearly separated
 - core structures can express the intended invariants
 - ownership and lifecycle are not ambiguous

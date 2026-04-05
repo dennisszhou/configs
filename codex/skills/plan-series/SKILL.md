@@ -1,9 +1,9 @@
 ---
-name: plan-commits
+name: plan-series
 description: Decompose an approved design, feature plan, or implementation idea into a sequence of small, reviewable, independently correct commits. Use when the user asks to break work into commits, plan the commit sequence, make the work atomic, or after a design/docs-plans doc is ready and implementation should be staged cleanly.
 ---
 
-# Plan Commits
+# Plan Series
 
 Turn an implementation plan into a sequence of small, independently correct
 commits.
@@ -11,7 +11,7 @@ commits.
 ## When to use this
 Use this skill when:
 - the user asks to break work into commits
-- the user asks for a commit plan or commit stack
+- the user asks for a series plan or commit stack
 - a design or `docs/plans/YYYY-MM-DD-topic.md` doc already exists and
   implementation is next
 - design and, when needed, structure review have already been approved
@@ -21,7 +21,7 @@ Use this skill when:
 Do not use this skill to write code or generate diffs. This skill produces the
 execution contract.
 
-Do not use this skill while native plan mode is still active. Commit planning is
+Do not use this skill while native plan mode is still active. Series planning is
 an execution-planning step, not a design-planning step.
 
 ## Goal
@@ -50,7 +50,7 @@ invent the architecture and the commit stack unless the task is very small.
 When an existing design plan is present:
 - use that current plan doc as the source of truth for the work
 - do not edit unrelated plan docs
-- do not rewrite older plan docs as part of commit planning
+- do not rewrite older plan docs as part of series planning
 - only propose updates to the active plan doc if the execution contract is wrong
 
 If structure review concluded `needs design revision`, stop. Do not plan commits
@@ -136,11 +136,11 @@ Every commit must say:
   - code
   - perf
   - migration
-- The output of this skill is the execution contract for `$do-commits`.
+- The output of this skill is the execution contract for `$impl-series`.
 
 ## Output format
 
-Produce a numbered commit plan. Each commit entry must look like this:
+Produce a numbered series plan. Each entry must look like this:
 
 Commit N/Total: <subsystem: description>
 

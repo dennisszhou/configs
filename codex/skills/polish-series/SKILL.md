@@ -134,7 +134,7 @@ Use practical git cleanup language:
 
 ## What this skill does not do
 - It does not change intended final behavior.
-- It does not replace `$do-commits`.
+- It does not replace `$impl-series`.
 - It does not invent a different architecture or commit order than the final
   approved series warrants.
 - It does not casually rewrite shared or public history.

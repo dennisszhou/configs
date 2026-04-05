@@ -8,7 +8,7 @@ description: Produce an architecture or design artifact for a feature, refactor,
 Produce the design artifact that answers what is being built and why it should
 have this shape.
 
-This skill is for architecture and design work. It is not for commit planning,
+This skill is for architecture and design work. It is not for series planning,
 code generation, or implementation.
 
 ## When to use this
@@ -20,14 +20,14 @@ Use this skill when:
 
 Do not use this skill for:
 - trivial changes whose design is already obvious
-- commit planning
+- series planning
 - code review of an existing diff
 
 This skill works best while native plan mode is on.
 
 ## Goal
 Produce a concrete, reviewable design artifact that can be approved before
-commit planning begins.
+series planning begins.
 
 The artifact should make these things hard to miss:
 - what problem is being solved
@@ -57,7 +57,7 @@ The artifact should make these things hard to miss:
 
 5. Stop for approval
 - End with explicit design exit criteria and a recommended next step.
-- Do not move on to commit planning inside this skill.
+- Do not move on to series planning inside this skill.
 
 ## Process
 
