@@ -35,6 +35,7 @@ The artifact should make these things hard to miss:
 - what the source-of-truth state is
 - what data structures or API boundaries will exist
 - what invariants must hold
+- what operational or lifecycle contracts matter, when they are relevant
 - what risks and tradeoffs remain
 
 ## Rules
@@ -74,20 +75,32 @@ The artifact should make these things hard to miss:
 4. Propose the shape
 - Describe the data model, API boundary, ownership model, and control flow.
 - Distinguish source-of-truth state from cached and derived state.
+- When relevant, make request-path versus background-path boundaries explicit.
 
 5. State invariants
 - List the conditions that must always hold.
 - Call out illegal states, ambiguity, or concurrency assumptions when relevant.
 
-6. Compare alternatives
+6. Make operational and lifecycle contracts explicit when relevant
+- For concurrent, async, stateful, or operator-facing systems, include the
+  operational contracts that matter to correctness and operability.
+- Useful examples include:
+  - lifecycle or state-transition summaries
+  - startup and shutdown expectations
+  - queueing, retries, cancellation, and removal rules
+  - public status or progress truthfulness expectations
+  - late-completion rules for work that may finish after a user-visible change
+- Do not force these sections for simple or purely local changes.
+
+7. Compare alternatives
 - Include only the alternatives that materially affected the decision.
 
-7. Describe rollout and validation
+8. Describe rollout and validation
 - Include migration, compatibility, or staged rollout when relevant.
 - Choose validation that matches the actual contract, not default unit-test
   ritual.
 
-8. End with approval criteria
+9. End with approval criteria
 - Say what must be true for the design to be ready for structure review.
 
 ## Output format

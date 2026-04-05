@@ -5,11 +5,12 @@ description: Skeptically review an approved or near-approved design to decide wh
 
 # Review Plan
 
-Review the proposed structure of the solution before execution starts.
+Review whether the proposed plan and design are coherent enough to implement
+before execution starts.
 
 This skill is intentionally skeptical. Its job is not to invent a new design
-from scratch. Its job is to test whether the proposed model is coherent enough
-to implement without hidden ambiguity.
+from scratch. Its job is to test whether the proposed plan and model are
+coherent enough to implement without hidden ambiguity.
 
 ## When to use this
 Use this skill when:
@@ -45,6 +46,12 @@ Review the design against these points:
 - illegal states and ambiguity
 - whether the boundaries support high-signal regression, functional, or
   integration testing
+
+When relevant, also ask whether the operational truth is coherent enough:
+- can public status misrepresent queued or deferred work
+- can removed or shutdown entities still publish or mutate shared state
+- can request handlers accidentally block on background work
+- are progress signals truthful enough for their intended audience
 
 This is a review, not a redesign session. If the design is weak, say so
 directly and point to the smallest revision needed.
@@ -82,7 +89,12 @@ directly and point to the smallest revision needed.
 - Are unit tests being forced by the structure rather than chosen because they
   match the contract?
 
-8. Decide readiness
+8. Check operational truth when relevant
+- For async, concurrent, stateful, background, or operator-facing systems,
+  check whether lifecycle and public-status behavior are explicit enough.
+- Only apply this lens when the system actually has these concerns.
+
+9. Decide readiness
 - If the model is coherent, say `ready for series planning`.
 - Otherwise say `needs design revision` and list the blocking issues.
 
@@ -134,6 +146,8 @@ Only return `ready for series planning` when:
 - ownership and lifecycle are not ambiguous
 - API boundaries are concrete enough to stage in commits
 - testing can target the real contract at the right layer
+- and, when operational concerns are relevant, lifecycle and public-status
+  contracts are explicit enough not to mislead implementers or operators
 
 ## What this skill does not do
 - It does not produce a commit stack.

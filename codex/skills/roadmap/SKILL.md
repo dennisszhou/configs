@@ -22,6 +22,8 @@ Use this skill when:
   milestones
 - you need to decide which slices deserve dedicated `docs/plans/...` design
   docs before implementation
+- the roadmap may produce a real multi-item design backlog rather than one
+  immediate design path
 
 Do not use this skill when:
 - the task is small enough for a single `design` pass
@@ -43,6 +45,13 @@ Answer these questions before detailed design begins:
 The output should let the workflow move from one vague large objective into a
 small set of explicit design tasks.
 
+If the roadmap produces a genuine multi-item design backlog, this skill should
+usually write or update a roadmap doc under `docs/roadmaps/` so the component
+map, milestone map, and design backlog stay explicit across sessions.
+
+If the roadmap only sharpens one immediate design path, an in-chat roadmap is
+usually enough.
+
 ## Principles
 
 1. Milestone-first, not component-only
@@ -53,17 +62,28 @@ small set of explicit design tasks.
 - Model the work as component-version or capability-version slices.
 - For parity migrations, make parity targets explicit per slice.
 
-3. Design backlog, not execution backlog
+3. Use slice lenses when they help
+- For large features, migrations, refactors, rewrites, or other multi-phase
+  work, it is often useful to distinguish among:
+  - correctness or contract slices
+  - operational or lifecycle slices
+  - optimization or performance slices
+- This is a helpful lens, not a required taxonomy.
+
+4. Design backlog, not execution backlog
 - This skill identifies what needs design.
 - It does not produce the final implementation series.
 
-4. Keep the roadmap lightweight
+5. Keep the roadmap lightweight
 - Prefer a small number of meaningful milestones.
 - Prefer a focused design-doc backlog over exhaustive decomposition theater.
+- The point is to notice when one umbrella design doc is too coarse and should
+  split into a clearer backlog, not to classify every slice exhaustively.
 
-5. Stop before detailed design
+6. Stop before detailed design
 - Do not invent detailed data models or APIs for every slice here.
 - That belongs in `design`.
+- Do not drift into detailed execution planning here either.
 
 ## Process
 
@@ -89,14 +109,17 @@ small set of explicit design tasks.
 - Focus on real constraints, not tidy but fake sequencing.
 
 6. Identify parity and validation requirements
-- For migrations and rewrites, call out the slices that need explicit parity
-  proof, compatibility shims, or regression harnesses.
+- When relevant, call out slices that need explicit compatibility, validation,
+  regression, or operator-facing proof.
 
 7. Build the design-doc backlog
 - Decide which slices need dedicated `docs/plans/YYYY-MM-DD-topic.md` design
   docs.
 - Decide which slices can remain sections in an umbrella roadmap or umbrella
   design doc.
+
+If this roadmap should be saved to disk, use a dated filename such as:
+- `docs/roadmaps/YYYY-MM-DD-topic.md`
 
 8. Recommend the next design steps
 - End with the smallest set of next design tasks that would unblock progress.
@@ -150,7 +173,7 @@ The roadmap is not ready if:
 - components are listed without meaningful slice definitions
 - milestones exist but do not have exit conditions
 - dependencies are mostly implied rather than stated
-- parity-critical slices are not called out
+- operationally meaningful slices are hidden inside an over-broad umbrella item
 - everything is marked as needing a dedicated design doc
 - the roadmap drifts into detailed API design for every slice
 
