@@ -14,11 +14,15 @@ Use this skill when:
 - the user asks for a commit plan or commit stack
 - a design or `docs/plans/YYYY-MM-DD-topic.md` doc already exists and
   implementation is next
+- design and, when needed, structure review have already been approved
 - the work is large enough that reviewability, bisectability, and staged
   verification matter
 
 Do not use this skill to write code or generate diffs. This skill produces the
 execution contract.
+
+Do not use this skill while native plan mode is still active. Commit planning is
+an execution-planning step, not a design-planning step.
 
 ## Goal
 Each planned commit should be:
@@ -28,6 +32,7 @@ Each planned commit should be:
 - Reviewable: small enough for a human to reason about
 - Ordered: preconditions are satisfied by prior commits
 - Scoped: the commit says what it will not do
+- Explicit about invariants, evidence level, and review gates
 
 ## Inputs
 This skill works best when it has an existing plan to decompose. That plan may
@@ -47,6 +52,9 @@ When an existing design plan is present:
 - do not edit unrelated plan docs
 - do not rewrite older plan docs as part of commit planning
 - only propose updates to the active plan doc if the execution contract is wrong
+
+If structure review concluded `needs design revision`, stop. Do not plan commits
+on top of a rejected model.
 
 ## Process
 
@@ -74,7 +82,7 @@ Look for boundaries between:
 - Prefer this order:
   1. preparatory cleanup
   2. primitive / helper / API introduction
-  3. tests for the primitive or contract
+  3. tests for the primitive or contract when that is the right proof
   4. adoption / behavior change
   5. optimization
   6. docs / cleanup
@@ -95,6 +103,14 @@ Every commit must say:
   commit.
 - If verification depends on the user’s environment, say so and adapt it.
 
+7. Choose the right test layer
+- Unit tests are not the default proof of seriousness.
+- Prefer regression, functional, or integration tests when the real contract
+  lives at a subsystem boundary.
+- Use unit tests mainly for small, stable, logic-dense primitives.
+- Do not add abstractions mainly to make unit tests easier.
+- Avoid mock-heavy plans that mostly restate implementation details.
+
 ## Additional planning rules
 - Mark each commit as one of:
   - preparatory
@@ -106,6 +122,20 @@ Every commit must say:
   optional follow-up.
 - Include a brief risk note for commits with non-obvious correctness, migration,
   or review hazards.
+- Include one invariant focus per commit so reviewers know what truth that step
+  is meant to establish or preserve.
+- Include one test level per commit from this fixed set:
+  - none
+  - regression
+  - functional
+  - integration
+  - unit
+- Include one review gate per commit from this fixed set:
+  - none
+  - structures
+  - code
+  - perf
+  - migration
 - The output of this skill is the execution contract for `$do-commits`.
 
 ## Output format
@@ -117,6 +147,9 @@ Commit N/Total: <subsystem: description>
   Type:          preparatory | semantic | optimization | docs | cleanup
   Required:      yes | no
   Summary:       1-2 sentence plain-English summary
+  Invariant focus: specific truth this commit establishes or preserves
+  Test level:    none | regression | functional | integration | unit
+  Review gate:   none | structures | code | perf | migration
   Files:         explicit list of files created or modified
   Preconditions: what must already be true before this commit starts
   Postconditions: what is true after this commit lands
@@ -139,6 +172,31 @@ Examples:
 
 ### Summary
 Brief plain English so someone skimming the plan can follow the arc.
+
+### Invariant focus
+Name the contract or truth this commit is responsible for. This is the
+centerpiece for review and verification.
+
+### Test level
+Pick the highest-leverage level that matches the contract being changed.
+
+Guidance:
+- `none` for pure docs, comments, or mechanical changes where another command is
+  a better proof than a test
+- `regression` for bugfix proof or narrow behavior restoration
+- `functional` for behavior exercised through a public feature or workflow
+- `integration` for subsystem or boundary interactions
+- `unit` for small, stable, logic-dense primitives
+
+Do not default to `unit` just to look rigorous.
+
+### Review gate
+Use this to mark commits that deserve extra scrutiny:
+- `none` for low-risk preparatory or straightforward commits
+- `structures` when the design boundary still needs a structure-focused check
+- `code` for risky semantic changes
+- `perf` for optimization or performance claims
+- `migration` for cutovers, compatibility, or rollout hazards
 
 ### Files
 List every file expected to change. Use `(new)` for new files. If uncertain, add
@@ -185,11 +243,14 @@ independent branches when relevant.
 ## What good plans look like
 Good plans:
 - introduce primitives before using them
-- land tests with the primitive when practical
+- land tests with the primitive when practical and when that is the right test
+  layer
 - keep each commit independently correct
 - separate semantics from optimization
 - expose scope boundaries explicitly
 - give verification commands the implementer can actually run
+- mark where extra review is warranted without requiring review theater for
+  every commit
 
 ## What this skill does not do
 - It does not implement the code.

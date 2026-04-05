@@ -42,6 +42,20 @@ applicable `AGENTS.md` first.
 - Match repo style. When unsure about a pattern, inspect the codebase instead of
   inventing a new one.
 - Keep changes scoped to what was asked. No drive-by refactors.
+- For non-trivial features or refactors, prefer this lane:
+  1. native `/plan`
+  2. `$design`
+  3. approval
+  4. `$review-structures`
+  5. approval
+  6. turn plan mode off
+  7. `$plan-commits`
+  8. approval
+  9. `$do-commits`
+- For trivial work where design is already clear, skip straight to
+  `$plan-commits` and then `$do-commits`.
+- For bugfixes, reproduce the bug or define regression evidence first; use a
+  short design note only when the fix shape is not obvious.
 
 ## Planning model
 
@@ -56,6 +70,8 @@ This phase is for deciding:
 - what the constraints and non-goals are
 - what the API or data model should look like
 - what invariants must hold
+- what the authoritative source-of-truth state is
+- what state is derived versus cached versus authoritative
 - what tradeoffs are being made
 - what migration or compatibility strategy is needed
 - what the overall shape of the solution should be
@@ -84,6 +100,7 @@ A design or architecture plan should include, when relevant:
 - proposed approach
 - data model or API shape
 - invariants
+- source-of-truth, derived-state, and cached-state boundaries
 - migration strategy
 - validation milestones
 - open questions
@@ -107,6 +124,10 @@ Execution planning is about:
 `$plan-commits` is an execution-planning step, not an architecture-planning
 step.
 
+Native plan mode belongs to design work, not commit execution. Keep native plan
+mode on through design and structure review, then turn it off before
+`$plan-commits` and `$do-commits`.
+
 Use `$plan-commits` only after one of these is true:
 - the design is already clear from the task and existing code
 - a design discussion has already settled the approach
@@ -126,6 +147,16 @@ Use this workflow for non-trivial work:
 5. Use `$do-commits` to implement the approved commit sequence.
 6. If implementation reveals that the design or execution plan is wrong, stop,
    update the relevant plan, and only then continue.
+
+The active `docs/plans/...` file remains mutable during design, structure
+review, and commit planning. Once `$do-commits` begins:
+- if the active approved plan doc is not yet committed on the execution branch,
+  commit it first as a docs-only commit
+- if only that initial docs/plans commit exists and no implementation commit has
+  landed yet, amending it in place is acceptable
+- once implementation commits exist, meaningful plan updates should usually be
+  recorded as new docs/plans update commits rather than silently rewriting the
+  original plan-doc commit underneath code history
 
 ## Heuristics
 - Small, obvious tasks may not need a written design plan.
@@ -148,11 +179,17 @@ Do not treat commit planning as a substitute for design.
   approved commit plan followed by a commit-execution skill — that approval
   authorizes executing the planned commits sequentially until a real question,
   failure, or plan mismatch arises.
+- Use selective review gates rather than mandatory review theater on every
+  commit. Typical gates are `structures`, `code`, `perf`, and `migration`.
 - Stop for approval again when:
   - the plan needs to change materially
   - verification fails in a way that requires out-of-scope changes
   - there are multiple valid implementation choices with meaningful tradeoffs
   - unexpected files or side effects expand the scope
+
+Preserve truthful execution history while work is ongoing. Do not polish the
+branch history during `$do-commits`; later docs/plans update commits are
+acceptable when the plan changes materially.
 
 ## Core principles
 - Solve the right problem before optimizing the implementation.
@@ -211,6 +248,16 @@ Rules:
   - profiles
   - benchmarks
   - before/after behavior checks
+- Prefer the highest-leverage evidence that exercises the real contract at
+  reasonable cost.
+- Prefer regression, functional, or integration tests when the behavior of
+  interest lives at a subsystem boundary.
+- Use unit tests mainly for small, stable, logic-dense primitives.
+- Do not require TDD.
+- Avoid mock-heavy tests that mainly restate implementation.
+- Avoid creating abstractions mainly to make unit tests easier.
+- Avoid broad low-signal test volume when one or two high-signal checks would
+  prove more.
 - Stronger evidence is expected when:
   - replacing mature code
   - changing user-visible behavior
@@ -232,6 +279,8 @@ Rules:
   explicitly the goal.
 - If the bug cannot be reproduced directly, say what evidence is available and
   what remains uncertain.
+- For bugfixes, let regression evidence drive the plan; only require a design
+  phase when the fix changes structure, API shape, or rollout risk.
 
 ## Correctness and API design
 - Make contracts explicit:
@@ -254,6 +303,20 @@ Rules:
 - If stale hints are allowed, they must fail in the safe direction.
 - Design docs describe intent, constraints, and non-goals. They do not replace
   clear code or explicit invariants.
+
+## Structure review
+Before execution planning on non-trivial work, perform a skeptical structure
+review of the proposed model. The review should confirm:
+- the source of truth is explicit
+- authoritative, cached, and derived state are clearly separated
+- ownership and lifecycle are coherent
+- API boundaries are concrete enough to implement
+- invariants and illegal states are explicit
+- the chosen boundaries support high-signal regression, functional, or
+  integration testing
+
+Execution should not casually reopen architecture after design and structure
+review are approved. Reopen it only when implementation exposes a real mismatch.
 
 ## Separate correctness from optimization
 - First make the boundary explicit and testable.
@@ -383,6 +446,22 @@ For concurrent, async, queued, or retried code:
 - Use `subsystem: short description` subject lines when appropriate for the repo.
 - Wrap commit-message bodies cleanly.
 - Do not add assistant attribution trailers unless explicitly requested.
+
+For docs/plans commits, prefer specific subjects such as:
+- `docs/plans: add <topic> design`
+- `docs/plans: revise <topic> design`
+- `docs/plans: update <topic> execution plan`
+- `docs/plans: clarify <topic> invariants`
+
+Avoid vague subjects such as `update docs` or `fix plan`.
+
+## History polishing
+`$polish-series` is an optional local-history cleanup step after execution is
+stable. It may fold later docs/plans update commits back into one clean
+docs/plans commit and squash obvious tiny fixups when safe.
+
+It is not part of core execution correctness and should not be used to hide
+ambiguous or still-changing implementation history.
 
 ## Repo respect
 - Follow the repository’s formatter, linter, test, and naming conventions.
