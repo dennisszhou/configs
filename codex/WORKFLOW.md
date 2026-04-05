@@ -19,7 +19,7 @@ API, data model, or rollout shape is not already obvious.
 1. Turn native plan mode on.
 2. Run `$design <task>`.
 3. Review and approve the design.
-4. Run `$review-structures`.
+4. Run `$review-plan`.
 5. Review and approve the structure review result.
 6. Turn native plan mode off.
 7. Run `$plan-series`.
@@ -66,7 +66,7 @@ For high-risk bugfixes, use the full feature/refactor lane.
 - Use it when one design doc would be too coarse.
 - Stops before detailed per-slice design.
 
-`$review-structures`
+`$review-plan`
 - Skeptical review of the proposed design shape.
 - Checks source of truth, authoritative versus cached versus derived state,
   ownership, lifecycle, API boundaries, invariants, and testability.
@@ -85,7 +85,7 @@ For high-risk bugfixes, use the full feature/refactor lane.
 - Verifies every commit before committing.
 - Stops on real mismatches, not on every boundary.
 
-`$review-code`
+`$review-series`
 - Skeptical code review for risky semantic, optimization, migration, or
   reliability-sensitive commits.
 - Optional by default; use it selectively where the series plan calls for a
@@ -103,7 +103,7 @@ Keep native plan mode on through:
 - `$roadmap`
 - `$design`
 - design revisions
-- `$review-structures`
+- `$review-plan`
 
 Turn native plan mode off before:
 - `$plan-series`
@@ -118,7 +118,7 @@ approved, execution should stay tight.
 Approval is required after:
 - `$roadmap` when used
 - `$design`
-- `$review-structures` when it says `ready for series planning`
+- `$review-plan` when it says `ready for series planning`
 - `$plan-series`
 
 `$impl-series` may proceed through the approved stack without asking between
@@ -128,7 +128,7 @@ commits. Stop only when:
 - a meaningful design choice reappears
 - scope expands beyond minor mechanical changes
 
-Use `$review-code` during execution only where the plan says a commit has a real
+Use `$review-series` during execution only where the plan says a commit has a real
 review gate such as `code`, `perf`, or `migration`.
 
 If an approved active `docs/plans/...` file exists when execution starts,

@@ -1,9 +1,9 @@
 ---
-name: review-structures
+name: review-plan
 description: Skeptically review an approved or near-approved design to decide whether its data model, state boundaries, ownership, and invariants are coherent enough for implementation. Use after design and before series planning.
 ---
 
-# Review Structures
+# Review Plan
 
 Review the proposed structure of the solution before execution starts.
 

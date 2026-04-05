@@ -1,9 +1,9 @@
 ---
-name: review-code
-description: Skeptically review an implementation diff against the approved design and commit contract. Use for semantic, optimization, migration, or other risky commits where an extra code-review gate is warranted.
+name: review-series
+description: Skeptically review an implementation diff against the approved design and series contract. Use for semantic, optimization, migration, or other risky commits where an extra code-review gate is warranted.
 ---
 
-# Review Code
+# Review Series
 
 Review the implemented diff as a skeptical reviewer, not as the author trying to
 defend it.
@@ -49,7 +49,7 @@ testing gap.
 ## Process
 
 1. Restate the target contract
-- Identify the approved design or commit-plan promises relevant to this diff.
+- Identify the approved design or series-plan promises relevant to this diff.
 
 2. Check semantic alignment
 - Compare the diff against the stated postconditions and invariant focus.

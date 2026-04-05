@@ -48,7 +48,7 @@ applicable `AGENTS.md` first.
   3. approval
   4. `$design`
   5. approval
-  6. `$review-structures`
+  6. `$review-plan`
   7. approval
   8. turn plan mode off
   9. `$plan-series`

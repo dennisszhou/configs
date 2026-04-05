@@ -137,7 +137,7 @@ Design exit criteria
 - ...
 
 Recommended next step
-- Usually `$review-structures` after approval.
+- Usually `$review-plan` after approval.
 
 ## Quality bar
 The design is not ready if:

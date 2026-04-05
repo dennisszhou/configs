@@ -118,7 +118,7 @@ Treat deviations from the approved plan in three buckets:
 3. Structural mismatches
 - If dependency order, API shape, migration strategy, or overall sequencing is
   wrong, stop and re-plan before continuing.
-- Return to design or `$review-structures` when needed. Do not improvise around
+- Return to design or `$review-plan` when needed. Do not improvise around
   a stale design.
 
 The approved plan remains the source of truth unless explicitly amended.
