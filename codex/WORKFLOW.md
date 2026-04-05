@@ -8,6 +8,7 @@ The workflow is intentionally narrow:
 - native plan mode is for early design thinking only
 - local skills define the artifacts that must be reviewed and approved
 - execution should not casually reopen architecture once design is approved
+- roadmap work is optional and only for multi-component or milestone-driven work
 
 ## Lanes
 
@@ -24,6 +25,9 @@ API, data model, or rollout shape is not already obvious.
 7. Run `$plan-series`.
 8. Review and approve the series plan.
 9. Run `$impl-series`.
+
+For large migrations, rewrites, or milestone-driven work, insert `$roadmap`
+before `$design`.
 
 ### Trivial lane
 Use this for small, obvious changes where the design and data shape are already
@@ -55,6 +59,12 @@ For high-risk bugfixes, use the full feature/refactor lane.
   and validation strategy.
 - Stops for approval.
 - Does not write code or produce a commit stack.
+
+`$roadmap`
+- Discovers components, slices, milestones, dependencies, and the design-doc
+  backlog for large work.
+- Use it when one design doc would be too coarse.
+- Stops before detailed per-slice design.
 
 `$review-structures`
 - Skeptical review of the proposed design shape.
@@ -90,6 +100,7 @@ For high-risk bugfixes, use the full feature/refactor lane.
 ## Plan Mode
 
 Keep native plan mode on through:
+- `$roadmap`
 - `$design`
 - design revisions
 - `$review-structures`
@@ -105,6 +116,7 @@ approved, execution should stay tight.
 ## Approval Boundaries
 
 Approval is required after:
+- `$roadmap` when used
 - `$design`
 - `$review-structures` when it says `ready for series planning`
 - `$plan-series`

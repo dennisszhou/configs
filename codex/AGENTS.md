@@ -44,14 +44,16 @@ applicable `AGENTS.md` first.
 - Keep changes scoped to what was asked. No drive-by refactors.
 - For non-trivial features or refactors, prefer this lane:
   1. native `/plan`
-  2. `$design`
+  2. `$roadmap` when the work spans multiple components or milestones
   3. approval
-  4. `$review-structures`
+  4. `$design`
   5. approval
-  6. turn plan mode off
-  7. `$plan-series`
-  8. approval
-  9. `$impl-series`
+  6. `$review-structures`
+  7. approval
+  8. turn plan mode off
+  9. `$plan-series`
+  10. approval
+  11. `$impl-series`
 - For trivial work where design is already clear, skip straight to
   `$plan-series` and then `$impl-series`.
 - For bugfixes, reproduce the bug or define regression evidence first; use a
@@ -78,6 +80,10 @@ This phase is for deciding:
 
 For substantial features, refactors, or migrations, write or update a design doc
 under `docs/plans/` before implementation begins.
+
+When the work is too large for one design doc, first produce a roadmap that
+identifies components, slices, milestones, dependencies, and which slices need
+their own dedicated design docs under `docs/plans/`.
 
 Use dated filenames in this form:
 - `docs/plans/YYYY-MM-DD-topic.md`

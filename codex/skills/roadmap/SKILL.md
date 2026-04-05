@@ -1,0 +1,164 @@
+---
+name: roadmap
+description: Map a large feature, migration, or refactor into components, version/parity slices, milestone targets, dependencies, and a design-doc backlog before detailed design begins. Use when one design doc is too coarse and the work needs an ordered roadmap of what must be designed next.
+---
+
+# Roadmap
+
+Produce the roadmap artifact that says what slices exist, how they relate, and
+which ones need dedicated design work before implementation.
+
+This skill sits above `design`. It is for large work where a single design pass
+is too coarse because the problem spans multiple components, multiple maturity
+levels, or multiple milestones.
+
+## When to use this
+Use this skill when:
+- the task is a large feature, migration, rewrite, or refactor spanning
+  multiple components or subsystems
+- one design doc would be too coarse to manage the work safely
+- the work needs milestone sequencing such as `m1`, `m2`, `m3`
+- individual components may have `v1`, `v2`, `v3` slices that land in different
+  milestones
+- you need to decide which slices deserve dedicated `docs/plans/...` design
+  docs before implementation
+
+Do not use this skill when:
+- the task is small enough for a single `design` pass
+- the architecture is already decomposed and the only remaining job is staging
+  commits
+- the user only wants implementation planning
+
+This skill works best while native plan mode is on.
+
+## Goal
+Answer these questions before detailed design begins:
+- what are the important components or capability areas
+- what maturity or parity slices exist for each component
+- which slices belong in which milestone
+- what dependencies constrain milestone ordering
+- which slices need dedicated design docs
+- what should be designed next
+
+The output should let the workflow move from one vague large objective into a
+small set of explicit design tasks.
+
+## Principles
+
+1. Milestone-first, not component-only
+- A component may span multiple milestones.
+- A milestone may include slices from multiple components.
+
+2. Discover slices, not just modules
+- Model the work as component-version or capability-version slices.
+- For parity migrations, make parity targets explicit per slice.
+
+3. Design backlog, not execution backlog
+- This skill identifies what needs design.
+- It does not produce the final implementation series.
+
+4. Keep the roadmap lightweight
+- Prefer a small number of meaningful milestones.
+- Prefer a focused design-doc backlog over exhaustive decomposition theater.
+
+5. Stop before detailed design
+- Do not invent detailed data models or APIs for every slice here.
+- That belongs in `design`.
+
+## Process
+
+1. State the objective
+- Define the overall outcome, such as migration, parity goal, or staged feature
+  rollout.
+
+2. Identify components or capability areas
+- Group the work into meaningful areas with distinct responsibilities or
+  contracts.
+
+3. Define slices per component
+- For each component, identify the meaningful slices such as `v1`, `v2`, `v3`,
+  parity stages, bridge stages, or rollout stages.
+
+4. Build the milestone map
+- Assign slices to milestones such as `m1`, `m2`, `m3`.
+- A later version of one component may land after earlier versions of other
+  components.
+
+5. Identify dependencies
+- Record what must exist before another slice can be designed or implemented.
+- Focus on real constraints, not tidy but fake sequencing.
+
+6. Identify parity and validation requirements
+- For migrations and rewrites, call out the slices that need explicit parity
+  proof, compatibility shims, or regression harnesses.
+
+7. Build the design-doc backlog
+- Decide which slices need dedicated `docs/plans/YYYY-MM-DD-topic.md` design
+  docs.
+- Decide which slices can remain sections in an umbrella roadmap or umbrella
+  design doc.
+
+8. Recommend the next design steps
+- End with the smallest set of next design tasks that would unblock progress.
+
+## Output format
+
+Produce the roadmap artifact in this shape:
+
+Objective
+- ...
+
+Scope and assumptions
+- ...
+
+Components / capability areas
+- ...
+
+Slice matrix
+- Use rows like `<component> | <slice> | <goal> | <parity target or maturity>`.
+
+Milestone map
+- Use rows like `<milestone> | <included slices> | <exit condition>`.
+
+Dependencies
+- Use rows like `<slice> -> <depends on> | <why>`.
+
+Parity / migration requirements
+- Use `not applicable` when irrelevant.
+
+Design-doc backlog
+- For each item, say:
+  - slice or topic
+  - dedicated design doc required: yes | no
+  - suggested doc path if yes
+  - why it needs dedicated design
+
+Risk hotspots
+- ...
+
+What not to design yet
+- ...
+
+Recommended next design tasks
+- Ordered list of the next `design` calls or plan-doc drafts to create.
+
+Roadmap exit criteria
+- ...
+
+## Quality bar
+The roadmap is not ready if:
+- components are listed without meaningful slice definitions
+- milestones exist but do not have exit conditions
+- dependencies are mostly implied rather than stated
+- parity-critical slices are not called out
+- everything is marked as needing a dedicated design doc
+- the roadmap drifts into detailed API design for every slice
+
+## What this skill does not do
+- It does not replace `design`.
+- It does not produce a series plan.
+- It does not write code.
+- It does not require subagents.
+- It does not force one design doc per component.
+- It does not pretend milestones are strictly component-by-component when they
+  are not.
