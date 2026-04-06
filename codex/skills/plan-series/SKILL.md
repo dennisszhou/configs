@@ -166,16 +166,27 @@ the execution source of truth for the effort. It should identify:
 - the verification plan for each series
 - approval gates before later series when needed
 
+Proof belongs to each series. The verification plan and stable checkpoint for a
+series should provide that series's evidence rather than pushing proof into a
+final catch-all series.
+
+Place cleanup where it best reduces risk or clarifies later work. Use a
+standalone cleanup series only when it is a real milestone with its own stable,
+independently correct checkpoint.
+
 Split series at real milestone boundaries, not arbitrary file counts.
 
 Good boundaries include:
 - foundational state/model changes
+- preparatory cleanup that unlocks later work
 - rebuild/runtime changes
 - persistence/load/export cutover
-- proof, migration, and cleanup
+- migration boundaries with explicit compatibility or cutover checkpoints
 
 Bad boundaries include:
 - random file grouping
+- a generic final “proof/cleanup” series that should have been absorbed into
+  earlier series checkpoints and verification
 - splitting tightly coupled correctness changes across series with no stable
   checkpoint
 

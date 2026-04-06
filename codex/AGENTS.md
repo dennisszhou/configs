@@ -220,6 +220,14 @@ When a `docs/series/...` doc exists for an execution effort, it should cover:
 - the approval gate before later series when needed
 - the verification plan per series
 
+Proof belongs to each series. Do not default to a final standalone
+“proof/cleanup” series when the real evidence should live with the series that
+establishes each checkpoint.
+
+Cleanup should be placed where it best reduces risk or improves reviewability.
+Use a standalone cleanup series only when that cleanup itself forms a real,
+independently correct milestone.
+
 ## Important distinction
 Do not treat series planning as a substitute for design.
 
