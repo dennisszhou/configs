@@ -100,6 +100,7 @@ A written design plan is required when:
 - correctness changes must be staged separately from optimizations
 
 A design or architecture plan should include, when relevant:
+- status
 - goal
 - constraints
 - non-goals
@@ -115,6 +116,12 @@ When a task is already associated with an existing design plan:
 - update only the current active plan doc for that task
 - do not edit older or unrelated plan docs
 - treat other plan docs as historical records unless explicitly told otherwise
+
+Design docs under `docs/plans/` should carry an explicit status field:
+- `Status: draft` while the design is still being revised
+- `Status: approved` once design and structure review are complete enough for
+  execution planning
+- `Status: superseded` when a newer plan replaces it as the active design
 
 ### 2. Execution planning
 Execution planning happens after the architecture or design is already understood
@@ -137,7 +144,7 @@ mode on through design and structure review, then turn it off before
 Use `$plan-series` only after one of these is true:
 - the design is already clear from the task and existing code
 - a design discussion has already settled the approach
-- a design doc under `docs/plans/` already exists
+- an approved design doc under `docs/plans/` already exists
 
 If the architecture is still unclear, do not jump straight to `$plan-series`.
 First do design planning.
@@ -147,11 +154,13 @@ Use this workflow for non-trivial work:
 
 1. Determine whether architecture/design planning is needed.
 2. If needed, create or update a design doc under `docs/plans/`.
-3. Once the solution shape is clear, use `$plan-series` to produce the commit
+3. Mark that design doc `Status: approved` once design and structure review are
+   complete enough for execution planning.
+4. Once the solution shape is clear, use `$plan-series` to produce the commit
    sequence.
-4. Review and approve the execution plan.
-5. Use `$impl-series` to implement the approved commit sequence.
-6. If implementation reveals that the design or execution plan is wrong, stop,
+5. Review and approve the execution plan.
+6. Use `$impl-series` to implement the approved commit sequence.
+7. If implementation reveals that the design or execution plan is wrong, stop,
    update the relevant plan, and only then continue.
 
 The active `docs/plans/...` file remains mutable during design, structure
@@ -179,6 +188,8 @@ Do not treat series planning as a substitute for design.
 
 ## Approval boundaries
 - Present a plan before non-trivial code changes when approval is expected.
+- Do not treat a `docs/plans/...` artifact as implementation-ready until it is
+  explicitly marked `Status: approved`.
 - Before committing, show the staged diff and proposed commit message when the
   workflow expects review.
 - If an explicit execution workflow has already been approved — for example an

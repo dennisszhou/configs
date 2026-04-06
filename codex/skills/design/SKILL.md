@@ -30,6 +30,7 @@ Produce a concrete, reviewable design artifact that can be approved before
 series planning begins.
 
 The artifact should make these things hard to miss:
+- whether the design is still draft or approved for execution planning
 - what problem is being solved
 - why this solution shape was chosen
 - what the source-of-truth state is
@@ -102,10 +103,17 @@ The artifact should make these things hard to miss:
 
 9. End with approval criteria
 - Say what must be true for the design to be ready for structure review.
+- Include explicit status metadata for the plan doc.
 
 ## Output format
 
 Produce the design artifact in this shape:
+
+Status
+- `draft` while the design is being revised
+- `approved` only after the user accepts it and the structure review is ready
+  for series planning
+- `superseded` only when a newer design replaces it
 
 Problem
 - ...

@@ -96,6 +96,7 @@ directly and point to the smallest revision needed.
 
 9. Decide readiness
 - If the model is coherent, say `ready for series planning`.
+- If it is ready, the design doc should be able to carry `Status: approved`.
 - Otherwise say `needs design revision` and list the blocking issues.
 
 ## Output format
@@ -132,6 +133,10 @@ Blocking issues
 
 Ready criteria
 - ...
+
+Design doc status
+- `draft` | `approved` | `superseded`
+- Use `approved` only when the review result is `ready for series planning`.
 
 Result
 - `ready for series planning` | `needs design revision`
