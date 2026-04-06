@@ -101,6 +101,8 @@ A written design plan is required when:
 
 A design or architecture plan should include, when relevant:
 - status
+- title
+- date
 - goal
 - constraints
 - non-goals
@@ -122,6 +124,11 @@ Design docs under `docs/plans/` should carry an explicit status field:
 - `Status: approved` once design review via `$review-plan` is complete enough
   for execution planning
 - `Status: superseded` when a newer plan replaces it as the active design
+
+Docs produced under `docs/` by this workflow should:
+- include explicit top-of-doc metadata appropriate to the artifact type
+- include `Title`, `Date`, and `Status` sections
+- wrap prose at `80` columns for terminal and review readability
 
 ### 2. Execution planning
 Execution planning happens after the architecture or design is already understood
@@ -211,6 +218,10 @@ Series docs should use dated filenames in this form:
 artifact is required.
 
 When a `docs/series/...` doc exists for an execution effort, it should cover:
+- the title
+- the date
+- the status
+- the approval section for the whole execution doc
 - the overall goal
 - the approved design inputs it implements
 - whether execution is single-series or multi-series
@@ -219,6 +230,14 @@ When a `docs/series/...` doc exists for an execution effort, it should cover:
 - the stable checkpoint expected at the end of each series
 - the approval gate before later series when needed
 - the verification plan per series
+
+When creating or revising a `docs/series/...` doc, normalize the doc to this
+top-of-file schema rather than appending only the newly changed sections.
+
+Approve the whole `docs/series/...` doc before moving on to series-by-series
+execution approval.
+Before that whole-doc approval is complete, `current approved series` should
+remain `none`.
 
 Proof belongs to each series. Do not default to a final standalone
 “proof/cleanup” series when the real evidence should live with the series that
@@ -239,8 +258,9 @@ Do not treat series planning as a substitute for design.
 
 `$review-plan` has two valid uses:
 - after `$design`, to review a `docs/plans/...` design before series planning
-- after `$plan-series`, to review a `docs/series/...` execution breakdown when
-  the series boundaries themselves introduce structural risk
+- after `$plan-series`, to review a `docs/series/...` execution doc before
+  implementation begins, and again later when the series boundaries themselves
+  introduce new structural risk
 
 Do not use the second pass for routine small single-series plans; it is for
 multi-doc, multi-series, migration, or checkpoint-sensitive execution shapes.

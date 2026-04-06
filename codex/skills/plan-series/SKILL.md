@@ -159,12 +159,20 @@ Response-only output is acceptable only when all of these are true:
 
 When this skill produces a `docs/series/...` execution doc, that doc becomes
 the execution source of truth for the effort. It should identify:
+- the title
+- the date
+- the status
+- the approval section for the whole execution doc
 - the overall goal
 - the approved design inputs
 - the execution mode: single-series or multi-series
 - the ordered series list, dependencies, and stable checkpoints
 - the verification plan for each series
 - approval gates before later series when needed
+
+When creating or revising a `docs/series/...` execution doc, normalize the top
+of the file to the required schema rather than leaving older ad hoc headings in
+place.
 
 Proof belongs to each series. The verification plan and stable checkpoint for a
 series should provide that series's evidence rather than pushing proof into a
@@ -199,6 +207,16 @@ Produce either:
 
 For a `docs/series/...` execution artifact, begin with:
 
+Title: <short descriptive title>
+Date: YYYY-MM-DD
+Status: `draft` | `approved` | `in_progress` | `completed` | `superseded`
+Approval:
+- overall doc approved: yes | no
+- current approved series: `Series N` | `none`
+
+Use `current approved series: none` until the whole execution doc has been
+reviewed and approved.
+
 Goal: <plain-English end state>
 Design inputs: <approved docs/plans/... inputs>
 Execution mode: single-series | multi-series
@@ -213,6 +231,10 @@ Then, for each series, include:
 - Verification plan: brief summary of the evidence expected before moving on
 
 If the plan is recorded in a doc, name that doc explicitly in the response.
+Wrap prose in `docs/` artifacts at `80` columns.
+
+When revising an existing `docs/series/...` doc, update the existing file to
+match this schema at the top before emitting the rest of the plan.
 
 Within each series, each commit entry must look like this:
 

@@ -18,7 +18,7 @@ Use this skill when:
 - the work introduces or changes data models, ownership boundaries, or APIs
 - the user wants a structure-focused review before series planning
 - or the user wants a structure-focused review of a `docs/series/...`
-  execution breakdown before implementation continues
+  execution doc before implementation continues
 
 Do not use this skill when:
 - there is no design artifact to review
@@ -145,6 +145,12 @@ Design doc status
 - Use this section only when the review target is a design doc.
 - Use `approved` only when the review result is `ready for series planning`.
 
+Series doc approval
+- overall doc approved: yes | no
+- current approved series: `Series N` | `none`
+- Use this section only when the review target is a `docs/series/...` doc.
+- Use `current approved series: none` until the whole execution doc is approved.
+
 Result
 - `ready for series planning` | `needs design revision`
 
@@ -163,6 +169,10 @@ Only return `ready for series planning` when:
 
 For `docs/series/...` execution-structure review, only return `ready for series
 planning` when:
+- the whole execution doc is coherent enough to approve before implementation
+  begins
+- the approval section is coherent enough to distinguish whole-doc approval from
+  later per-series approval
 - the series boundaries still respect the approved design docs
 - dependencies and checkpoints are explicit
 - no series silently smuggles unresolved architecture into execution

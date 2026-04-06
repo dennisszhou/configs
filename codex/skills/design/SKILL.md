@@ -102,16 +102,22 @@ The artifact should make these things hard to miss:
   ritual.
 
 9. End with approval criteria
-- Say what must be true for the design to be ready for structure review.
+- Say what must be true for the design to be ready for `$review-plan`.
 - Include explicit status metadata for the plan doc.
 
 ## Output format
 
 Produce the design artifact in this shape:
 
+Title
+- short descriptive title
+
+Date
+- `YYYY-MM-DD`
+
 Status
 - `draft` while the design is being revised
-- `approved` only after the user accepts it and the structure review is ready
+- `approved` only after the user accepts it and `$review-plan` is ready
   for series planning
 - `superseded` only when a newer design replaces it
 
@@ -159,6 +165,8 @@ Design exit criteria
 
 Recommended next step
 - Usually `$review-plan` after approval.
+
+Wrap prose in `docs/` artifacts at `80` columns.
 
 ## Quality bar
 The design is not ready if:
