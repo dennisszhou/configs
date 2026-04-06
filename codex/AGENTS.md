@@ -274,6 +274,8 @@ Rules:
 - Do not require heavyweight benchmarking for every change.
 - Do not make performance or reliability claims without supporting evidence.
 - If the project has test or lint commands, run them before marking work done.
+- Before committing, run the repo's relevant formatter and linter, or their
+  check modes, when they apply to the touched files.
 - Do not mark a task complete without verification.
 - Flag untested edge cases instead of ignoring them.
 

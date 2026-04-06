@@ -237,6 +237,14 @@ If verification fails:
 
 Never commit code that fails its own verification.
 
+Before committing, also run the repo's relevant formatter and linter, or their
+check modes, when they apply to the touched files.
+
+If a formatter changes files:
+- review the formatter-produced diff
+- re-stage the intended files
+- make sure the commit still matches the planned scope before continuing
+
 Treat the planned test level as guidance about proof:
 - `regression`, `functional`, and `integration` are often better evidence than
   unit tests for behavior changes
