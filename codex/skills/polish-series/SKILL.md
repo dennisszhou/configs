@@ -11,11 +11,16 @@ This skill is for final local-history cleanup, not for core execution
 correctness. Use it after the branch behavior is settled and the truthful
 working history has already done its job.
 
+In a staged execution workflow, this skill is typically used after the current
+series is complete and stable, before planning or starting the next series.
+
 ## When to use this
 Use this skill when:
 - execution is complete or stable enough that history cleanup will not hide
   ongoing change
 - the branch has accumulated multiple `docs/plans` update commits
+- or the branch has accumulated `docs/series` update commits for the same active
+  execution artifact
 - there are obvious tiny fixup commits that should fold into their parent
 - the user wants a cleaner final patch series for review
 
@@ -31,8 +36,12 @@ behavior of the branch.
 
 The common case is:
 - preserve one high-quality `docs/plans` commit
+- preserve one high-quality `docs/series` commit when a durable execution
+  artifact exists
 - preserve the real implementation commits
 - fold later `docs/plans` revisions back into that original docs/plans commit
+  when appropriate
+- fold later `docs/series` revisions back into that original docs/series commit
   when appropriate
 - fold tiny obvious fixups into their intended parent commits when safe
 
@@ -55,11 +64,15 @@ Do not rewrite history if:
 
 1. Inspect the branch history
 - Identify the initial `docs/plans` anchoring commit.
+- Identify the initial `docs/series` anchoring commit when one exists.
 - Identify later `docs/plans` revise, update, or clarify commits.
+- Identify later `docs/series` revise or update commits.
 - Identify tiny obvious fixup commits.
 
 2. Classify candidates
 - `docs/plans` follow-up commits that should fold into the original plan commit
+- `docs/series` follow-up commits that should fold into the original execution
+  commit
 - tiny fixups that obviously belong to a nearby parent
 - semantic commits that should remain independent
 
@@ -98,6 +111,8 @@ Do not rewrite history if:
 Usually good candidates:
 - later `docs/plans: revise ...`, `docs/plans: update ...`, and
   `docs/plans: clarify ...` commits that simply evolve the same active plan doc
+- later `docs/series: revise ...` and `docs/series: update ...` commits that
+  simply evolve the same active execution doc
 - tiny typo or missed-import fixups
 - one-line correction commits that obviously belong to the immediately preceding
   commit

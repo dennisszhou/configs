@@ -5,9 +5,9 @@ description: Execute an approved plan-series stack by implementing, verifying, a
 
 # Impl Series
 
-Execute an approved series plan one commit at a time. The git history is the
-audit trail. Keep going until you hit a real question, a failure, or the plan is
-complete.
+Execute an approved current execution series one commit at a time. The git
+history is the audit trail. Keep going until you hit a real question, a
+failure, the current series is complete, or the full plan is complete.
 
 During execution, preserve truthful working history. Do not try to polish the
 series while the work is still moving. History cleanup belongs later, if
@@ -23,26 +23,31 @@ If there is no approved plan, stop and ask the user to run or approve
 `$plan-series` first.
 
 Do not use this skill while native plan mode is active. Execution begins after
-design work and structure review are finished.
+design work and `$review-plan` are finished.
 
 ## Approval model
-Invocation of this skill counts as authorization to execute the approved series
-stack sequentially.
+Invocation of this skill counts as authorization to execute the approved
+current execution series sequentially.
+
+Do not treat approval of a large execution artifact as permission to execute all
+later series blindly when they depend on later checkpoints, review, or revised
+conditions.
 
 Do not stop between commits to ask “should I continue?” Stop only when:
 - verification fails and the fix would go out of scope
 - the plan no longer matches reality
 - a meaningful design decision is required
 - the worktree is unexpectedly dirty
-- the stack is complete
+- the current approved series is complete
+- the full approved plan is complete
 
 If the approved plan contains selective review gates such as `code`, `perf`, or
 `migration`, honor them at the planned points instead of treating every commit
 as a mandatory review stop.
 
-If there is an approved active `docs/plans/...` file for the task and it is not
-yet committed on the execution branch, that docs/plans commit becomes Commit 1
-before any implementation commit.
+If there is an approved active `docs/plans/...` design doc for the task and it
+is not yet committed on the execution branch, that docs/plans commit becomes
+Commit 1 before any implementation commit.
 
 ## Core rules
 
@@ -65,7 +70,7 @@ the starting point for execution history.
   for correctness, such as a missing import or small test fixture update.
 - Respect the “Not included” list.
 - Do not smuggle future work into the current commit.
-- Do not casually reopen architecture once design and structure review are
+- Do not casually reopen architecture once design and `$review-plan` are
   approved. Stop only if the approved model no longer fits reality.
 
 4. Keep progress recoverable
@@ -74,7 +79,8 @@ the starting point for execution history.
 
 5. Separate truthful history from polished history
 - During execution, prefer truthful commits over tidy ones.
-- Later docs/plans update commits are acceptable when the plan changes.
+- Later docs/plans or docs/series update commits are acceptable when the plan
+  changes.
 - Do not prematurely rewrite or squash history during active execution.
 - Final cleanup belongs to `$polish-series`, not this skill.
 
@@ -82,7 +88,13 @@ the starting point for execution history.
 This skill expects:
 - an approved series plan from `$plan-series`
 - or an equivalent numbered series plan supplied by the user
-- and optionally an active approved `docs/plans/...` file for the task
+- and optionally:
+  - an active approved `docs/plans/...` design doc for the task
+  - a `docs/series/...` execution doc when durable execution planning is needed
+
+When a `docs/series/...` execution doc exists, treat it as the execution source
+of truth. Do not fall back to chat output for execution state unless the plan
+was intentionally response-only.
 
 Each commit entry should include:
 - subject line
@@ -99,6 +111,20 @@ Each commit entry should include:
 The user may optionally specify where to start:
 - start from the first unimplemented commit
 - start from commit N
+- start from series N
+
+## Series-boundary rules
+If the approved execution plan contains multiple series:
+- implement only the current approved series
+- stop when that series reaches its stable checkpoint unless later continuation
+  is already explicitly approved
+- re-check the next series against the approved design and execution artifact
+  before continuing
+- update the execution artifact before continuing if earlier implementation
+  changes later assumptions
+
+If a durable execution artifact is required by the workflow and does not exist,
+stop and ask for the series plan to be recorded before implementation begins.
 
 ## Plan amendment rules
 Treat deviations from the approved plan in three buckets:
@@ -112,7 +138,7 @@ Treat deviations from the approved plan in three buckets:
 - If an extra file must change, a verify command must change, or one planned
   commit should be split for correctness or reviewability, stop and propose a
   local plan amendment before continuing.
-- Update the active plan doc or approved series plan as needed, then continue
+- Update the active design doc or execution artifact as needed, then continue
   after approval if the workflow calls for it.
 
 3. Structural mismatches
@@ -124,15 +150,29 @@ Treat deviations from the approved plan in three buckets:
 The approved plan remains the source of truth unless explicitly amended.
 
 When a design plan doc exists for the task:
-- treat the current active plan doc as the only plan doc eligible for updates
+- treat the current active design doc as the only design plan doc eligible for
+  updates
 - do not modify other plan docs
 - do not rewrite historical plan docs during execution
-- before implementation starts, the active plan doc may still be amended freely
+- before implementation starts, the active design doc may still be amended
+  freely
 - if only the initial docs/plans commit exists and no implementation commit has
   landed yet, that initial docs/plans commit may be amended in place
 - once implementation commits exist, do not silently amend the original
   docs/plans commit underneath them; record meaningful plan changes as a new
   docs/plans update commit instead
+
+When a `docs/series/...` execution artifact exists for the task:
+- treat the current active execution doc as the only execution artifact eligible
+  for updates
+- do not modify unrelated execution docs
+- before implementation starts, the active execution doc may still be amended
+  freely
+- if only the initial docs/series commit exists and no implementation commit has
+  landed yet, that initial docs/series commit may be amended in place
+- once implementation commits exist, do not silently amend the original
+  docs/series commit underneath them; record meaningful execution-plan changes
+  as a new docs/series update commit instead
 
 ## Process
 
@@ -141,18 +181,26 @@ Run:
 - `git log --oneline --reverse`
 - `git status --short`
 
-First determine whether there is an approved active `docs/plans/...` file for
-the task:
+First determine whether there is an approved active `docs/plans/...` design doc
+for the task:
 - if yes and no docs/plans anchoring commit exists on this execution branch yet,
   create that docs-only commit first
 - if yes and the docs/plans anchoring commit exists but no implementation commit
   exists yet, it may still be amended in place
+
+Then determine whether there is an approved active `docs/series/...` execution
+doc for the task:
+- if yes and no docs/series anchoring commit exists on this execution branch
+  yet, create that docs-only commit before implementation commits that depend on
+  it
+- if yes and the docs/series anchoring commit exists but no implementation
+  commit exists yet, it may still be amended in place
 - if implementation commits already exist, treat the branch history as active
   execution history
 
 Then compare the planned subject lines against git history.
-The first implementation plan entry that does not appear in history is the
-starting point.
+The first implementation plan entry in the current approved series that does not
+appear in history is the starting point.
 
 If the worktree is dirty, stop and explain. Do not proceed on top of unexpected
 uncommitted state.
@@ -168,7 +216,23 @@ Series plan progress:
   ⬜ 5/6: ...
   ⬜ 6/6: ...
 
-### 1a. Anchor the approved plan doc when needed
+When a `docs/series/...` execution artifact exists, also show the series
+boundary, for example:
+
+Series plan progress:
+  ✅ docs/plans: ...
+  ✅ docs/series: ...
+  Series 1: approved current series
+    ✅ 1/3: ...
+    ➡️ 2/3: ...
+    ⬜ 3/3: ...
+  Series 2: waiting for approval
+    ⬜ 1/4: ...
+    ⬜ 2/4: ...
+    ⬜ 3/4: ...
+    ⬜ 4/4: ...
+
+### 1a. Anchor approved docs when needed
 If an approved active `docs/plans/...` file exists and is not yet committed on
 the branch:
 - stage only the active `docs/plans/...` file
@@ -176,18 +240,18 @@ the branch:
 - use a specific subject line such as:
   - `docs/plans: add <topic> design`
   - `docs/plans: revise <topic> design`
-  - `docs/plans: update <topic> execution plan`
   - `docs/plans: clarify <topic> invariants`
 - do not include code or unrelated files in this commit
 
-If only this initial docs/plans commit exists and no implementation commit has
-landed yet:
-- amending that commit in place is allowed
-- keep it docs-only
-
-Once implementation commits exist:
-- do not amend that original docs/plans commit underneath later code commits
-- record meaningful plan changes as a new docs/plans update commit instead
+If an approved active `docs/series/...` file exists and is not yet committed on
+the branch:
+- stage only the active `docs/series/...` file
+- make a docs-only commit before any implementation commit that depends on it
+- use a specific subject line such as:
+  - `docs/series: add <topic> execution plan`
+  - `docs/series: revise <topic> execution plan`
+  - `docs/series: update <topic> series checkpoints`
+- do not include code or unrelated files in this commit
 
 ### 2. Restate the current contract
 Before implementing each commit, restate:
@@ -201,8 +265,8 @@ Before implementing each commit, restate:
 - verify commands
 - not-included list
 
-If a plan-doc update commit is required before the next implementation commit,
-restate that docs/plans update as a separate step first.
+If a design-doc or series-doc update commit is required before the next
+implementation commit, restate that docs update as a separate step first.
 
 ### 3. Check preconditions
 Verify that the plan’s preconditions are satisfied.
@@ -216,8 +280,8 @@ explain. Do not silently patch around broken earlier steps.
   improvise around it.
 
 If reality changed materially after implementation has begun:
-- update the active plan doc first
-- commit that plan-doc update as its own docs/plans commit
+- update the active design doc or execution doc first
+- commit that docs update as its own docs commit
 - then continue from the updated approved plan
 
 ### 5. Implement
@@ -289,16 +353,18 @@ dropping back to a subject-only message.
 Do not use `--no-verify`.
 Do not add assistant attribution trailers unless explicitly requested.
 
-For docs/plans commits:
+For docs commits:
 - keep the commit docs-only
 - use specific subjects such as:
   - `docs/plans: add <topic> design`
   - `docs/plans: revise <topic> design`
-  - `docs/plans: update <topic> execution plan`
   - `docs/plans: clarify <topic> invariants`
+  - `docs/series: add <topic> execution plan`
+  - `docs/series: revise <topic> execution plan`
+  - `docs/series: update <topic> series checkpoints`
 - avoid vague subjects like `update docs` or `fix plan`
-- include a wrapped body that explains why the plan doc changed and what
-  remains intentionally deferred when that is not obvious from the subject
+- include a wrapped body that explains why the docs changed and what remains
+  intentionally deferred when that is not obvious from the subject
 
 ### 9. Report progress
 After each successful commit, print a short summary:
@@ -314,6 +380,13 @@ After each successful commit, print a short summary:
 
 Then immediately continue to the next planned commit.
 
+If that commit completes the current approved series and later series remain,
+stop and report:
+- the stable checkpoint reached
+- the main verification performed for that series
+- whether the next series still appears to match reality
+- whether a docs update is needed before planning or approving the next series
+
 ## Handling problems
 
 ### Verification fails
@@ -324,13 +397,14 @@ stop and ask.
 ### Plan does not match reality
 If a dependency was missed, a file list is wrong, or a postcondition is
 unrealistic, stop and propose a plan amendment.
-If a design plan doc exists, update only the current active plan doc.
-Do not modify other plan docs.
+If a design doc or execution doc exists, update only the current active
+artifact for that layer. Do not modify unrelated docs.
 Wait for approval before continuing.
 
 If implementation has already begun, preserve truthful history:
-- make a new docs/plans update commit for meaningful plan changes
-- do not silently rewrite the original plan-doc commit underneath code commits
+- make a new docs/plans or docs/series update commit for meaningful plan changes
+- do not silently rewrite the original approved docs commit underneath code
+  commits
 
 ### Scope creep temptation
 If you spot a real issue that is outside the current commit:
@@ -353,10 +427,14 @@ If a prior issue blocks progress, stop and explain.
 ## Resuming after a stop
 When the user says “continue”, “resume”, or invokes this skill again:
 1. inspect git history
-2. find the first unimplemented commit
+2. find the first unimplemented commit in the current approved series
 3. resume there
 4. if the prior stop happened mid-commit because of a question, incorporate the
    user’s answer and finish that commit first
+
+If the current series is complete but later series remain, do not continue into
+the next series until the execution artifact and approvals say that series is
+ready to start.
 
 ## What this skill does not do
 - It does not create or redesign the series plan.

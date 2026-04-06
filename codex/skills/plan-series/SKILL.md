@@ -5,8 +5,10 @@ description: Decompose an approved design, feature plan, or implementation idea 
 
 # Plan Series
 
-Turn an implementation plan into a sequence of small, independently correct
-commits.
+Turn an implementation plan into either:
+- a direct single-series execution plan
+- a durable `docs/series/...` execution artifact containing one or more
+  execution series
 
 ## When to use this
 Use this skill when:
@@ -14,7 +16,7 @@ Use this skill when:
 - the user asks for a series plan or commit stack
 - a design or `docs/plans/YYYY-MM-DD-topic.md` doc already exists and
   implementation is next
-- design and, when needed, structure review have already been approved
+- design and, when needed, `$review-plan` have already been approved
 - the work is large enough that reviewability, bisectability, and staged
   verification matter
 
@@ -53,7 +55,7 @@ When an existing design plan is present:
 - do not rewrite older plan docs as part of series planning
 - only propose updates to the active plan doc if the execution contract is wrong
 
-If structure review concluded `needs design revision`, stop. Do not plan commits
+If `$review-plan` concluded `needs design revision`, stop. Do not plan commits
 on top of a rejected model.
 
 ## Process
@@ -138,9 +140,70 @@ Every commit must say:
   - migration
 - The output of this skill is the execution contract for `$impl-series`.
 
+## Large execution planning
+Prefer a single execution series when the work can still be made reviewable,
+independently correct, and realistically implementable as one stack.
+
+Create or update a durable `docs/series/...` execution doc when any hard
+trigger applies:
+- one execution effort spans multiple approved design docs
+- execution requires multiple series
+- implementation is likely to span multiple sessions
+- the plan depends on explicit checkpoints or approval gates between stages
+
+Response-only output is acceptable only when all of these are true:
+- one approved design doc is in scope
+- one execution series is sufficient
+- the stack remains small enough to review coherently as one unit
+- no durable checkpoint or staged approval boundary is needed
+
+When this skill produces a `docs/series/...` execution doc, that doc becomes
+the execution source of truth for the effort. It should identify:
+- the overall goal
+- the approved design inputs
+- the execution mode: single-series or multi-series
+- the ordered series list, dependencies, and stable checkpoints
+- the verification plan for each series
+- approval gates before later series when needed
+
+Split series at real milestone boundaries, not arbitrary file counts.
+
+Good boundaries include:
+- foundational state/model changes
+- rebuild/runtime changes
+- persistence/load/export cutover
+- proof, migration, and cleanup
+
+Bad boundaries include:
+- random file grouping
+- splitting tightly coupled correctness changes across series with no stable
+  checkpoint
+
 ## Output format
 
-Produce a numbered series plan. Each entry must look like this:
+Produce either:
+- a numbered single-series plan
+- a `docs/series/...` execution artifact with clearly labeled sections such as
+  `Series 1`, `Series 2`, and `Series 3`
+
+For a `docs/series/...` execution artifact, begin with:
+
+Goal: <plain-English end state>
+Design inputs: <approved docs/plans/... inputs>
+Execution mode: single-series | multi-series
+Why split: <why multiple execution series are better than one stack> | `not needed`
+
+Then, for each series, include:
+- Series N: <short label>
+- Depends on: earlier series or `none`
+- Stable checkpoint: what is expected to be true and reviewable at the end of
+  this series
+- Approval gate: `none` | `stop for approval`
+- Verification plan: brief summary of the evidence expected before moving on
+
+If the plan is recorded in a doc, name that doc explicitly in the response.
+
+Within each series, each commit entry must look like this:
 
 Commit N/Total: <subsystem: description>
 
@@ -229,6 +292,10 @@ independent branches when relevant.
 ## Interaction rules
 - After producing the plan, stop and ask the user to review it before
   implementation starts.
+- If a `docs/series/...` execution doc is required and does not exist yet,
+  create or update it as part of planning before asking for approval.
+- Make clear whether approval covers only the current execution series or the
+  whole execution artifact.
 - Common adjustments:
   - split a commit
   - combine two commits
@@ -238,7 +305,7 @@ independent branches when relevant.
   - separate optimization from correctness more clearly
 - Once the user approves the plan, treat it as the execution contract.
 - If later execution reveals that the contract is wrong, update the current
-  active plan doc first. Do not modify other plan docs.
+  active execution artifact first. Do not modify unrelated plan docs.
 
 ## What good plans look like
 Good plans:
