@@ -268,7 +268,16 @@ Create the commit using the planned subject line and a body that explains:
 - key implementation decisions
 - what is intentionally deferred
 
-Use a clean multi-line commit message.
+Use kernel-style commit formatting:
+- subject line first
+- blank line
+- explanatory body
+- wrap body lines cleanly at about 72 columns
+- keep the subject concise and normally within 72 characters
+
+When amending an existing commit in place, preserve this same format rather than
+dropping back to a subject-only message.
+
 Do not use `--no-verify`.
 Do not add assistant attribution trailers unless explicitly requested.
 
@@ -280,6 +289,8 @@ For docs/plans commits:
   - `docs/plans: update <topic> execution plan`
   - `docs/plans: clarify <topic> invariants`
 - avoid vague subjects like `update docs` or `fix plan`
+- include a wrapped body that explains why the plan doc changed and what
+  remains intentionally deferred when that is not obvious from the subject
 
 ### 9. Report progress
 After each successful commit, print a short summary:

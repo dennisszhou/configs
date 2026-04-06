@@ -77,8 +77,19 @@ Do not rewrite history if:
 - Rewrite only when the cleanup is clear and safe.
 - Preserve the intended final content.
 - Preserve independently reviewable semantic commits.
+- When rewording, squashing, or amending commits during cleanup, normalize the
+  resulting commit messages to kernel-style formatting:
+  - concise subject, usually within 72 characters
+  - blank line
+  - explanatory body wrapped at about 72 columns
 
-6. Verify after rewrite
+6. Preserve commit-message quality
+- Do not let history cleanup degrade a good commit into a subject-only message
+  when the original change needs explanatory body text.
+- Preserve or improve the `why` in the commit body when folding docs/plans
+  updates or obvious fixups into a parent commit.
+
+7. Verify after rewrite
 - Re-run the relevant verification needed to confirm the cleaned series still
   lands in the same final state.
 
