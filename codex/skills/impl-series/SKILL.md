@@ -96,8 +96,8 @@ When a `docs/series/...` execution doc exists, treat it as the execution source
 of truth. Do not fall back to chat output for execution state unless the plan
 was intentionally response-only.
 Do not treat any series as approved to start until the doc's approval section
-shows that the whole execution doc is approved and the current series is named
-explicitly.
+shows that the whole execution doc is approved, the current series is named
+explicitly, and that series's own approval field is `approved`.
 
 Each commit entry should include:
 - subject line
@@ -130,6 +130,8 @@ If a durable execution artifact is required by the workflow and does not exist,
 stop and ask for the series plan to be recorded before implementation begins.
 If the execution artifact exists but its approval section does not yet approve
 the whole doc, stop before implementation begins.
+If the current target series is missing its own `Approval: approved` field,
+stop before implementation begins.
 
 ## Plan amendment rules
 Treat deviations from the approved plan in three buckets:

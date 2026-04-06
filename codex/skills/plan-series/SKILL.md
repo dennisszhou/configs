@@ -167,6 +167,7 @@ the execution source of truth for the effort. It should identify:
 - the approved design inputs
 - the execution mode: single-series or multi-series
 - the ordered series list, dependencies, and stable checkpoints
+- the per-series approval state
 - the verification plan for each series
 - approval gates before later series when needed
 
@@ -216,6 +217,7 @@ Approval:
 
 Use `current approved series: none` until the whole execution doc has been
 reviewed and approved.
+Whole-doc approval does not imply that all series are approved to execute.
 
 Goal: <plain-English end state>
 Design inputs: <approved docs/plans/... inputs>
@@ -227,14 +229,20 @@ Then, for each series, include:
 - Depends on: earlier series or `none`
 - Stable checkpoint: what is expected to be true and reviewable at the end of
   this series
+- Approval: `pending` | `approved`
 - Approval gate: `none` | `stop for approval`
 - Verification plan: brief summary of the evidence expected before moving on
+
+Until the user explicitly approves a series, keep that series at
+`Approval: pending`.
 
 If the plan is recorded in a doc, name that doc explicitly in the response.
 Wrap prose in `docs/` artifacts at `80` columns.
 
 When revising an existing `docs/series/...` doc, update the existing file to
 match this schema at the top before emitting the rest of the plan.
+Also add any missing per-series approval fields so the whole file matches this
+house style.
 
 Within each series, each commit entry must look like this:
 

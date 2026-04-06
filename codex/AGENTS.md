@@ -228,6 +228,7 @@ When a `docs/series/...` doc exists for an execution effort, it should cover:
 - why the work is split when it is not one series
 - the ordered series list and dependencies
 - the stable checkpoint expected at the end of each series
+- the per-series approval state
 - the approval gate before later series when needed
 - the verification plan per series
 
@@ -238,6 +239,9 @@ Approve the whole `docs/series/...` doc before moving on to series-by-series
 execution approval.
 Before that whole-doc approval is complete, `current approved series` should
 remain `none`.
+Whole-doc approval does not imply blanket approval of every series to start.
+Each series should carry its own `Approval: pending | approved` field, and
+later series should remain `pending` until explicitly approved.
 
 Proof belongs to each series. Do not default to a final standalone
 “proof/cleanup” series when the real evidence should live with the series that

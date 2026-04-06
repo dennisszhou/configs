@@ -173,11 +173,15 @@ planning` when:
   begins
 - the approval section is coherent enough to distinguish whole-doc approval from
   later per-series approval
+- per-series approval fields exist and are coherent
 - the series boundaries still respect the approved design docs
 - dependencies and checkpoints are explicit
 - no series silently smuggles unresolved architecture into execution
 - later series are not assuming evidence or approvals that earlier series do not
   actually establish
+
+Missing per-series approval fields are a blocking issue for
+`docs/series/...` review readiness.
 
 ## What this skill does not do
 - It does not produce a commit stack.
