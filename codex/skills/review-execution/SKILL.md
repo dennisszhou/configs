@@ -25,6 +25,11 @@ Do not use this skill when:
 - the user wants diff review of implemented code
 - the next series is straightforward and the execution doc has not changed
 
+Typical usage is:
+- once before whole-doc approval
+- later only when the execution doc changed materially or the next series
+  boundary is structurally risky
+
 ## Goal
 Answer one question:
 

@@ -8,8 +8,8 @@ description: Close out the current approved execution series by updating the act
 Record truthful closeout for the current execution series.
 
 This skill updates the active `docs/execution/...` artifact after implementation
-and review are done. It does not redesign the plan or silently change the scope
-of later series.
+and review are done. It is a docs-only closeout step. It does not redesign the
+plan or silently change the scope of later series.
 
 ## When to use this
 Use this skill when:
@@ -46,6 +46,8 @@ Update the active `docs/execution/...` doc so it truthfully records:
 - Update `Completion` when the full effort is done.
 - Add or update `optional follow-up` only when there is a real deferred or
   completed follow-up to record.
+- Keep the resulting commit docs-only. Do not mix code changes into
+  `$finish-series`.
 
 4. Do not redesign
 - Do not change later series boundaries unless the user explicitly asks for a
@@ -75,3 +77,4 @@ Next state
 - It does not review diffs.
 - It does not replace `review-execution` when the execution plan itself changed.
 - It does not silently redesign later work.
+- It does not include code changes in the closeout commit.

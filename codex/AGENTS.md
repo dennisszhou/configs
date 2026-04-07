@@ -52,7 +52,8 @@ applicable `AGENTS.md` first.
     `$finish-series`
 - Native `/plan` is optional. It is useful for lightweight planning discussion,
   but durable docs become the source of truth once work is large enough to need
-  them.
+  them. Once a roadmap, design doc, or execution doc exists for the effort,
+  chat should not quietly replace that artifact as the source of truth.
 - For bugfixes, reproduce the bug or define regression evidence first; use a
   short design note only when the fix shape is not obvious.
 
