@@ -541,6 +541,17 @@ For concurrent, async, queued, or retried code:
   changed.
 - Use `subsystem: short description` subject lines when appropriate for the repo.
 - Wrap commit-message bodies cleanly.
+- Never pass a multi-paragraph commit body via a normal quoted
+  `git commit -m "...\n..."` string. Do not rely on backslash-n escapes for
+  paragraph breaks.
+- Safe commit-message patterns only:
+  - multiple `-m` flags with real paragraph text
+  - `git commit -F <file>`
+  - a shell form containing actual newline characters rather than literal
+    backslash-n text
+- Prefer `git commit -F` for multi-paragraph commit messages.
+- Before finalizing a commit, ensure the message preview contains real wrapped
+  lines and no literal `\n` sequences.
 - Do not add assistant attribution trailers unless explicitly requested.
 
 For docs/plans commits, prefer specific subjects such as:

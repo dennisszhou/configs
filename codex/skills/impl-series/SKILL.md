@@ -359,6 +359,22 @@ Use kernel-style commit formatting:
 When amending an existing commit in place, preserve this same format rather than
 dropping back to a subject-only message.
 
+Never pass a multi-paragraph commit body via a normal quoted
+`git commit -m "...\n..."` string. Do not rely on backslash-n escapes for
+paragraph breaks.
+
+Use one of these safe patterns only:
+- multiple `-m` flags with real paragraph text
+- `git commit -F <file>`
+- a shell form containing actual newline characters rather than literal
+  backslash-n text
+
+Prefer `git commit -F` for multi-paragraph commit messages.
+
+Before finalizing the commit:
+- preview the message in a form that shows the real wrapped body
+- ensure there are no literal `\n` sequences caused by shell escaping mistakes
+
 Do not use `--no-verify`.
 Do not add assistant attribution trailers unless explicitly requested.
 
