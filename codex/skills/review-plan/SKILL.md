@@ -1,12 +1,12 @@
 ---
 name: review-plan
-description: Skeptically review an approved or near-approved design to decide whether its data model, state boundaries, ownership, and invariants are coherent enough for implementation. Use after design and before series planning.
+description: Skeptically review the roadmap and design context for an effort to decide whether its data model, state boundaries, ownership, and invariants are coherent enough for execution planning. Use after design and before series planning.
 ---
 
 # Review Plan
 
-Review whether the proposed design or execution-boundary plan is coherent enough
-to implement before execution starts.
+Review whether the proposed roadmap and design context are coherent enough to
+stage for execution.
 
 This skill is intentionally skeptical. Its job is not to invent a new design
 from scratch. Its job is to test whether the proposed plan and model are
@@ -17,8 +17,6 @@ Use this skill when:
 - an approved or near-approved design already exists
 - the work introduces or changes data models, ownership boundaries, or APIs
 - the user wants a structure-focused review before series planning
-- or the user wants a structure-focused review of a `docs/series/...`
-  execution doc before implementation continues
 
 Do not use this skill when:
 - there is no design artifact to review
@@ -61,8 +59,8 @@ and point to the smallest revision needed.
 ## Process
 
 1. Restate the proposed model
-- Summarize the target artifact’s state shape and boundaries briefly so the
-  review has a clear target.
+- Summarize the roadmap and design context briefly so the review has a clear
+  target.
 
 2. Check source of truth
 - Identify the authoritative state.
@@ -108,7 +106,7 @@ Review target
 - ...
 
 Review mode
-- `design review` | `execution-structure review`
+- `design review`
 
 Findings
 - ...
@@ -145,12 +143,6 @@ Design doc status
 - Use this section only when the review target is a design doc.
 - Use `approved` only when the review result is `ready for series planning`.
 
-Series doc approval
-- overall doc approved: yes | no
-- current approved series: `Series N` | `none`
-- Use this section only when the review target is a `docs/series/...` doc.
-- Use `current approved series: none` until the whole execution doc is approved.
-
 Result
 - `ready for series planning` | `needs design revision`
 
@@ -166,22 +158,6 @@ Only return `ready for series planning` when:
 - testing can target the real contract at the right layer
 - and, when operational concerns are relevant, lifecycle and public-status
   contracts are explicit enough not to mislead implementers or operators
-
-For `docs/series/...` execution-structure review, only return `ready for series
-planning` when:
-- the whole execution doc is coherent enough to approve before implementation
-  begins
-- the approval section is coherent enough to distinguish whole-doc approval from
-  later per-series approval
-- per-series approval fields exist and are coherent
-- the series boundaries still respect the approved design docs
-- dependencies and checkpoints are explicit
-- no series silently smuggles unresolved architecture into execution
-- later series are not assuming evidence or approvals that earlier series do not
-  actually establish
-
-Missing per-series approval fields are a blocking issue for
-`docs/series/...` review readiness.
 
 ## What this skill does not do
 - It does not produce a commit stack.

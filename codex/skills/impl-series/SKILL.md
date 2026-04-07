@@ -23,7 +23,7 @@ If there is no approved plan, stop and ask the user to run or approve
 `$plan-series` first.
 
 Do not use this skill while native plan mode is active. Execution begins after
-design work and `$review-plan` are finished.
+design work and, when needed, `$review-execution` are finished.
 
 ## Approval model
 Invocation of this skill counts as authorization to execute the approved
@@ -90,14 +90,16 @@ This skill expects:
 - or an equivalent numbered series plan supplied by the user
 - and optionally:
   - an active approved `docs/plans/...` design doc for the task
-  - a `docs/series/...` execution doc when durable execution planning is needed
+  - a `docs/execution/...` execution doc when durable execution planning is
+    needed
 
-When a `docs/series/...` execution doc exists, treat it as the execution source
+When a `docs/execution/...` execution doc exists, treat it as the execution
+source
 of truth. Do not fall back to chat output for execution state unless the plan
 was intentionally response-only.
 Do not treat any series as approved to start until the doc's approval section
-shows that the whole execution doc is approved, the current series is named
-explicitly, and that series's own approval field is `approved`.
+shows that the whole execution doc is approved, the current state authorizes
+that series, and that series's own approval field is `approved`.
 
 Each commit entry should include:
 - subject line
@@ -123,8 +125,8 @@ If the approved execution plan contains multiple series:
   is already explicitly approved
 - re-check the next series against the approved design and execution artifact
   before continuing
-- update the execution artifact before continuing if earlier implementation
-  changes later assumptions
+  - update the execution artifact before continuing if earlier implementation
+    changes later assumptions
 
 If a durable execution artifact is required by the workflow and does not exist,
 stop and ask for the series plan to be recorded before implementation begins.
@@ -169,17 +171,17 @@ When a design plan doc exists for the task:
   docs/plans commit underneath them; record meaningful plan changes as a new
   docs/plans update commit instead
 
-When a `docs/series/...` execution artifact exists for the task:
+When a `docs/execution/...` execution artifact exists for the task:
 - treat the current active execution doc as the only execution artifact eligible
   for updates
 - do not modify unrelated execution docs
 - before implementation starts, the active execution doc may still be amended
   freely
-- if only the initial docs/series commit exists and no implementation commit has
-  landed yet, that initial docs/series commit may be amended in place
+- if only the initial docs/execution commit exists and no implementation commit
+  has landed yet, that initial docs/execution commit may be amended in place
 - once implementation commits exist, do not silently amend the original
-  docs/series commit underneath them; record meaningful execution-plan changes
-  as a new docs/series update commit instead
+  docs/execution commit underneath them; record meaningful execution-plan
+  changes as a new docs/execution update commit instead
 
 ## Process
 
@@ -195,12 +197,12 @@ for the task:
 - if yes and the docs/plans anchoring commit exists but no implementation commit
   exists yet, it may still be amended in place
 
-Then determine whether there is an approved active `docs/series/...` execution
+Then determine whether there is an approved active `docs/execution/...` execution
 doc for the task:
-- if yes and no docs/series anchoring commit exists on this execution branch
+- if yes and no docs/execution anchoring commit exists on this execution branch
   yet, create that docs-only commit before implementation commits that depend on
   it
-- if yes and the docs/series anchoring commit exists but no implementation
+- if yes and the docs/execution anchoring commit exists but no implementation
   commit exists yet, it may still be amended in place
 - if implementation commits already exist, treat the branch history as active
   execution history
@@ -223,12 +225,12 @@ Series plan progress:
   ⬜ 5/6: ...
   ⬜ 6/6: ...
 
-When a `docs/series/...` execution artifact exists, also show the series
+When a `docs/execution/...` execution artifact exists, also show the series
 boundary, for example:
 
 Series plan progress:
   ✅ docs/plans: ...
-  ✅ docs/series: ...
+  ✅ docs/execution: ...
   Series 1: approved current series
     ✅ 1/3: ...
     ➡️ 2/3: ...
@@ -250,14 +252,14 @@ the branch:
   - `docs/plans: clarify <topic> invariants`
 - do not include code or unrelated files in this commit
 
-If an approved active `docs/series/...` file exists and is not yet committed on
+If an approved active `docs/execution/...` file exists and is not yet committed on
 the branch:
-- stage only the active `docs/series/...` file
+- stage only the active `docs/execution/...` file
 - make a docs-only commit before any implementation commit that depends on it
 - use a specific subject line such as:
-  - `docs/series: add <topic> execution plan`
-  - `docs/series: revise <topic> execution plan`
-  - `docs/series: update <topic> series checkpoints`
+  - `docs/execution: add <topic> execution plan`
+  - `docs/execution: revise <topic> execution plan`
+  - `docs/execution: update <topic> series checkpoints`
 - do not include code or unrelated files in this commit
 
 ### 2. Restate the current contract
@@ -272,7 +274,7 @@ Before implementing each commit, restate:
 - verify commands
 - not-included list
 
-If a design-doc or series-doc update commit is required before the next
+If a design-doc or execution-doc update commit is required before the next
 implementation commit, restate that docs update as a separate step first.
 
 ### 3. Check preconditions
@@ -366,9 +368,9 @@ For docs commits:
   - `docs/plans: add <topic> design`
   - `docs/plans: revise <topic> design`
   - `docs/plans: clarify <topic> invariants`
-  - `docs/series: add <topic> execution plan`
-  - `docs/series: revise <topic> execution plan`
-  - `docs/series: update <topic> series checkpoints`
+  - `docs/execution: add <topic> execution plan`
+  - `docs/execution: revise <topic> execution plan`
+  - `docs/execution: update <topic> series checkpoints`
 - avoid vague subjects like `update docs` or `fix plan`
 - include a wrapped body that explains why the docs changed and what remains
   intentionally deferred when that is not obvious from the subject
@@ -409,7 +411,8 @@ artifact for that layer. Do not modify unrelated docs.
 Wait for approval before continuing.
 
 If implementation has already begun, preserve truthful history:
-- make a new docs/plans or docs/series update commit for meaningful plan changes
+- make a new docs/plans or docs/execution update commit for meaningful plan
+  changes
 - do not silently rewrite the original approved docs commit underneath code
   commits
 
@@ -456,4 +459,4 @@ ready to start.
 
 ## Completion
 After the final commit, print a concise summary of the completed stack and the
-main verification that was performed.
+main verification that was performed, then stop for `$finish-series`.

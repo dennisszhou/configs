@@ -107,7 +107,13 @@ The artifact should make these things hard to miss:
 
 ## Output format
 
-Produce the design artifact in this shape:
+Produce the design artifact using
+`codex/skills/design/TEMPLATE.md` as a starting point:
+
+- keep the required core sections
+- adapt the shape when the task needs a narrower or clearer doc
+- do not treat the template as a rigid form when a simpler artifact would be
+  more truthful
 
 Title
 - short descriptive title

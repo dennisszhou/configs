@@ -7,7 +7,7 @@ description: Decompose an approved design, feature plan, or implementation idea 
 
 Turn an implementation plan into either:
 - a direct single-series execution plan
-- a durable `docs/series/...` execution artifact containing one or more
+- a durable `docs/execution/...` execution artifact containing one or more
   execution series
 
 ## When to use this
@@ -21,7 +21,7 @@ Use this skill when:
   verification matter
 
 Do not use this skill to write code or generate diffs. This skill produces the
-execution contract.
+commit plan for the current approved execution series.
 
 Do not use this skill while native plan mode is still active. Series planning is
 an execution-planning step, not a design-planning step.
@@ -138,18 +138,30 @@ Every commit must say:
   - code
   - perf
   - migration
-- The output of this skill is the execution contract for `$impl-series`.
+- The output of this skill is the commit series contract for `$impl-series`.
+- Every commit must stand on its own:
+  - the repo remains correct
+  - relevant verification passes
+  - the intermediate state is truthful and reviewable
+- Ban:
+  - adding a new feature helper with no live user in the commit where it lands
+  - adding dormant feature logic, branches, or plumbing whose first real user is
+    only a later commit
+- Acceptable preparatory work is narrower:
+  - extract helpers from already-used code
+  - improve shared boundaries used by current code
+  - restructure live code so a later semantic commit is smaller and clearer
 
 ## Large execution planning
 Prefer a single execution series when the work can still be made reviewable,
 independently correct, and realistically implementable as one stack.
 
-Create or update a durable `docs/series/...` execution doc when any hard
+Create or update a durable `docs/execution/...` execution doc when any hard
 trigger applies:
 - one execution effort spans multiple approved design docs
 - execution requires multiple series
 - implementation is likely to span multiple sessions
-- the plan depends on explicit checkpoints or approval gates between stages
+- the plan depends on explicit checkpoints or staged approvals between series
 
 Response-only output is acceptable only when all of these are true:
 - one approved design doc is in scope
@@ -157,23 +169,31 @@ Response-only output is acceptable only when all of these are true:
 - the stack remains small enough to review coherently as one unit
 - no durable checkpoint or staged approval boundary is needed
 
-When this skill produces a `docs/series/...` execution doc, that doc becomes
-the execution source of truth for the effort. It should identify:
-- the title
-- the date
-- the status
-- the approval section for the whole execution doc
-- the overall goal
+When this skill produces a `docs/execution/...` execution doc, that doc becomes
+the execution source of truth for the effort. It should define the higher-level
+execution contract:
+- the goal
+- roadmap context, when it matters
 - the approved design inputs
-- the execution mode: single-series or multi-series
-- the ordered series list, dependencies, and stable checkpoints
+- why execution is split when it is not one series
+- the ordered series list and dependencies
+- the stable checkpoint for each series
+- the review focus and done-means for each series
 - the per-series approval state
-- the verification plan for each series
-- approval gates before later series when needed
+- the completion state for the effort
 
-When creating or revising a `docs/series/...` execution doc, normalize the top
-of the file to the required schema rather than leaving older ad hoc headings in
-place.
+Execution docs should be strong enough to constrain implementation, but they do
+not need to pre-plan every future commit. This skill is responsible for
+decomposing the current approved execution series into the commit stack needed
+to reach its checkpoint cleanly.
+
+When creating or revising a `docs/execution/...` doc, use
+`codex/skills/plan-series/EXECUTION_TEMPLATE.md` as the house-style starting
+point:
+- keep the required metadata and per-series contract fields
+- adapt the doc shape when the execution effort is clearer with less ceremony
+- do not treat the template as permission to bloat the execution doc with
+  low-value boilerplate
 
 Proof belongs to each series. The verification plan and stable checkpoint for a
 series should provide that series's evidence rather than pushing proof into a
@@ -203,46 +223,47 @@ Bad boundaries include:
 
 Produce either:
 - a numbered single-series plan
-- a `docs/series/...` execution artifact with clearly labeled sections such as
-  `Series 1`, `Series 2`, and `Series 3`
+- a `docs/execution/...` execution artifact with clearly labeled sections such
+  as `Series 1`, `Series 2`, and `Series 3`
 
-For a `docs/series/...` execution artifact, begin with:
+For a `docs/execution/...` execution artifact, begin with:
 
 Title: <short descriptive title>
 Date: YYYY-MM-DD
-Status: `draft` | `approved` | `in_progress` | `completed` | `superseded`
+Status: `draft` | `approved` | `in_progress` | `finished` | `superseded`
 Approval:
 - overall doc approved: yes | no
-- current approved series: `Series N` | `none`
+- current state: human-readable current position in the effort, for example
+  `planning`, `Series 1 approved`, `Series 1 finished`, `all series approved`,
+  or `complete`
+Completion:
+- execution complete: yes | no
+- include `optional follow-up:` only when there is a real deferred or completed
+  follow-up to record
 
-Use `current approved series: none` until the whole execution doc has been
-reviewed and approved.
-Whole-doc approval does not imply that all series are approved to execute.
-
-Goal: <plain-English end state>
-Design inputs: <approved docs/plans/... inputs>
-Execution mode: single-series | multi-series
-Why split: <why multiple execution series are better than one stack> | `not needed`
+Then include:
+- `## Goal`
+- `## Roadmap Context` when it matters
+- `## Design Inputs`
+- `## Why Split` when relevant
 
 Then, for each series, include:
-- Series N: <short label>
-- Depends on: earlier series or `none`
-- Stable checkpoint: what is expected to be true and reviewable at the end of
-  this series
-- Approval: `pending` | `approved`
-- Approval gate: `none` | `stop for approval`
-- Verification plan: brief summary of the evidence expected before moving on
+- `Series N: <short label>`
+- `Depends on: earlier series or none`
+- `Roadmap milestone:` or `Roadmap slice:` when relevant
+- `Design coverage: ...`
+- `Stable checkpoint: ...`
+- `Review focus: ...`
+- `Done means: ...`
+- `Approval: pending | approved | finished`
+- `Verification plan: ...`
+- `Not included: ...` when scope pressure or ambiguity makes it useful
 
 Until the user explicitly approves a series, keep that series at
 `Approval: pending`.
 
 If the plan is recorded in a doc, name that doc explicitly in the response.
 Wrap prose in `docs/` artifacts at `80` columns.
-
-When revising an existing `docs/series/...` doc, update the existing file to
-match this schema at the top before emitting the rest of the plan.
-Also add any missing per-series approval fields so the whole file matches this
-house style.
 
 Within each series, each commit entry must look like this:
 
@@ -333,7 +354,7 @@ independent branches when relevant.
 ## Interaction rules
 - After producing the plan, stop and ask the user to review it before
   implementation starts.
-- If a `docs/series/...` execution doc is required and does not exist yet,
+- If a `docs/execution/...` execution doc is required and does not exist yet,
   create or update it as part of planning before asking for approval.
 - Make clear whether approval covers only the current execution series or the
   whole execution artifact.
@@ -351,8 +372,6 @@ independent branches when relevant.
 ## What good plans look like
 Good plans:
 - introduce primitives before using them
-- land tests with the primitive when practical and when that is the right test
-  layer
 - keep each commit independently correct
 - separate semantics from optimization
 - expose scope boundaries explicitly

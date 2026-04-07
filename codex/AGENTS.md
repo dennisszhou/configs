@@ -42,20 +42,17 @@ applicable `AGENTS.md` first.
 - Match repo style. When unsure about a pattern, inspect the codebase instead of
   inventing a new one.
 - Keep changes scoped to what was asked. No drive-by refactors.
-- For non-trivial features or refactors, prefer this lane:
-  1. native `/plan`
-  2. `$roadmap` when the work spans multiple components or milestones
-  3. approval
-  4. `$design`
-  5. approval
-  6. `$review-plan`
-  7. approval
-  8. turn plan mode off
-  9. `$plan-series`
-  10. approval
-  11. `$impl-series`
-- For trivial work where design is already clear, skip straight to
-  `$plan-series` and then `$impl-series`.
+- For non-trivial work, use the lightest lane that fits:
+  - small work: optional native `/plan`, then `$plan-series`, then
+    `$impl-series`
+  - medium work: write `docs/plans/...`, use `$review-plan`, then
+    `$plan-series`, then `$impl-series`
+  - large or staged work: `$roadmap`, `docs/plans/...`, `$review-plan`,
+    `docs/execution/...`, `$review-execution`, `$plan-series`, `$impl-series`,
+    `$finish-series`
+- Native `/plan` is optional. It is useful for lightweight planning discussion,
+  but durable docs become the source of truth once work is large enough to need
+  them.
 - For bugfixes, reproduce the bug or define regression evidence first; use a
   short design note only when the fix shape is not obvious.
 
@@ -137,18 +134,14 @@ well enough to implement.
 Execution planning is about:
 - breaking the work into commits
 - deciding whether execution should stay in one reviewable series or move into a
-  durable `docs/series/...` execution artifact
+  durable `docs/execution/...` execution artifact
 - staging verification
 - separating correctness from optimization
 - making the work reviewable and bisectable
 - choosing the order of implementation
 
-`$plan-series` is a series-planning step, not an architecture-planning
-step.
-
-Native plan mode belongs to design work, not commit execution. Keep native plan
-mode on through design and `$review-plan`, then turn it off before
-`$plan-series` and `$impl-series`.
+`$plan-series` is a commit-series planning step, not an architecture-planning
+step or a replacement for a higher-level execution contract.
 
 Use `$plan-series` only after one of these is true:
 - the design is already clear from the task and existing code
@@ -161,23 +154,25 @@ First do design planning.
 ## Planning workflow
 Use this workflow for non-trivial work:
 
-1. Determine whether architecture/design planning is needed.
-2. If needed, create or update a design doc under `docs/plans/`.
-3. Mark that design doc `Status: approved` once design and `$review-plan` are
-   complete enough for execution planning.
-4. Once the solution shape is clear, use `$plan-series` to produce the commit
-   sequence or a `docs/series/...` execution artifact when needed.
-5. Review and approve the execution plan or current execution series.
-6. Use `$impl-series` to implement the approved current execution series.
-7. If that series is stable and local-history cleanup would improve review,
+1. Determine whether design planning is needed.
+2. If needed, create or update `docs/plans/...`.
+3. Use `$review-plan` to review the planning context:
+   - roadmap, when one exists
+   - the relevant design docs
+4. If execution needs durable staged tracking, create or update
+   `docs/execution/...`.
+5. Use `$review-execution` to review the execution doc before implementation.
+6. Use `$plan-series` to decompose one approved execution series into commits.
+7. Use `$impl-series` to execute that approved commit stack.
+8. If the series is stable and local-history cleanup would improve review,
    optionally run `$polish-series`.
-8. Re-check the next series against the approved design and execution plan
-   before continuing.
-9. If implementation reveals that the design or execution plan is wrong, stop,
-   update the relevant plan, and only then continue.
+9. Run `$finish-series` to close out the series truthfully in the execution doc.
+10. If implementation reveals that the design or execution plan is wrong, stop,
+    update the relevant doc, and only then continue.
 
 The active `docs/plans/...` file remains mutable during design, `$review-plan`,
-and series planning. Once `$impl-series` begins:
+and series planning. The active `docs/execution/...` file remains mutable during
+`$review-execution` and `$plan-series`. Once `$impl-series` begins:
 - if the active approved plan doc is not yet committed on the execution branch,
   commit it first as a docs-only commit
 - if only that initial docs/plans commit exists and no implementation commit has
@@ -196,12 +191,12 @@ and series planning. Once `$impl-series` begins:
 Prefer one execution series when the work is still reviewable, independently
 correct, and realistically implementable as one stack.
 
-Require a durable `docs/series/...` execution doc when any of these hard
+Require a durable `docs/execution/...` execution doc when any of these hard
 triggers apply:
 - one execution effort spans multiple approved design docs
 - execution requires multiple series
 - implementation is likely to span multiple sessions
-- the plan depends on explicit checkpoints or approval gates between stages
+- the plan depends on explicit checkpoints or staged approvals between series
 
 Allow `$plan-series` to return a response-only execution plan only when all of
 these are true:
@@ -210,38 +205,25 @@ these are true:
 - the stack remains small enough to review coherently as one unit
 - no durable checkpoint or staged approval boundary is needed
 
-Series docs should use dated filenames in this form:
-- `docs/series/YYYY-MM-DD-topic.md`
+Execution docs should use dated filenames in this form:
+- `docs/execution/YYYY-MM-DD-topic.md`
 
 `docs/plans/...` remains the architecture source of truth.
-`docs/series/...` is the execution source of truth when a durable execution
+`docs/execution/...` is the execution source of truth when a durable execution
 artifact is required.
 
-When a `docs/series/...` doc exists for an execution effort, it should cover:
-- the title
-- the date
-- the status
-- the approval section for the whole execution doc
-- the overall goal
-- the approved design inputs it implements
-- whether execution is single-series or multi-series
-- why the work is split when it is not one series
+Execution docs should define the higher-level staged execution contract:
+- the goal and relevant planning inputs
 - the ordered series list and dependencies
-- the stable checkpoint expected at the end of each series
+- the stable checkpoint for each series
 - the per-series approval state
-- the approval gate before later series when needed
-- the verification plan per series
+- the completion state for the effort
 
-When creating or revising a `docs/series/...` doc, normalize the doc to this
-top-of-file schema rather than appending only the newly changed sections.
-
-Approve the whole `docs/series/...` doc before moving on to series-by-series
-execution approval.
-Before that whole-doc approval is complete, `current approved series` should
-remain `none`.
-Whole-doc approval does not imply blanket approval of every series to start.
-Each series should carry its own `Approval: pending | approved` field, and
-later series should remain `pending` until explicitly approved.
+Execution docs should be strong enough to constrain implementation, but they do
+not need to pre-plan every future commit. `$plan-series` is responsible for
+decomposing the current approved execution series into a clean commit stack.
+The exact execution-doc shape belongs in the relevant skill and template, not
+here.
 
 Proof belongs to each series. Do not default to a final standalone
 “proof/cleanup” series when the real evidence should live with the series that
@@ -255,26 +237,22 @@ independently correct milestone.
 Do not treat series planning as a substitute for design.
 
 - Design planning decides what to build.
-- `$review-plan` tests whether the approved design is coherent enough to stage.
+- `$review-plan` tests whether the planning context is coherent enough to stage.
+- `$review-execution` tests whether the execution doc is coherent enough to
+  implement before whole-doc approval, and later only when the execution doc
+  changed materially or the next series boundary is structurally risky.
 - `$plan-series` decides how to stage building it.
 - `$impl-series` executes the current approved execution series.
 - `$polish-series` optionally cleans local history after a series is stable.
-
-`$review-plan` has two valid uses:
-- after `$design`, to review a `docs/plans/...` design before series planning
-- after `$plan-series`, to review a `docs/series/...` execution doc before
-  implementation begins, and again later when the series boundaries themselves
-  introduce new structural risk
-
-Do not use the second pass for routine small single-series plans; it is for
-multi-doc, multi-series, migration, or checkpoint-sensitive execution shapes.
+- `$finish-series` records truthful closeout after implementation and review.
 
 ## Approval boundaries
 - Present a plan before non-trivial code changes when approval is expected.
 - Do not treat a `docs/plans/...` artifact as implementation-ready until it is
   explicitly marked `Status: approved`.
-- Do not start `$impl-series` from a `docs/series/...` artifact until the
-  current execution series has been explicitly approved.
+- Do not start `$impl-series` from a `docs/execution/...` artifact until the
+  whole execution doc is approved and the current execution series is explicitly
+  approved.
 - Before committing, show the staged diff and proposed commit message when the
   workflow expects review.
 - If an explicit execution workflow has already been approved — for example an
@@ -290,7 +268,7 @@ multi-doc, multi-series, migration, or checkpoint-sensitive execution shapes.
   - unexpected files or side effects expand the scope
 
 Preserve truthful execution history while work is ongoing. Do not polish the
-branch history during `$impl-series`; later docs/plans or docs/series update
+branch history during `$impl-series`; later docs/plans or docs/execution update
 commits are acceptable when the plan changes materially.
 
 ## Core principles
@@ -338,6 +316,19 @@ Rules:
   optimizations on top of it.
 - Purely mechanical renames or code motion do not need new tests by themselves,
   but a new primitive usually does.
+
+## Commit correctness
+- Every commit should stand on its own:
+  - the repo remains correct
+  - relevant verification passes
+  - the intermediate state is truthful and reviewable
+- Commit boundaries exist for bisectability and ease of review.
+- Do not add dormant feature-specific helpers, branches, or plumbing whose
+  first real user exists only in a later commit.
+- Acceptable preparatory work is narrower:
+  - extract helpers from already-used code
+  - improve shared boundaries used by current code
+  - restructure live code so a later semantic commit is smaller and clearer
 
 ## Testing and evidence
 - Validate every non-trivial change.
@@ -556,16 +547,16 @@ For docs/plans commits, prefer specific subjects such as:
 - `docs/plans: revise <topic> design`
 - `docs/plans: clarify <topic> invariants`
 
-For docs/series commits, prefer specific subjects such as:
-- `docs/series: add <topic> execution plan`
-- `docs/series: revise <topic> execution plan`
-- `docs/series: update <topic> series checkpoints`
+For docs/execution commits, prefer specific subjects such as:
+- `docs/execution: add <topic> execution plan`
+- `docs/execution: revise <topic> execution plan`
+- `docs/execution: update <topic> series checkpoints`
 
 Avoid vague subjects such as `update docs` or `fix plan`.
 
 ## History polishing
 `$polish-series` is an optional local-history cleanup step after execution is
-stable. It may fold later docs/plans or docs/series update commits back into
+stable. It may fold later docs/plans or docs/execution update commits back into
 one clean docs commit and squash obvious tiny fixups when safe.
 
 It is not part of core execution correctness and should not be used to hide

@@ -126,7 +126,12 @@ If this roadmap should be saved to disk, use a dated filename such as:
 
 ## Output format
 
-Produce the roadmap artifact in this shape:
+Produce the roadmap artifact using
+`codex/skills/roadmap/TEMPLATE.md` as a starting point:
+
+- keep the milestone, dependency, and design-backlog structure
+- adapt the shape when the work needs a simpler or more focused roadmap
+- do not force every section when it would add ceremony without clarity
 
 Objective
 - ...
