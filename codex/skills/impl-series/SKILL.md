@@ -25,6 +25,10 @@ If there is no approved plan, stop and ask the user to run or approve
 Do not use this skill while native plan mode is active. Execution begins after
 design work and, when needed, `$review-execution` are finished.
 
+Completion of the current approved series includes a final `$review-series`
+pass. This skill should review the completed current series before handoff and
+fix in-scope findings inline.
+
 ## Approval model
 Invocation of this skill counts as authorization to execute the approved
 current execution series sequentially.
@@ -43,7 +47,8 @@ Do not stop between commits to ask “should I continue?” Stop only when:
 
 If the approved plan contains selective review gates such as `code`, `perf`, or
 `migration`, honor them at the planned points instead of treating every commit
-as a mandatory review stop.
+as a mandatory review stop. The end-of-series `$review-series` pass is
+independent of those per-commit review gates.
 
 If there is an approved active `docs/plans/...` design doc for the task and it
 is not yet committed on the execution branch, that docs/plans commit becomes
@@ -79,10 +84,13 @@ the starting point for execution history.
 
 5. Separate truthful history from polished history
 - During execution, prefer truthful commits over tidy ones.
-- Later docs/plans or docs/series update commits are acceptable when the plan
-  changes.
+- Later docs/plans or docs/execution update commits are acceptable when the
+  plan changes.
 - Do not prematurely rewrite or squash history during active execution.
 - Final cleanup belongs to `$polish-series`, not this skill.
+- Exception: after the current approved series is implemented, this skill may
+  amend or rewrite commits inside that just-completed local series to fold in
+  in-scope `$review-series` fixes before handoff.
 
 ## Inputs
 This skill expects:
@@ -405,10 +413,22 @@ After each successful commit, print a short summary:
 
 Then immediately continue to the next planned commit.
 
-If that commit completes the current approved series and later series remain,
-stop and report:
+If that commit completes the current approved series, do not hand off yet.
+First run the end-of-series review loop:
+- run `$review-series` on the completed current series
+- if findings are in scope and do not materially change the approved plan, fix
+  them inline by amending or rewriting commits within the just-completed local
+  series
+- re-run verification
+- optionally re-run `$review-series` once to confirm the series is clean enough
+- stop immediately if findings require a material plan or design change
+
+After that review loop, report:
 - the stable checkpoint reached
 - the main verification performed for that series
+- whether end-of-series review ran
+- whether findings were fixed inline
+- whether any residual findings remain
 - whether the next series still appears to match reality
 - whether a docs update is needed before planning or approving the next series
 
@@ -447,8 +467,12 @@ If there are multiple valid approaches and the plan does not choose between them
 stop and present the options with tradeoffs.
 
 ### Need to modify a prior commit
-Do not rewrite prior commits during execution unless the user explicitly asks.
-If a prior issue blocks progress, stop and explain.
+Do not rewrite prior commits during execution unless:
+- the user explicitly asks
+- or the rewrite is part of the end-of-series `$review-series` loop and is
+  limited to the just-completed local series
+
+If a prior issue blocks progress outside that narrow case, stop and explain.
 
 ## Resuming after a stop
 When the user says “continue”, “resume”, or invokes this skill again:
@@ -467,12 +491,13 @@ ready to start.
 - It does not silently skip commits.
 - It does not combine commits.
 - It does not push.
-- It does not amend prior commits unless explicitly asked.
+- It does not amend already-shared history.
 - It does not stop at every commit boundary for permission.
 - It does not reopen settled architecture unless the approved model is actually
   failing in practice.
 - It does not polish history during active execution.
 
 ## Completion
-After the final commit, print a concise summary of the completed stack and the
-main verification that was performed, then stop for `$finish-series`.
+After the end-of-series review loop is complete, print a concise summary of the
+completed stack, the main verification that was performed, and the review
+results, then stop for `$finish-series`.

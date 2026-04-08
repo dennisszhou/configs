@@ -197,7 +197,9 @@ Use this workflow for non-trivial work:
    `docs/execution/...`.
 8. Use `$review-execution` to review the execution doc before implementation.
 9. Use `$plan-series` to decompose one approved execution series into commits.
-10. Use `$impl-series` to execute that approved commit stack.
+10. Use `$impl-series` to execute that approved commit stack. This includes a
+    final `$review-series` pass over the completed current series before
+    handoff.
 11. If the series is stable and local-history cleanup would improve review,
    optionally run `$polish-series`.
 12. Run `$finish-series` to close out the series truthfully in the execution doc.
@@ -580,6 +582,11 @@ For concurrent, async, queued, or retried code:
   changed.
 - Use `subsystem: short description` subject lines when appropriate for the repo.
 - Wrap commit-message bodies cleanly.
+- Default to kernel-style commit formatting unless the repository clearly uses a
+  different local convention:
+  - concise subject, usually within 72 characters
+  - blank line
+  - explanatory body wrapped at about 72 columns
 - Never pass a multi-paragraph commit body via a normal quoted
   `git commit -m "...\n..."` string. Do not rely on backslash-n escapes for
   paragraph breaks.
@@ -608,7 +615,10 @@ Avoid vague subjects such as `update docs` or `fix plan`.
 ## History polishing
 `$polish-series` is an optional local-history cleanup step after execution is
 stable. It may fold later docs/plans or docs/execution update commits back into
-one clean docs commit and squash obvious tiny fixups when safe.
+one clean docs commit and squash obvious tiny fixups when safe. The rewrite
+target should follow the repository or nearest-`AGENTS.md` commit-hygiene
+rules, falling back to kernel-style formatting when no more specific convention
+exists.
 
 It is not part of core execution correctness and should not be used to hide
 ambiguous or still-changing implementation history.
