@@ -1,12 +1,12 @@
 ---
 name: review-plan
-description: Skeptically review the roadmap and design context for an effort to decide whether its data model, state boundaries, ownership, and invariants are coherent enough for execution planning. Use after design and before series planning.
+description: Skeptically review the product, roadmap, and design context for an effort to decide whether its state boundaries, ownership, and invariants are coherent enough for execution planning. Use after design and before series planning.
 ---
 
 # Review Plan
 
-Review whether the proposed roadmap and design context are coherent enough to
-stage for execution.
+Review whether the proposed product, roadmap, and design context are coherent
+enough to stage for execution.
 
 This skill is intentionally skeptical. Its job is not to invent a new design
 from scratch. Its job is to test whether the proposed plan and model are
@@ -15,6 +15,7 @@ coherent enough to implement without hidden ambiguity.
 ## When to use this
 Use this skill when:
 - an approved or near-approved design already exists
+- or a product or roadmap artifact materially constrains the work
 - the work introduces or changes data models, ownership boundaries, or APIs
 - the user wants a structure-focused review before series planning
 
@@ -59,8 +60,8 @@ and point to the smallest revision needed.
 ## Process
 
 1. Restate the proposed model
-- Summarize the roadmap and design context briefly so the review has a clear
-  target.
+- Summarize the product, roadmap, and design context briefly so the review has a
+  clear target.
 
 2. Check source of truth
 - Identify the authoritative state.
@@ -107,6 +108,11 @@ Review target
 
 Review mode
 - `design review`
+
+Planning inputs
+- `product: ...`
+- `roadmap: ...`
+- `design docs: ...`
 
 Findings
 - ...

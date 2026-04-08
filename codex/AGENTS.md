@@ -47,9 +47,12 @@ applicable `AGENTS.md` first.
     `$impl-series`
   - medium work: write `docs/plans/...`, use `$review-plan`, then
     `$plan-series`, then `$impl-series`
-  - large or staged work: `$roadmap`, `docs/plans/...`, `$review-plan`,
+  - large technical work: `$roadmap`, `docs/plans/...`, `$review-plan`,
     `docs/execution/...`, `$review-execution`, `$plan-series`, `$impl-series`,
     `$finish-series`
+  - large product or app work: `$product`, `$roadmap`, `docs/plans/...`,
+    `$review-plan`, `docs/execution/...`, `$review-execution`, `$plan-series`,
+    `$impl-series`, `$finish-series`
 - Native `/plan` is optional. It is useful for lightweight planning discussion,
   but durable docs become the source of truth once work is large enough to need
   them. Once a roadmap, design doc, or execution doc exists for the effort,
@@ -79,9 +82,35 @@ This phase is for deciding:
 For substantial features, refactors, or migrations, write or update a design doc
 under `docs/plans/` before implementation begins.
 
+For substantial app or initiative work where user journeys, release slices, or
+cross-surface integration are not yet clear, first produce a product doc under
+`docs/products/` before roadmap or design planning begins.
+
 When the work is too large for one design doc, first produce a roadmap that
 identifies components, slices, milestones, dependencies, and which slices need
 their own dedicated design docs under `docs/plans/`.
+
+Product docs should use dated filenames in this form:
+- `docs/products/YYYY-MM-DD-topic.md`
+
+Examples:
+- `docs/products/2026-03-20-collab-notes-v1.md`
+- `docs/products/2026-03-20-admin-ops-console.md`
+
+`docs/products/...` is the source of truth for:
+- target audience or operator
+- core user journeys
+- release slices
+- major integration expectations
+- in-scope versus out-of-scope initiative boundaries
+
+Product docs should be used mostly for:
+- new apps
+- major product initiatives
+- broad user-facing efforts spanning multiple subsystems
+
+Do not force a product doc for technical migrations, narrow internal changes,
+or feature work already well-bounded by existing product context.
 
 Use dated filenames in this form:
 - `docs/plans/YYYY-MM-DD-topic.md`
@@ -155,21 +184,25 @@ First do design planning.
 ## Planning workflow
 Use this workflow for non-trivial work:
 
-1. Determine whether design planning is needed.
-2. If needed, create or update `docs/plans/...`.
-3. Use `$review-plan` to review the planning context:
+1. Determine whether product planning is needed.
+2. If needed, create or update `docs/products/...`.
+3. Determine whether roadmap planning is needed.
+4. If needed, create or update `docs/roadmaps/...`.
+5. If needed, create or update `docs/plans/...`.
+6. Use `$review-plan` to review the planning context:
+   - product doc, when one exists
    - roadmap, when one exists
    - the relevant design docs
-4. If execution needs durable staged tracking, create or update
+7. If execution needs durable staged tracking, create or update
    `docs/execution/...`.
-5. Use `$review-execution` to review the execution doc before implementation.
-6. Use `$plan-series` to decompose one approved execution series into commits.
-7. Use `$impl-series` to execute that approved commit stack.
-8. If the series is stable and local-history cleanup would improve review,
+8. Use `$review-execution` to review the execution doc before implementation.
+9. Use `$plan-series` to decompose one approved execution series into commits.
+10. Use `$impl-series` to execute that approved commit stack.
+11. If the series is stable and local-history cleanup would improve review,
    optionally run `$polish-series`.
-9. Run `$finish-series` to close out the series truthfully in the execution doc.
-10. If implementation reveals that the design or execution plan is wrong, stop,
-    update the relevant doc, and only then continue.
+12. Run `$finish-series` to close out the series truthfully in the execution doc.
+13. If implementation reveals that the product, roadmap, design, or execution
+    plan is wrong, stop, update the relevant doc, and only then continue.
 
 The active `docs/plans/...` file remains mutable during design, `$review-plan`,
 and series planning. The active `docs/execution/...` file remains mutable during
@@ -185,6 +218,8 @@ and series planning. The active `docs/execution/...` file remains mutable during
 ## Heuristics
 - Small, obvious tasks may not need a written design plan.
 - Non-trivial tasks should usually use `$plan-series`.
+- Large app or initiative work should usually start with `docs/products/...`
+  before roadmap or design work.
 - Large, ambiguous, multi-step, or multi-session tasks should usually have a
   written design plan under `docs/plans/` before `$plan-series`.
 
@@ -237,6 +272,10 @@ independently correct milestone.
 ## Important distinction
 Do not treat series planning as a substitute for design.
 
+- Product planning decides what experience should exist and what release slice
+  matters first.
+- Roadmap planning decides what technical slices and milestones are needed to
+  realize that product or initiative.
 - Design planning decides what to build.
 - `$review-plan` tests whether the planning context is coherent enough to stage.
 - `$review-execution` tests whether the execution doc is coherent enough to

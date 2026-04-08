@@ -1,3 +1,6 @@
+Product input
+- Use `not needed` when there is no product doc.
+
 Objective
 - ...
 
@@ -8,7 +11,8 @@ Components / capability areas
 - ...
 
 Slice matrix
-- Use rows like `<component> | <slice> | <goal> | <parity target or maturity>`.
+- Use rows like
+  `<slice type> | <component or integration> | <slice> | <goal> | <parity target or maturity>`.
 
 Milestone map
 - Use rows like `<milestone> | <included slices> | <exit condition>`.
@@ -19,9 +23,13 @@ Dependencies
 Parity / migration requirements
 - Use `not applicable` when irrelevant.
 
+First shippable slice
+- Use `not needed` when the work is not app- or product-like.
+
 Design-doc backlog
 - For each item, say:
   - slice or topic
+  - slice type: component | integration
   - dedicated design doc required: yes | no
   - suggested doc path if yes
   - why it needs dedicated design

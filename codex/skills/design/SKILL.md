@@ -11,6 +11,10 @@ have this shape.
 This skill is for architecture and design work. It is not for series planning,
 code generation, or implementation.
 
+When a `docs/products/...` doc or `docs/roadmaps/...` doc exists, this skill
+should treat them as upstream context. It should not silently redefine product
+scope, core user journeys, release slices, or roadmap milestones.
+
 ## When to use this
 Use this skill when:
 - the task is a non-trivial feature or refactor
@@ -104,6 +108,8 @@ The artifact should make these things hard to miss:
 9. End with approval criteria
 - Say what must be true for the design to be ready for `$review-plan`.
 - Include explicit status metadata for the plan doc.
+- When product or roadmap docs exist, cite the relevant upstream inputs when
+  they materially constrain the design.
 
 ## Output format
 
