@@ -283,6 +283,62 @@ Commit N/Total: <subsystem: description>
   Not included:  what this commit explicitly does not do
   Depends on:    commit number(s) this depends on
 
+When presenting one or more commit entries in chat, emit the commit block(s)
+inside a fenced `text` code block so indentation is preserved exactly. Do not
+present aligned commit entries as ordinary prose paragraphs.
+
+For commit-entry formatting, `codex/skills/plan-series/scripts/format_commit_block.py`
+is the source of truth for the required inline-indent layout. When a commit
+entry includes any wrapped field or multi-line file list, you must generate the
+final printed block from that script's layout rather than hand-formatting it.
+Do not freehand wrapped commit blocks in the final response, and do not remove
+the fenced `text` block wrapper around the final formatted output.
+
+When printing or writing long field values such as `Summary`, `Files`,
+`Preconditions`, `Postconditions`, and `Verify`, you must keep the value inline
+after the label and align continuation lines under the start of the value. If
+output does not follow this format, that is a formatting mistake and should be
+corrected directly rather than explained away. For example:
+
+  Summary:       first wrapped line
+                 continuation line
+
+For `Files`, you must list one path per line when there is more than one file
+or when a single wrapped line would break path readability. Align each path
+under the start of the value. For example:
+
+  Files:         crates/igrepd/tests/config_compat.rs
+                 crates/igrepd/tests/support/mod.rs
+                 crates/igrepd/src/config.rs
+
+Apply the same alignment rule to every wrapped long field, including
+`Invariant focus`, `Preconditions`, `Postconditions`, `Risks`, and
+`Not included`. This is the required shape:
+
+  Summary:       first wrapped line
+                 continuation line
+  Invariant focus: first wrapped line
+                   continuation line
+  Files:         path/one
+                 path/two
+  Postconditions: first wrapped line
+                  continuation line
+
+If a wrapped line appears flush-left under the field label, or if a second file
+path appears on an unindented line under `Files:`, the output is invalid and
+must be regenerated before sending it to the user.
+
+The required chat shape is:
+
+```text
+Commit 1/2: subsystem: short description
+
+  Type:             semantic
+  Required:         yes
+  Summary:          first wrapped line
+                    continuation line
+```
+
 ## Field guidance
 
 ### Commit title
