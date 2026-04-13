@@ -209,8 +209,13 @@ Use this workflow for non-trivial work:
 The active `docs/plans/...` file remains mutable during design, `$review-plan`,
 and series planning. The active `docs/execution/...` file remains mutable during
 `$review-execution` and `$plan-series`. Once `$impl-series` begins:
-- if the active approved plan doc is not yet committed on the execution branch,
-  commit it first as a docs-only commit
+- if the active approved plan doc is not yet committed on the execution branch
+  and more than one implementation commit will follow, commit it first as a
+  docs-only commit
+- if execution will be exactly one semantic commit, folding the approved
+  `docs/plans/...` update into that lone implementation commit is allowed
+- do not use that single-commit exception to skip a committed approved plan doc
+  for larger multi-commit series
 - if only that initial docs/plans commit exists and no implementation commit has
   landed yet, amending it in place is acceptable
 - once implementation commits exist, meaningful design or execution-plan updates

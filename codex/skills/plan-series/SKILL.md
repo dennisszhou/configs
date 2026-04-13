@@ -79,6 +79,12 @@ Look for boundaries between:
 - The first commit is what everything else depends on.
 - Resist putting the most interesting code first if it depends on unlanded
   structure.
+- Choose the `docs/plans/...` commit shape intentionally:
+  - if more than one implementation commit will follow, keep the approved plan
+    doc in its own docs-only commit at the front of the series
+  - if exactly one semantic implementation commit will follow, fold the
+    approved `docs/plans/...` update into that lone implementation commit by
+    default
 
 4. Separate correctness from optimization
 - Prefer this order:
@@ -158,6 +164,10 @@ Every commit must say:
 - Anti-pattern:
   - a final `tests/coverage only` commit for narrow work where the tests merely
     prove the immediately preceding semantic change
+  - a two-commit stack that is only:
+    1. approved `docs/plans/...` docs-only commit
+    2. one semantic implementation commit
+    unless a real review or checkpoint reason justifies keeping them separate
 
 ## Large execution planning
 Prefer a single execution series when the work can still be made reviewable,
@@ -362,6 +372,9 @@ Examples:
 Brief plain English so someone skimming the plan can follow the arc.
 If a commit is tests-only, say why it stands on its own instead of folding into
 the semantic commit it proves.
+If there is a standalone `docs/plans/...` commit and only one implementation
+commit follows, say why that docs-only commit stands on its own instead of
+folding into the implementation commit.
 
 ### Invariant focus
 Name the contract or truth this commit is responsible for. This is the
@@ -443,6 +456,9 @@ Good plans:
 - separate semantics from optimization
 - expose scope boundaries explicitly
 - give verification commands the implementer can actually run
+- keep approved `docs/plans/...` in a front docs-only commit for real
+  multi-commit series, but fold it into a lone semantic implementation commit
+  when that yields a cleaner one-commit execution stack
 - mark where extra review is warranted without requiring review theater for
   every commit
 - fold regression tests into the semantic commit they prove when the work is a
