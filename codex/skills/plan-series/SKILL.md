@@ -88,6 +88,10 @@ Look for boundaries between:
   4. adoption / behavior change
   5. optimization
   6. docs / cleanup
+- Do not apply `primitive / tests / adoption` mechanically when there is no
+  real primitive boundary.
+- For bugfixes and narrow semantic changes, merge regression evidence into the
+  semantic commit by default instead of planning a trailing tests-only commit.
 
 5. Define the contract per commit
 Every commit must say:
@@ -151,6 +155,9 @@ Every commit must say:
   - extract helpers from already-used code
   - improve shared boundaries used by current code
   - restructure live code so a later semantic commit is smaller and clearer
+- Anti-pattern:
+  - a final `tests/coverage only` commit for narrow work where the tests merely
+    prove the immediately preceding semantic change
 
 ## Large execution planning
 Prefer a single execution series when the work can still be made reviewable,
@@ -353,6 +360,8 @@ Examples:
 
 ### Summary
 Brief plain English so someone skimming the plan can follow the arc.
+If a commit is tests-only, say why it stands on its own instead of folding into
+the semantic commit it proves.
 
 ### Invariant focus
 Name the contract or truth this commit is responsible for. This is the
@@ -402,6 +411,8 @@ Call out non-obvious correctness, migration, review, or blast-radius risk. Use
 ### Not included
 Explicitly state what tempting adjacent work is deferred. This is the main guard
 against scope creep.
+If you keep a standalone test commit, use `Not included` or `Risks` to justify
+why that separation improves reviewability or establishes a real boundary.
 
 ### Depends on
 Usually this is the previous commit, but call out non-obvious dependencies and
@@ -434,6 +445,13 @@ Good plans:
 - give verification commands the implementer can actually run
 - mark where extra review is warranted without requiring review theater for
   every commit
+- fold regression tests into the semantic commit they prove when the work is a
+  bugfix or narrow behavior change
+
+Bad plans:
+- end with a final `tests/coverage only` commit for a small bugfix or narrow
+  semantic change when that commit does not establish an independently useful
+  contract or failing-spec step
 
 ## What this skill does not do
 - It does not implement the code.

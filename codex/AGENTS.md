@@ -349,6 +349,12 @@ Rules:
 - Preserve bisectability whenever practical: intermediate commits should build
   and pass the relevant tests.
 - Prefer small, isolated commits with one logical change per commit.
+- For bugfixes and narrow semantic changes, tests should usually land in the
+  same commit as the behavior change they prove.
+- Do not default to a trailing test-only commit whose only purpose is added
+  regression coverage for a small fix or narrow semantic change.
+- Proof belongs with the commit that establishes the behavior unless the test
+  commit is itself introducing the primitive or contract boundary being defined.
 
 ## Primitive-first development
 - When introducing a new primitive, helper, abstraction, or API boundary, also
@@ -412,6 +418,11 @@ Rules:
 - Reproduce the bug first when practical.
 - Prefer the smallest failing case that still demonstrates the problem.
 - Add a regression test for the bug when feasible.
+- Fold end-to-end or user-path regression tests into the same commit as the
+  behavior fix by default.
+- Use a separate test commit only when it stands on its own as a useful
+  failing-spec step, defines a new primitive boundary before adoption, or is
+  large enough that separation materially improves reviewability.
 - Fix the root cause, not only the visible symptom, unless a narrow hotfix is
   explicitly the goal.
 - If the bug cannot be reproduced directly, say what evidence is available and
