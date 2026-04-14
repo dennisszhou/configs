@@ -3,6 +3,7 @@ alias f='find ./ -name '
 
 alias gr='grep -r'
 alias gri='grep -ri'
+alias iq='igrep query'
 
 alias ggi='git grep -i'
 alias gs='git branch -vv && git status'
