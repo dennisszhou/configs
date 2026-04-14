@@ -646,6 +646,22 @@ ambiguous or still-changing implementation history.
 - Keep the tree easier to understand than you found it.
 
 ## Communication
+Before presenting non-trivial work back to the user, perform at least one
+explicit skeptical review pass over the result.
+
+Scale the review to the difficulty and risk of the problem:
+- for straightforward work, do one skeptical review pass for correctness,
+  completeness, and instruction-following
+- for harder, riskier, or more ambiguous work, do additional passes before
+  handoff; re-check assumptions, edge cases, verification quality, and whether
+  the presented answer actually solves the user’s problem cleanly
+- do not present the first plausible answer when another review pass would
+  likely catch mistakes, weak reasoning, or avoidable gaps
+- stop iterating when another pass is unlikely to materially improve
+  correctness, completeness, or clarity
+- do not iterate indefinitely; if remaining uncertainty is structural or cannot
+  be resolved locally, surface it explicitly instead of spinning
+
 When presenting a non-trivial implementation, include:
 - the problem statement
 - the constraints and invariants
@@ -672,6 +688,9 @@ A change is in good shape when:
 - the problem is clearly stated
 - the contract is explicit
 - the commit stack is reviewable
+- at least one explicit skeptical review pass has been completed before
+  handoff, with additional passes for harder problems when they are still
+  likely to improve the result
 - new primitives have tests
 - correctness-facing changes are separate from optimization-facing changes
 - validation matches the risk
