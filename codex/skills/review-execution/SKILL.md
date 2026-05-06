@@ -1,137 +1,218 @@
 ---
 name: review-execution
-description: Skeptically review a docs/execution artifact to decide whether the whole execution plan or the current execution series is coherent enough for implementation. Use after the execution doc exists and before implementation starts or continues.
+description: Skeptically review the execution contract produced by plan-series or an equivalent user-supplied execution plan, including response-only series plans, docs/execution artifacts, and current-series commit chains. Use after plan-series and before impl-series when execution review is required or requested, especially for durable, risky, multi-series, or boundary-sensitive work.
 ---
 
 # Review Execution
 
-Review whether the proposed execution doc is coherent enough to implement.
+Review the execution contract produced by `$plan-series`, or an equivalent
+user-supplied execution plan, before implementation.
 
-This skill is intentionally skeptical. Its job is not to invent a new plan from
-scratch. Its job is to test whether the execution boundaries, checkpoints, and
-approval state are clear enough to implement without hidden ambiguity.
+This skill is intentionally skeptical and constructive. Its job is not only to
+ask whether the plan is coherent. It should also ask whether the execution
+shape can be made more reviewable, safer, or better staged without changing the
+approved product, roadmap, or design model.
+
+Do not turn this into design review. If the better execution shape requires a
+different architecture, API shape, source of truth, migration strategy, or
+rollout semantics, return `needs design revision` and send the work back to the
+planning domain.
+
+This review gate is not mandatory for every response-only plan. A small,
+low-risk, one-series plan with clear verification may proceed by explicit user
+approval without this skill. Durable execution docs, multi-series work, risky
+boundaries, unclear verification, or material review gates should use this
+skill before implementation.
 
 ## When to use this
+
 Use this skill when:
-- a `docs/execution/...` doc already exists
-- the user wants to review the whole execution doc before approving it
-- the execution doc changed materially after earlier implementation
-- the next execution series has a risky boundary that deserves another
-  structure-focused review
+- `$plan-series` has produced a response-only current-series plan
+- `$plan-series` has created or revised a `docs/execution/...` artifact
+- `$plan-series` has produced a current-series commit chain for a durable
+  execution doc
+- the execution contract is not clearly small and low-risk
+- the user supplied an equivalent execution contract and wants to approve
+  implementation
+- the user wants to approve implementation after series planning
+- the active execution doc changed materially after earlier implementation
+- the next series boundary or commit chain needs review before continuing
 
 Do not use this skill when:
-- there is no execution artifact to review
+- there is no candidate execution contract from `$plan-series` or an equivalent
+  user-supplied execution plan
 - the user wants design review before execution planning
 - the user wants diff review of implemented code
-- the next series is straightforward and the execution doc has not changed
-
-Typical usage is:
-- once before whole-doc approval
-- later only when the execution doc changed materially or the next series
-  boundary is structurally risky
+- the user wants to change architecture rather than review execution staging
 
 ## Goal
+
 Answer one question:
 
-Is the execution doc coherent enough to implement?
+Is this execution contract the right implementation shape to start from?
 
 The outcome must be one of:
 - `ready for implementation`
+- `needs series revision`
+- `needs execution-doc revision`
 - `needs design revision`
 
-## Review lens
+## Review Targets
 
-Review the target artifact against these points:
-- whether the roadmap and design inputs are explicit enough
-- whether the series boundaries match the approved design truth
-- whether dependencies and stable checkpoints are explicit
-- whether review focus and done-means are concrete enough to constrain planning
-- whether approval and completion state are coherent
-- whether the execution doc is strong enough to guide `$plan-series` without
-  moving important truth back into chat
+For a response-only plan, review:
+- the current-series commit chain
+- commit boundaries, ordering, verification, review gates, and scope limits
 
-This is a review, not a redesign session. If the model is weak, say so directly
-and point to the smallest revision needed.
+For a durable `docs/execution/...` plan, review:
+- the execution doc's series boundaries, checkpoints, approval state, and
+  completion state
+- the current-series commit chain produced by `$plan-series`
+- whether the commit chain actually reaches the series checkpoint
+
+For multi-series work, review whole-doc boundaries when the execution doc is
+first created or materially changed. Later, review the current or next series
+plus any doc state needed to know what is authorized.
+
+## Review Lens
+
+Check whether the contract can be improved before implementation:
+- Should commits be split, merged, reordered, or renamed?
+- Are docs/plans and implementation commits staged correctly?
+- Are tests or proof in the commit that establishes the behavior?
+- Are review gates on the risky commits, not everywhere or nowhere?
+- Is cleanup placed where it reduces risk instead of being dumped at the end?
+- Does each series boundary create a real stable checkpoint?
+- Is a multi-series split justified, or is it arbitrary?
+- Is a single series too large for review?
+- Are there hidden dependency, migration, or rollback-ordering problems?
+- Is `$plan-series` smuggling unresolved design back into execution?
+
+This is a review, not a rewrite session. If the plan should change, describe the
+smallest concrete revision that would make it ready.
 
 ## Process
 
-1. Restate the execution model
-- Summarize the ordered series, checkpoint boundaries, and approval state.
+1. Identify the review target
+- State whether this is a response-only series review, execution-doc review,
+  current-series review, or next-series review.
 
-2. Check planning inputs
-- Confirm roadmap context, when relevant, and design inputs are explicit.
-- Flag any place where the execution doc assumes context that only exists in
-  chat.
+2. Restate the execution contract
+- Summarize the goal, relevant planning inputs, execution-doc state when one
+  exists, and current commit chain.
 
-3. Check series boundaries
-- Are the series split at real milestone boundaries?
-- Does each series have an explicit stable checkpoint and review focus?
-- Do the boundaries preserve the approved design truth?
+3. Check planning inputs
+- Confirm the roadmap and design inputs are explicit enough for execution.
+- Flag any place where execution assumes context that only exists in chat.
 
-4. Check approval and completion state
+4. Check execution-doc state when present
 - Is whole-doc approval distinct from per-series approval?
 - Is the current state explicit enough to know what is authorized next?
-- Is completion or deferred follow-up represented truthfully?
+- Are completion and deferred follow-up represented truthfully?
 
-5. Check planning usefulness
-- Is the execution doc strong enough that `$plan-series` can decompose the
-  current series without inventing its scope?
-- Are `Done means` and `Not included` explicit enough to prevent scope creep?
+5. Check series boundaries
+- Are series split at real milestone boundaries?
+- Does each series have an explicit stable checkpoint and review focus?
+- Do the boundaries preserve the approved design truth?
+- Would a different split reduce risk or improve reviewability?
 
-6. Decide readiness
-- If the doc is coherent, say `ready for implementation`.
-- Otherwise say `needs design revision` and list the blocking issues.
+6. Check commit-chain boundaries
+- Does each commit stand on its own?
+- Are primitive, tests, adoption, optimization, docs, and cleanup staged in a
+  reviewable order?
+- Are narrow bugfixes keeping regression proof with the semantic fix?
+- Are there dormant helpers or feature plumbing whose first real use is later?
+- Are docs-only commits justified by a real multi-commit or checkpoint reason?
 
-## Output format
+7. Check verification and review gates
+- Are verify commands literal and high-signal?
+- Does the chosen proof target the real contract at the right layer?
+- Are performance, migration, or reliability claims backed by evidence?
+- Are `structures`, `code`, `perf`, and `migration` review gates placed where
+  extra scrutiny is useful?
+
+8. Decide the better execution shape
+- If the current plan is already the best reasonable shape, say so.
+- If it can be improved, list concrete changes such as split, merge, reorder,
+  move proof, adjust gate, tighten verification, or revise execution doc.
+- If the improvement would change the approved design, return
+  `needs design revision` instead of patching over it in execution.
+
+## Output Format
 
 Review target
 - ...
 
 Review mode
-- `whole-doc execution review` | `next-series execution review`
+- `response-only series review`
+- `execution-doc + current-series review`
+- `whole-doc execution review`
+- `next-series execution review`
 
 Findings
-- ...
+- Ordered by severity. Use `none` if there are no findings.
+
+Better execution shape
+- `none; current plan is good enough`
+- or concrete changes:
+  - split commit ...
+  - fold commit ...
+  - reorder commit ...
+  - move proof ...
+  - adjust review gate ...
+  - revise execution doc ...
 
 Planning input check
 - ...
 
+Execution doc check
+- Use `not applicable` when there is no execution doc.
+
 Series boundary check
 - ...
 
-Approval and completion check
+Commit-chain check
 - ...
 
-Execution usefulness check
+Verification and review-gate check
 - ...
+
+Approval check
+- State whether implementation approval can be recorded in chat only or whether
+  a durable execution doc approval update is required before `$impl-series`.
+- For durable execution docs, state the approval fields that must change before
+  implementation starts.
 
 Blocking issues
 - Use `none` if there are no blockers.
 
-Execution doc state
-- `Status: ...`
-- `overall doc approved: yes | no`
-- `current state: ...`
-
 Result
-- `ready for implementation` | `needs design revision`
+- `ready for implementation`
+- `needs series revision`
+- `needs execution-doc revision`
+- `needs design revision`
 
 Recommended next step
 - ...
 
-## Exit criteria for “ready”
-Only return `ready for implementation` when:
-- roadmap context and design inputs are clear enough for the series being
-  reviewed
-- series boundaries and dependencies are explicit
-- stable checkpoints, review focus, and done-means are concrete enough to guide
-  `$plan-series`
-- whole-doc approval is clearly distinguished from per-series approval
-- the current execution state is explicit enough to know what is authorized next
-- no series silently smuggles unresolved architecture into execution
+## Exit Criteria For Ready
 
-## What this skill does not do
+Only return `ready for implementation` when:
+- planning inputs are clear enough for the reviewed series
+- any execution doc has coherent approval and completion state
+- series boundaries and dependencies are explicit
+- stable checkpoints, review focus, and done-means are concrete
+- the current commit chain is atomic, ordered, independently correct, and
+  reviewable
+- verification proves the right contract at the right layer
+- review gates match the real risk points
+- no series silently smuggles unresolved architecture into execution
+- no obvious split, merge, reorder, or proof-placement change would materially
+  improve reviewability before implementation starts
+
+## What This Skill Does Not Do
+
 - It does not produce a commit stack.
 - It does not write code.
 - It does not review implemented diffs.
-- It does not paper over structural ambiguity with “implementation details”.
+- It does not redesign the approved architecture.
+- It does not paper over structural ambiguity with "implementation details".

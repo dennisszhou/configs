@@ -1,13 +1,14 @@
 ---
 name: impl-series
-description: Execute an approved plan-series stack by implementing, verifying, and committing each planned step in order. Use when the user says to execute the series plan, start implementing, resume the stack, or continue an already approved staged implementation.
+description: Execute an approved execution contract by implementing, verifying, and committing each planned step in order. Use when the user says to execute the approved series plan, start implementing, resume the stack, or continue an already approved staged implementation.
 ---
 
 # Impl Series
 
 Execute an approved current execution series one commit at a time. The git
 history is the audit trail. Keep going until you hit a real question, a
-failure, the current series is complete, or the full plan is complete.
+failure, the current series is complete, or the full execution contract is
+complete.
 
 During execution, preserve truthful working history. Do not try to polish the
 series while the work is still moving. History cleanup belongs later, if
@@ -15,15 +16,16 @@ needed, to `$polish-series`.
 
 ## When to use this
 Use this skill when:
-- the user has already approved a series plan
-- the user explicitly asks to execute that plan
+- the user has already approved an execution contract
+- the user explicitly asks to execute that contract
 - the user asks to continue or resume an in-progress commit stack
 
-If there is no approved plan, stop and ask the user to run or approve
-`$plan-series` first.
+If there is no approved execution contract, stop and ask the user to run
+`$plan-series`, then either `$review-execution` or explicit approval for a small
+low-risk response-only bypass.
 
 Do not use this skill while native plan mode is active. Execution begins after
-design work and, when needed, `$review-execution` are finished.
+design work, `$plan-series`, and `$review-execution` are finished.
 
 Completion of the current approved series includes a final `$review-series`
 pass. This skill should review the completed current series before handoff and
@@ -39,16 +41,16 @@ conditions.
 
 Do not stop between commits to ask “should I continue?” Stop only when:
 - verification fails and the fix would go out of scope
-- the plan no longer matches reality
+- the execution contract no longer matches reality
 - a meaningful design decision is required
 - the worktree is unexpectedly dirty
 - the current approved series is complete
-- the full approved plan is complete
+- the full approved execution contract is complete
 
-If the approved plan contains selective review gates such as `code`, `perf`, or
-`migration`, honor them at the planned points instead of treating every commit
-as a mandatory review stop. The end-of-series `$review-series` pass is
-independent of those per-commit review gates.
+If the approved execution contract contains selective review gates such as
+`code`, `perf`, or `migration`, honor them at the planned points instead of
+treating every commit as a mandatory review stop. The end-of-series
+`$review-series` pass is independent of those per-commit review gates.
 
 If there is an approved active `docs/plans/...` design doc for the task and it
 is not yet committed on the execution branch, that docs/plans commit becomes
@@ -94,17 +96,21 @@ the starting point for execution history.
 
 ## Inputs
 This skill expects:
-- an approved series plan from `$plan-series`
-- or an equivalent numbered series plan supplied by the user
+- a candidate execution contract from `$plan-series` or an equivalent numbered
+  series plan supplied by the user
+- either:
+  - a `$review-execution` result of `ready for implementation`
+  - or explicit user approval to skip `$review-execution` because the contract
+    is small, low-risk, response-only, and has clear verification
+- explicit user approval to implement
 - and optionally:
   - an active approved `docs/plans/...` design doc for the task
   - a `docs/execution/...` execution doc when durable execution planning is
     needed
 
 When a `docs/execution/...` execution doc exists, treat it as the execution
-source
-of truth. Do not fall back to chat output for execution state unless the plan
-was intentionally response-only.
+source of truth. Do not fall back to chat output for execution state unless the
+plan was intentionally response-only.
 Do not treat any series as approved to start until the doc's approval section
 shows that the whole execution doc is approved, the current state authorizes
 that series, and that series's own approval field is `approved`.
@@ -164,7 +170,8 @@ Treat deviations from the approved plan in three buckets:
 - Return to design or `$review-plan` when needed. Do not improvise around
   a stale design.
 
-The approved plan remains the source of truth unless explicitly amended.
+The approved execution contract remains the source of truth unless explicitly
+amended.
 
 When a design plan doc exists for the task:
 - treat the current active design doc as the only design plan doc eligible for
@@ -299,7 +306,7 @@ explain. Do not silently patch around broken earlier steps.
 If reality changed materially after implementation has begun:
 - update the active design doc or execution doc first
 - commit that docs update as its own docs commit
-- then continue from the updated approved plan
+- then continue from the updated approved execution contract
 
 ### 5. Implement
 Write the minimum code needed to satisfy the postconditions.
@@ -400,9 +407,9 @@ Then immediately continue to the next planned commit.
 If that commit completes the current approved series, do not hand off yet.
 First run the end-of-series review loop:
 - run `$review-series` on the completed current series
-- if findings are in scope and do not materially change the approved plan, fix
-  them inline by amending or rewriting commits within the just-completed local
-  series
+- if findings are in scope and do not materially change the approved execution
+  contract, fix them inline by amending or rewriting commits within the
+  just-completed local series
 - re-run verification
 - optionally re-run `$review-series` once to confirm the series is clean enough
 - stop immediately if findings require a material plan or design change

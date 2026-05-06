@@ -20,8 +20,10 @@ Use this skill when:
 - the work is large enough that reviewability, bisectability, and staged
   verification matter
 
-Do not use this skill to write code or generate diffs. This skill produces the
-commit plan for the current approved execution series.
+Do not use this skill to write implementation code or generate implementation
+diffs. This skill produces a candidate execution contract: either a
+response-only current-series plan or a durable execution doc plus the
+current-series commit plan.
 
 Do not use this skill while native plan mode is still active. Series planning is
 an execution-planning step, not a design-planning step.
@@ -148,7 +150,10 @@ Every commit must say:
   - code
   - perf
   - migration
-- The output of this skill is the commit series contract for `$impl-series`.
+- The output of this skill is the candidate execution contract. It becomes the
+  contract for `$impl-series` after either `$review-execution` returns
+  `ready for implementation` and the user approves implementation, or the user
+  explicitly approves a small low-risk response-only bypass.
 - Every commit must stand on its own:
   - the repo remains correct
   - relevant verification passes
@@ -432,12 +437,16 @@ Usually this is the previous commit, but call out non-obvious dependencies and
 independent branches when relevant.
 
 ## Interaction rules
-- After producing the plan, stop and ask the user to review it before
-  implementation starts.
+- After producing the plan, stop. The next gate is either `$review-execution` or
+  explicit implementation approval for a small low-risk response-only plan.
 - If a `docs/execution/...` execution doc is required and does not exist yet,
-  create or update it as part of planning before asking for approval.
-- Make clear whether approval covers only the current execution series or the
-  whole execution artifact.
+  create or update it as part of planning before asking the user to run
+  `$review-execution`.
+- Make clear whether the candidate execution contract covers only the current
+  execution series or the whole execution artifact.
+- If you recommend skipping `$review-execution`, state why the plan qualifies:
+  response-only, one small series, no durable checkpoint, no risky boundary, no
+  material review gate, and clear verification.
 - Common adjustments:
   - split a commit
   - combine two commits
@@ -445,7 +454,11 @@ independent branches when relevant.
   - tighten or relax verification
   - move tests earlier
   - separate optimization from correctness more clearly
-- Once the user approves the plan, treat it as the execution contract.
+- Once `$review-execution` has returned `ready for implementation` and the user
+  approves implementation, or once the user explicitly approves a small
+  low-risk response-only bypass, treat the plan as the execution contract.
+- If that contract uses a durable `docs/execution/...` doc, record the user's
+  approval in the doc before `$impl-series` starts.
 - If later execution reveals that the contract is wrong, update the current
   active execution artifact first. Do not modify unrelated plan docs.
 
@@ -471,10 +484,11 @@ Bad plans:
 
 ## What this skill does not do
 - It does not implement the code.
-- It does not generate diffs.
+- It does not generate implementation diffs.
 - It does not commit anything.
 - It does not silently choose a large architectural direction when design is
   still unresolved.
 
 ## Final step
-End by asking for approval or edits before implementation begins.
+End by asking for `$review-execution`, explicit approval for a small low-risk
+bypass, or edits before implementation begins.
