@@ -20,6 +20,14 @@ applicable `AGENTS.md` first.
 - Match the repository’s tooling and conventions unless changing them is part of
   the task.
 
+## Local reference material
+- `~/workplace/llm-wiki` contains LLM-managed wikis for work we have done
+  together.
+- When answering questions, planning work, or looking for reference material,
+  consider checking `~/workplace/llm-wiki` for relevant prior context.
+- Treat the wiki as helpful context, not as a replacement for the current
+  repository, nearest instructions, source code, tests, or official docs.
+
 ## Environment
 - Primary machine is macOS on Apple Silicon.
 - Editor is Neovim.
