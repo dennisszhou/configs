@@ -95,10 +95,11 @@ Do not rewrite history if:
 - Preserve independently reviewable semantic commits.
 - When rewording, squashing, or amending commits during cleanup, normalize the
   resulting commit messages to the repository or nearest-`AGENTS.md`
-  commit-hygiene rules.
-- If there is no more specific local convention, fall back to kernel-style
-  formatting:
-  - concise subject, usually within 72 characters
+  commit-hygiene rules. Use `$git-commit` for file-based amend, reword,
+  squash, and fixup message mechanics; do not use `git commit -m`.
+- If there is no more specific local convention, fall back to the ideal 50/72
+  rule for commit formatting:
+  - concise subject, ideally within 50 characters
   - blank line
   - explanatory body wrapped at about 72 columns
 

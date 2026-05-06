@@ -604,22 +604,30 @@ For concurrent, async, queued, or retried code:
 - Never use `--no-verify` when committing.
 - Commit messages should explain why the change is needed, not merely what
   changed.
+- Commit bodies should be cohesive prose, not a series of isolated one-sentence
+  paragraphs. Do not put a blank line after every sentence.
+- The first body paragraph should explain the problem, motivation, or constraint
+  that makes the change necessary. If the body only restates what the diff does,
+  rewrite it before committing.
+- Subsequent body paragraphs should group related rationale, tradeoffs,
+  compatibility notes, risks, or intentionally deferred work. Avoid converting
+  the commit plan's checklist fields into separate sentence-per-field
+  paragraphs.
 - Use `subsystem: short description` subject lines when appropriate for the repo.
 - Wrap commit-message bodies cleanly.
-- Default to kernel-style commit formatting unless the repository clearly uses a
-  different local convention:
-  - concise subject, usually within 72 characters
+- Default to the ideal 50/72 rule for commit formatting unless the repository
+  clearly uses a different local convention:
+  - concise subject, ideally within 50 characters
   - blank line
   - explanatory body wrapped at about 72 columns
-- Never pass a multi-paragraph commit body via a normal quoted
-  `git commit -m "...\n..."` string. Do not rely on backslash-n escapes for
-  paragraph breaks.
-- Safe commit-message patterns only:
-  - multiple `-m` flags with real paragraph text
-  - `git commit -F <file>`
-  - a shell form containing actual newline characters rather than literal
-    backslash-n text
-- Prefer `git commit -F` for multi-paragraph commit messages.
+- Use `$git-commit` for creating, amending, rewording, squashing, or
+  fixup-folding commits.
+- Agent-created commits must write the message under `.tmp/`, preview it, use
+  a file-based commit path such as `git commit -F <message-file>`, and delete
+  the temporary message file after a successful commit.
+- Do not use `git commit -m`, including multiple `-m` flags, for
+  agent-created commits. Git will not wrap long `-m` arguments, and shell
+  escaping makes multi-paragraph bodies easy to corrupt.
 - Before finalizing a commit, ensure the message preview contains real wrapped
   lines and no literal `\n` sequences.
 - Do not add assistant attribution trailers unless explicitly requested.

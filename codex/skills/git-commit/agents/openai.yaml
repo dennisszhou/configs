@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git Commit"
+  short_description: "Create git commits with pre-wrapped message files."
+  default_prompt: "Use git-commit when creating, amending, or rewriting git commits."

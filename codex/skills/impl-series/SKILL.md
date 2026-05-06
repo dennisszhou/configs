@@ -357,31 +357,15 @@ Create the commit using the planned subject line and a body that explains:
 - key implementation decisions
 - what is intentionally deferred
 
-Use kernel-style commit formatting:
-- subject line first
-- blank line
-- explanatory body
-- wrap body lines cleanly at about 72 columns
-- keep the subject concise and normally within 72 characters
+Write the body as cohesive prose, not as isolated one-sentence paragraphs. The
+first body paragraph should explain the problem, motivation, or constraint that
+makes the change necessary. Do not translate these checklist fields into
+separate sentence-per-field paragraphs, and do not put a blank line after every
+sentence.
 
-When amending an existing commit in place, preserve this same format rather than
-dropping back to a subject-only message.
-
-Never pass a multi-paragraph commit body via a normal quoted
-`git commit -m "...\n..."` string. Do not rely on backslash-n escapes for
-paragraph breaks.
-
-Use one of these safe patterns only:
-- multiple `-m` flags with real paragraph text
-- `git commit -F <file>`
-- a shell form containing actual newline characters rather than literal
-  backslash-n text
-
-Prefer `git commit -F` for multi-paragraph commit messages.
-
-Before finalizing the commit:
-- preview the message in a form that shows the real wrapped body
-- ensure there are no literal `\n` sequences caused by shell escaping mistakes
+Use `$git-commit` for the commit mechanics: write the message under `.tmp/`,
+preview its real wrapped lines, commit from the file, and delete the temporary
+message file after success. Do not use `git commit -m`.
 
 Do not use `--no-verify`.
 Do not add assistant attribution trailers unless explicitly requested.

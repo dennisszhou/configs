@@ -1,6 +1,7 @@
 # Local configuration overrides
 *.local
 .claude
+.tmp/
 
 # mac files
 .DS_Store
