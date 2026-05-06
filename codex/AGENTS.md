@@ -54,14 +54,17 @@ applicable `AGENTS.md` first.
   - small work: optional native `/plan`, then `$plan-series`, then
     either explicit implementation approval or `$review-execution`, then
     `$impl-series`
-  - medium work: write `docs/plans/...`, use `$review-plan`, then
-    `$plan-series`, then `$review-execution`, then `$impl-series`
-  - large technical work: `$roadmap`, `docs/plans/...`, `$review-plan`,
-    `$plan-series` with `docs/execution/...` when needed,
-    `$review-execution`, `$impl-series`, `$finish-series`
-  - large product or app work: `$product`, `$roadmap`, `docs/plans/...`,
+  - medium work: `$design` with `docs/plans/...` when needed,
+    `$review-plan`, `$plan-series`, then `$review-execution`, then
+    `$impl-series`
+  - large technical work: `$roadmap`, `$review-plan`, `$design`,
     `$review-plan`, `$plan-series` with `docs/execution/...` when needed,
-    `$review-execution`, `$impl-series`, `$finish-series`
+    `$review-execution`, `$impl-series`, then `$finish-series` only when
+    explicitly approved
+  - large product or app work: `$product`, `$review-plan`, `$roadmap`,
+    `$review-plan`, `$design`, `$review-plan`, `$plan-series` with
+    `docs/execution/...` when needed, `$review-execution`, `$impl-series`,
+    then `$finish-series` only when explicitly approved
 - Native `/plan` is optional. It is useful for lightweight planning discussion,
   but durable docs become the source of truth once work is large enough to need
   them. Once a roadmap, design doc, or execution doc exists for the effort,
@@ -195,37 +198,43 @@ Use this workflow for non-trivial work:
 
 1. Determine whether product planning is needed.
 2. If needed, create or update `docs/products/...`.
-3. Determine whether roadmap planning is needed.
-4. If needed, create or update `docs/roadmaps/...`.
-5. If needed, create or update `docs/plans/...`.
-6. Use `$review-plan` to review the planning context:
-   - product doc, when one exists
-   - roadmap, when one exists
-   - the relevant design docs
-7. Use `$plan-series` to produce the execution contract:
+3. Use `$review-plan` on a product artifact before roadmap planning that
+   depends on it. Continue only after the result is `ready for roadmap`.
+4. Determine whether roadmap planning is needed.
+5. If needed, create or update `docs/roadmaps/...`.
+6. Use `$review-plan` on a roadmap artifact before design planning that depends
+   on it. Continue only after the result is `ready for design`.
+7. If needed, create or update `docs/plans/...`.
+8. Use `$review-plan` on the design context before series planning. Continue
+   only after the result is `ready for series planning`.
+9. Use `$plan-series` to produce the execution contract:
    - a response-only current-series commit plan for small enough work
    - or a durable `docs/execution/...` artifact plus the current-series commit
      plan when staged execution tracking is needed
-8. Decide whether `$review-execution` is needed:
+10. Decide whether `$review-execution` is needed:
    - require it for durable `docs/execution/...` artifacts, multi-series work,
      risky boundaries, material review gates, unclear verification, or anything
      that is not obviously small and low-risk
    - allow skipping it only for a small, low-risk response-only plan when the
      user explicitly approves implementation from the `$plan-series` output
-9. If `$review-execution` runs and returns `ready for implementation`, or the
+11. If `$review-execution` runs and returns `ready for implementation`, or the
    user explicitly approves a small low-risk bypass, record that approval before
    execution:
    - for response-only plans, the chat approval is enough
    - for durable execution docs, update the doc so whole-doc approval and the
      current series approval are explicit
-10. Use `$impl-series` to execute that approved commit stack. This includes a
-    final `$review-series` pass over the completed current series before
-    handoff.
-11. If the series is stable and local-history cleanup would improve review,
+12. Use `$impl-series` to execute that approved commit stack. This always
+    includes a final `$review-series` pass over the implemented current series
+    before any closeout decision.
+13. If the series is stable and local-history cleanup would improve review,
     optionally run `$polish-series`.
-12. Run `$finish-series` to close out the series truthfully in the execution doc
-    when a durable execution doc exists.
-13. If implementation reveals that the product, roadmap, design, or execution
+14. Run `$finish-series` only when a durable execution doc exists and the user
+    explicitly approved marking the current series finished. That approval may
+    be given before implementation, such as "implement this and then finish the
+    series", or after reviewing the implementation and `$review-series` result.
+    If finish approval is absent, stop after the implementation and review
+    summary.
+15. If implementation reveals that the product, roadmap, design, or execution
     plan is wrong, stop, update the relevant doc, and only then continue.
 
 The active `docs/plans/...` file remains mutable during design, `$review-plan`,
@@ -315,7 +324,9 @@ Do not treat series planning as a substitute for design.
 - Roadmap planning decides what technical slices and milestones are needed to
   realize that product or initiative.
 - Design planning decides what to build.
-- `$review-plan` tests whether the planning context is coherent enough to stage.
+- `$review-plan` reviews each planning artifact before the next planning or
+  execution phase: product before roadmap, roadmap before design, and design
+  before series planning.
 - `$plan-series` decides how to stage building it and produces the execution
   contract: either a response-only series plan or a durable execution doc plus
   the current-series commit chain.
@@ -324,9 +335,11 @@ Do not treat series planning as a substitute for design.
   verification placement while staying within the approved design. It is
   required for durable or risky execution and optional for small low-risk
   response-only plans.
-- `$impl-series` executes the current approved execution series.
+- `$impl-series` executes the current approved execution series and always runs
+  `$review-series` on the implemented series before any closeout decision.
 - `$polish-series` optionally cleans local history after a series is stable.
-- `$finish-series` records truthful closeout after implementation and review.
+- `$finish-series` records truthful closeout only after implementation,
+  review, and explicit user approval to mark the current series finished.
 
 ## Approval boundaries
 - Present a plan before non-trivial code changes when approval is expected.
@@ -341,6 +354,10 @@ Do not treat series planning as a substitute for design.
 - If `$review-execution` finds the execution contract ready but the durable
   execution doc still says approval is pending, update the doc's approval state
   before starting `$impl-series`.
+- Do not mark an execution series finished, including by running
+  `$finish-series`, unless the user explicitly approves that closeout. The
+  approval may be part of the original request or given after implementation
+  and end-of-series review.
 - Before committing, show the staged diff and proposed commit message when the
   workflow expects review.
 - If an explicit execution workflow has already been approved through

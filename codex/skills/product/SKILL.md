@@ -1,6 +1,6 @@
 ---
 name: product
-description: Produce a product or initiative artifact that defines the target audience, core user journeys, release slices, and major integration expectations before roadmap decomposition begins. Use for new apps, major product initiatives, or broad user-facing efforts where roadmap would otherwise need to invent product scope.
+description: Produce a product or initiative artifact that defines the target audience, core user journeys, release slices, and major integration expectations before roadmap decomposition begins. Use for new apps, major product initiatives, or broad user-facing efforts where roadmap would otherwise need to invent product scope; hand off to review-plan before roadmap.
 ---
 
 # Product
@@ -91,7 +91,8 @@ slices, this skill should usually write or update a product doc under
 - Include constraints and non-goals when they matter.
 
 7. Recommend the next step
-- Usually `$roadmap` after approval.
+- Use `$review-plan` after the product draft is accepted.
+- Move to `$roadmap` only after `$review-plan` returns `ready for roadmap`.
 
 ## Output format
 

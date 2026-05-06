@@ -1,6 +1,6 @@
 ---
 name: roadmap
-description: Map a large feature, migration, refactor, or product initiative into components, integration slices, milestone targets, dependencies, and a design-doc backlog before detailed design begins. Use when one design doc is too coarse and the work needs an ordered roadmap of what must be designed next.
+description: Map a large feature, migration, refactor, or product initiative into components, integration slices, milestone targets, dependencies, and a design-doc backlog before detailed design begins. Use when one design doc is too coarse and the work needs an ordered roadmap of what must be designed next; hand off to review-plan before design.
 ---
 
 # Roadmap
@@ -148,6 +148,8 @@ If this roadmap should be saved to disk, use a dated filename such as:
 
 10. Recommend the next design steps
 - End with the smallest set of next design tasks that would unblock progress.
+- Run `$review-plan` before starting those design tasks.
+- Move to `design` only after `$review-plan` returns `ready for design`.
 
 ## Output format
 

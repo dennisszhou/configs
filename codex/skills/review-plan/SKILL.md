@@ -1,27 +1,30 @@
 ---
 name: review-plan
-description: Skeptically review the product, roadmap, and design context for an effort to decide whether its state boundaries, ownership, and invariants are coherent enough for execution planning. Use after design and before series planning.
+description: Skeptically review product, roadmap, or design planning artifacts before the next workflow phase. Use after product before roadmap, after roadmap before design, and after design before plan-series to test scope, milestones, state boundaries, ownership, invariants, and readiness.
 ---
 
 # Review Plan
 
-Review whether the proposed product, roadmap, and design context are coherent
-enough to stage for execution.
+Review whether the proposed planning artifact is coherent enough to trigger the
+next workflow phase.
 
-This skill is intentionally skeptical. Its job is not to invent a new design
-from scratch. Its job is to test whether the proposed plan and model are
-coherent enough to implement without hidden ambiguity.
+This skill is intentionally skeptical. Its job is not to invent new product
+scope, roadmap slices, or design structure from scratch. Its job is to test
+whether the artifact is clear enough to constrain the next planning or
+execution-planning step without hidden ambiguity.
 
 ## When to use this
 Use this skill when:
-- an approved or near-approved design already exists
-- or a product or roadmap artifact materially constrains the work
+- a product artifact exists and roadmap planning depends on it
+- a roadmap artifact exists and design planning depends on it
+- an approved or near-approved design exists and series planning depends on it
 - the work introduces or changes data models, ownership boundaries, or APIs
-- the user wants a structure-focused review before series planning
+- the user wants a skeptical planning review before moving to the next phase
 
 Do not use this skill when:
-- there is no design artifact to review
-- the task is so small that series planning is enough
+- there is no product, roadmap, or design artifact to review
+- the task is small enough that no product, roadmap, or design artifact is
+  needed and series planning is enough
 - the user wants diff review of implemented code
 
 This skill works best while native plan mode is still on.
@@ -29,15 +32,35 @@ This skill works best while native plan mode is still on.
 ## Goal
 Answer one question:
 
-Is the proposed state and boundary model coherent enough to implement?
+Is this artifact coherent enough to trigger the next phase?
 
 The outcome must be one of:
+- `ready for roadmap`
+- `ready for design`
 - `ready for series planning`
+- `needs product revision`
+- `needs roadmap revision`
 - `needs design revision`
 
 ## Review lens
 
-Review the target artifact against these points:
+For product review, check:
+- target audience or operator
+- core user journeys
+- release slices and first shippable slice
+- integration expectations
+- in-scope versus out-of-scope boundaries
+- whether roadmap would still need to invent product truth
+
+For roadmap review, check:
+- product context preservation, when a product artifact exists
+- component, capability, and integration slices
+- milestone exits and dependency ordering
+- design-doc backlog boundaries
+- first vertical slice, when app or product work is involved
+- whether design would still need to invent roadmap truth
+
+For design review, check:
 - source of truth
 - authoritative versus cached versus derived state
 - data structure choices
@@ -59,47 +82,63 @@ and point to the smallest revision needed.
 
 ## Process
 
-1. Restate the proposed model
-- Summarize the product, roadmap, and design context briefly so the review has a
-  clear target.
+1. Identify the review mode
+- State whether this is `product review`, `roadmap review`, or `design review`.
 
-2. Check source of truth
+2. Restate the proposed artifact
+- Summarize the artifact and upstream context briefly so the review has a clear
+  target.
+
+3. For product review, check product boundaries
+- Confirm audience, journeys, release slices, integration expectations, and
+  non-goals are explicit enough to constrain roadmap planning.
+- Skip this step when the target is not product.
+
+4. For roadmap review, check roadmap boundaries
+- Confirm slices, milestones, dependencies, and design-doc backlog are explicit
+  enough to constrain design planning.
+- Skip this step when the target is not roadmap.
+
+5. For design review, check source of truth
 - Identify the authoritative state.
 - Flag any place where cached or derived state appears to drive correctness
   implicitly.
+- Skip this and the remaining design-only checks when the target is not design.
 
-3. Check structure choices
+6. Check structure choices
 - Are the proposed data structures aligned with the invariants?
 - Are important distinctions encoded explicitly rather than by convention?
 
-4. Check ownership and lifecycle
+7. Check ownership and lifecycle
 - Who creates, owns, mutates, and discards each important piece of state?
 - Are state transitions and update paths clear?
 
-5. Check API boundaries
+8. Check API boundaries
 - Are inputs, outputs, failure modes, and responsibilities explicit enough for
   implementation and review?
 
-6. Check illegal states
+9. Check illegal states
 - Which invalid combinations are impossible by structure?
 - Which remain possible and require explicit handling?
 
-7. Check validation shape
+10. Check validation shape
 - Would the proposed boundaries support regression, functional, or integration
   tests at the right layer?
 - Are unit tests being forced by the structure rather than chosen because they
   match the contract?
 
-8. Check operational truth when relevant
+11. Check operational truth when relevant
 - For async, concurrent, stateful, background, or operator-facing systems,
   check whether lifecycle and public-status behavior are explicit enough.
 - Only apply this lens when the system actually has these concerns.
 
-9. Decide readiness
-- If the model is coherent, say `ready for series planning`.
+12. Decide readiness
+- For product review, return `ready for roadmap` or `needs product revision`.
+- For roadmap review, return `ready for design` or `needs roadmap revision`.
+- For design review, return `ready for series planning` or
+  `needs design revision`.
 - If the target is a design doc and it is ready, the design doc should be able
   to carry `Status: approved`.
-- Otherwise say `needs design revision` and list the blocking issues.
 
 ## Output format
 
@@ -107,6 +146,8 @@ Review target
 - ...
 
 Review mode
+- `product review`
+- `roadmap review`
 - `design review`
 
 Planning inputs
@@ -117,26 +158,32 @@ Planning inputs
 Findings
 - ...
 
+Product scope check
+- Use `not applicable` unless this is product review.
+
+Roadmap boundary check
+- Use `not applicable` unless this is roadmap review.
+
 Source of truth check
-- ...
+- Use `not applicable` unless this is design review.
 
 State boundary check
-- ...
+- Use `not applicable` unless this is design review.
 
 Data structure check
-- ...
+- Use `not applicable` unless this is design review.
 
 Ownership and lifecycle check
-- ...
+- Use `not applicable` unless this is design review.
 
 API boundary check
-- ...
+- Use `not applicable` unless this is design review.
 
 Invariant check
-- ...
+- Use `not applicable` unless this is design review.
 
 Testability check
-- ...
+- Use `not applicable` unless this is design review.
 
 Blocking issues
 - Use `none` if there are no blockers.
@@ -150,12 +197,27 @@ Design doc status
 - Use `approved` only when the review result is `ready for series planning`.
 
 Result
-- `ready for series planning` | `needs design revision`
+- `ready for roadmap`
+- `ready for design`
+- `ready for series planning`
+- `needs product revision`
+- `needs roadmap revision`
+- `needs design revision`
 
 Recommended next step
 - ...
 
 ## Exit criteria for “ready”
+Only return `ready for roadmap` when:
+- audience, journeys, release slices, and integration expectations are clear
+- roadmap can decompose the work without inventing product scope
+- non-goals and deferred slices are explicit enough to prevent scope creep
+
+Only return `ready for design` when:
+- roadmap slices, milestones, dependencies, and exits are clear
+- design-doc backlog boundaries are concrete enough to choose the next design
+- design can proceed without inventing milestone or slice truth
+
 Only return `ready for series planning` when:
 - authoritative, cached, and derived state are clearly separated
 - core structures can express the intended invariants

@@ -1,6 +1,6 @@
 ---
 name: finish-series
-description: Close out the current approved execution series by updating the active docs/execution artifact to reflect what actually completed, what remains deferred, and what state is next. Use after implementation and review of a series are complete.
+description: Close out the current approved execution series by updating the active docs/execution artifact to reflect what actually completed, what remains deferred, and what state is next. Use only after implementation and review of a series are complete and the user explicitly approves marking that series finished.
 ---
 
 # Finish Series
@@ -8,24 +8,30 @@ description: Close out the current approved execution series by updating the act
 Record truthful closeout for the current execution series.
 
 This skill updates the active `docs/execution/...` artifact after implementation
-and review are done. It is a docs-only closeout step. It does not redesign the
-plan or silently change the scope of later series.
+and review are done, but only when the user explicitly approves marking the
+series finished. That approval may be given before implementation, such as
+"implement this and then finish the series", or after the implementation and
+review summary. It is a docs-only closeout step. It does not redesign the plan
+or silently change the scope of later series.
 
 ## When to use this
 Use this skill when:
 - the current approved execution series has been implemented
 - verification for that series is complete
 - any requested review of the implemented diff is complete
+- the user has explicitly approved closeout for the current series, either
+  before implementation or after review
 - the execution doc should now reflect what actually landed
 
 Do not use this skill when:
 - implementation of the current series is still in progress
 - the series plan needs to be redesigned before closeout
+- the user has not explicitly approved marking the current series finished
 - the user wants to plan commits rather than close out a completed series
 
 ## Goal
 Update the active `docs/execution/...` doc so it truthfully records:
-- the current series is finished
+- the current series is finished because the user approved closeout
 - the top-level execution state has advanced
 - the completion state is accurate
 - any deferred follow-up is explicit when one exists

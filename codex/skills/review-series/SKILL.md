@@ -1,6 +1,6 @@
 ---
 name: review-series
-description: Skeptically review an implementation diff against the approved design and series contract. Use for semantic, optimization, migration, or other risky commits where an extra code-review gate is warranted.
+description: Skeptically review an implementation diff against the approved design and series contract. Use automatically after impl-series implements the current series and before any finish-series closeout, and for semantic, optimization, migration, or other risky commits where an extra code-review gate is warranted.
 ---
 
 # Review Series
@@ -17,6 +17,8 @@ separate lenses.
 
 ## When to use this
 Use this skill when:
+- `impl-series` has implemented the current approved execution series and needs
+  its mandatory review before any finish-series closeout decision
 - a series plan marks a step with `Review gate: code`
 - a commit changes semantics, optimization behavior, reliability, or migration
   behavior
@@ -103,6 +105,6 @@ Verdict
 ## What this skill does not do
 - It does not redesign the feature from scratch.
 - It does not produce a series plan.
-- It does not require review on every commit.
+- It does not require a separate manual review stop on every commit.
 - It does not block on style nits when the real issue is correctness.
 - It does not silently escalate into `series-reviewer`.

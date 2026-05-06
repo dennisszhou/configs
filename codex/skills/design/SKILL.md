@@ -1,6 +1,6 @@
 ---
 name: design
-description: Produce an architecture or design artifact for a feature, refactor, migration, or risky bugfix before execution planning. Use when the solution shape, data model, API boundary, invariants, or rollout is not yet settled.
+description: Produce an architecture or design artifact for a feature, refactor, migration, or risky bugfix before execution planning. Use when the solution shape, data model, API boundary, invariants, or rollout is not yet settled; hand off to review-plan before plan-series.
 ---
 
 # Design
@@ -176,7 +176,9 @@ Design exit criteria
 - ...
 
 Recommended next step
-- Usually `$review-plan` after approval.
+- `$review-plan` after the draft design is accepted.
+- Move to `$plan-series` only after `$review-plan` returns
+  `ready for series planning`.
 
 Wrap prose in `docs/` artifacts at `80` columns.
 

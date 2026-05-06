@@ -1,6 +1,6 @@
 ---
 name: impl-series
-description: Execute an approved execution contract by implementing, verifying, and committing each planned step in order. Use when the user says to execute the approved series plan, start implementing, resume the stack, or continue an already approved staged implementation.
+description: Execute an approved execution contract by implementing, verifying, committing each planned step in order, and always running review-series before handoff. Use when the user says to execute the approved series plan, start implementing, resume the stack, or continue an already approved staged implementation.
 ---
 
 # Impl Series
@@ -25,11 +25,12 @@ If there is no approved execution contract, stop and ask the user to run
 low-risk response-only bypass.
 
 Do not use this skill while native plan mode is active. Execution begins after
-design work, `$plan-series`, and `$review-execution` are finished.
+design work, `$plan-series`, and either `$review-execution` or an approved
+small low-risk bypass are finished.
 
-Completion of the current approved series includes a final `$review-series`
-pass. This skill should review the completed current series before handoff and
-fix in-scope findings inline.
+Completion of the current approved series always includes a final
+`$review-series` pass. This skill must review the completed current series
+before handoff and fix in-scope findings inline.
 
 ## Approval model
 Invocation of this skill counts as authorization to execute the approved
@@ -490,5 +491,8 @@ ready to start.
 
 ## Completion
 After the end-of-series review loop is complete, print a concise summary of the
-completed stack, the main verification that was performed, and the review
-results, then stop for `$finish-series`.
+implemented stack, the main verification that was performed, and the review
+results. Run `$finish-series` only if the user explicitly approved series
+closeout, either in the original request or after seeing the implementation and
+review summary. If finish approval is absent, stop after the summary without
+marking the series finished.

@@ -42,6 +42,7 @@ What not to design yet
 
 Recommended next design tasks
 - Ordered list of the next `design` calls or plan-doc drafts to create.
+- Run `$review-plan` before starting those design tasks.
 
 Roadmap exit criteria
 - ...
