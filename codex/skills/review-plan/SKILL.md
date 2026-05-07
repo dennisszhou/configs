@@ -139,7 +139,9 @@ and point to the smallest revision needed.
 - For design review, return `ready for series planning` or
   `needs design revision`.
 - If the target is a design doc and it is ready, the design doc should be able
-  to carry `Status: approved`.
+  to carry `Status: approved` in the working tree. Do not commit that approval
+  state before `$impl-series`; it belongs in the first `$impl-series` commit,
+  usually the planning-artifacts anchor.
 - A `ready` result should recommend asking the user for explicit approval for
   the next action. Do not start `$roadmap`, `design`, or `$plan-series` from
   this skill.

@@ -83,7 +83,10 @@ Look for boundaries between:
   structure.
 - Choose the `docs/plans/...` commit shape intentionally:
   - if more than one implementation commit will follow, keep the approved plan
-    doc in its own docs-only commit at the front of the series
+    doc in a front docs-only planning-artifacts commit
+  - if a durable `docs/execution/...` artifact is also part of that same
+    planning state, include it in the same planning-artifacts commit rather than
+    splitting `docs/plans` and `docs/execution` into separate commits
   - if exactly one semantic implementation commit will follow, fold the
     approved `docs/plans/...` update into that lone implementation commit by
     default
@@ -458,7 +461,9 @@ independent branches when relevant.
   approves implementation, or once the user explicitly approves a small
   low-risk response-only bypass, treat the plan as the execution contract.
 - If that contract uses a durable `docs/execution/...` doc, record the user's
-  approval in the doc before `$impl-series` starts.
+  approval in the working doc before `$impl-series` starts, but do not commit
+  that approval update yet. The approval state is committed by the first
+  `$impl-series` commit, usually the planning-artifacts anchor.
 - If later execution reveals that the contract is wrong, update the current
   active execution artifact first. Do not modify unrelated plan docs.
 
@@ -470,8 +475,9 @@ Good plans:
 - expose scope boundaries explicitly
 - give verification commands the implementer can actually run
 - keep approved `docs/plans/...` in a front docs-only commit for real
-  multi-commit series, but fold it into a lone semantic implementation commit
-  when that yields a cleaner one-commit execution stack
+  multi-commit series, including any same-state `docs/execution/...` artifact
+  in that commit, but fold it into a lone semantic implementation commit when
+  that yields a cleaner one-commit execution stack
 - mark where extra review is warranted without requiring review theater for
   every commit
 - fold regression tests into the semantic commit they prove when the work is a

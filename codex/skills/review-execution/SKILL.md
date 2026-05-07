@@ -219,6 +219,9 @@ Approval check
   a durable execution doc approval update is required before `$impl-series`.
 - For durable execution docs, state the approval fields that must change before
   implementation starts.
+- If approval fields are updated, leave them uncommitted until the first
+  `$impl-series` commit. Do not create a standalone approval-only commit from
+  this skill.
 
 Minor amendments applied
 - Use `none` if no amendments were applied.

@@ -231,6 +231,8 @@ Use this workflow for non-trivial work:
    - for response-only plans, the chat approval is enough
    - for durable execution docs, update the doc so whole-doc approval and the
      current series approval are explicit
+   - do not commit that approval update before `$impl-series`; it belongs in
+     the first `$impl-series` commit, usually the planning-artifacts anchor
 12. Use `$impl-series` to execute that approved commit stack. This always
     includes a final `$review-series` pass over the implemented current series
     before any closeout decision.
@@ -247,19 +249,28 @@ Use this workflow for non-trivial work:
 
 The active `docs/plans/...` file remains mutable during design, `$review-plan`,
 and series planning. The active `docs/execution/...` file remains mutable during
-`$plan-series` and `$review-execution`. Once `$impl-series` begins:
-- if the active approved plan doc is not yet committed on the execution branch
-  and more than one implementation commit will follow, commit it first as a
-  docs-only commit
+`$plan-series` and `$review-execution`. Approval may be written into these
+working docs before implementation, but do not commit approval state until
+`$impl-series` begins. Once `$impl-series` begins:
+- if the active approved plan doc and active execution doc are both ready and
+  not yet committed on the execution branch, commit them together in one
+  docs-only planning-artifacts commit before implementation; do not split them
+  into separate `docs/plans` and `docs/execution` commits for the same planning
+  state
+- if only the active approved plan doc is ready and not yet committed, and more
+  than one implementation commit will follow, commit it first as a docs-only
+  planning-artifacts commit
 - if execution will be exactly one semantic commit, folding the approved
   `docs/plans/...` update into that lone implementation commit is allowed
 - do not use that single-commit exception to skip a committed approved plan doc
   for larger multi-commit series
-- if only that initial docs/plans commit exists and no implementation commit has
-  landed yet, amending it in place is acceptable
+- if the initial planning-artifacts commit exists and no implementation commit
+  has landed yet, amending it in place is acceptable
 - once implementation commits exist, meaningful design or execution-plan updates
   should usually be recorded as new docs commits rather than silently rewriting
-  the original approved artifact underneath code history
+  the original approved artifact underneath code history; when the same
+  planning update touches both `docs/plans/...` and `docs/execution/...`, keep
+  those changes together in one docs-only commit
 
 ## Heuristics
 - Small, obvious tasks may not need a written design plan.
@@ -363,7 +374,8 @@ Do not treat series planning as a substitute for design.
   doc to be approved and the current execution series to be explicitly approved.
 - If `$review-execution` finds the execution contract ready but the durable
   execution doc still says approval is pending, update the doc's approval state
-  before starting `$impl-series`.
+  before starting `$impl-series`, but leave that update uncommitted until the
+  first `$impl-series` commit.
 - Do not mark an execution series finished, including by running
   `$finish-series`, unless the user explicitly approves that closeout. The
   approval may be part of the original request or given after implementation
@@ -692,15 +704,24 @@ For concurrent, async, queued, or retried code:
   lines and no literal `\n` sequences.
 - Do not add assistant attribution trailers unless explicitly requested.
 
-For docs/plans commits, prefer specific subjects such as:
+For planning-artifacts commits that include both `docs/plans/...` and
+`docs/execution/...`, prefer specific subjects such as:
+- `docs: add <topic> planning artifacts`
+- `docs: revise <topic> planning artifacts`
+- `docs: update <topic> planning checkpoints`
+
+For docs/plans-only commits, prefer specific subjects such as:
 - `docs/plans: add <topic> design`
 - `docs/plans: revise <topic> design`
 - `docs/plans: clarify <topic> invariants`
 
-For docs/execution commits, prefer specific subjects such as:
+For docs/execution-only commits, prefer specific subjects such as:
 - `docs/execution: add <topic> execution plan`
 - `docs/execution: revise <topic> execution plan`
 - `docs/execution: update <topic> series checkpoints`
+
+Do not split `docs/plans/...` and `docs/execution/...` into separate commits
+when both changes describe the same planning state or approval boundary.
 
 Avoid vague subjects such as `update docs` or `fix plan`.
 

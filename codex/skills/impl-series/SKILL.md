@@ -69,9 +69,9 @@ Commit 1 before any implementation commit.
 - Do not combine adjacent commits because they seem small.
 - Do not split a planned commit into multiple commits unless the plan is amended.
 
-Initial docs/plans anchoring is the one allowed extra commit outside the
-numbered implementation plan when needed. It establishes the approved plan as
-the starting point for execution history.
+Initial planning-artifacts anchoring is the one allowed extra commit outside
+the numbered implementation plan when needed. It establishes the approved plan
+and execution contract as the starting point for execution history.
 
 3. Respect the contract
 - Stay within the planned file list unless a minor obvious expansion is needed
@@ -207,19 +207,16 @@ Run:
 - `git status --short`
 
 First determine whether there is an approved active `docs/plans/...` design doc
-for the task:
-- if yes and no docs/plans anchoring commit exists on this execution branch yet,
-  create that docs-only commit first
-- if yes and the docs/plans anchoring commit exists but no implementation commit
-  exists yet, it may still be amended in place
-
-Then determine whether there is an approved active `docs/execution/...` execution
-doc for the task:
-- if yes and no docs/execution anchoring commit exists on this execution branch
-  yet, create that docs-only commit before implementation commits that depend on
-  it
-- if yes and the docs/execution anchoring commit exists but no implementation
-  commit exists yet, it may still be amended in place
+and an approved active `docs/execution/...` execution doc for the task:
+- if both are present and neither is anchored on this execution branch yet,
+  create one docs-only planning-artifacts commit containing both files
+- if only one is present, or only one is not yet anchored, create or amend one
+  docs-only planning-artifacts commit for the active planning artifact state
+- if a planning-artifacts anchoring commit exists but no implementation commit
+  exists yet, it may still be amended in place to add the other active planning
+  artifact
+- do not create adjacent separate `docs/plans` and `docs/execution` commits for
+  the same planning state or approval boundary
 - if implementation commits already exist, treat the branch history as active
   execution history
 
@@ -233,7 +230,7 @@ uncommitted state.
 Print progress in this shape:
 
 Series plan progress:
-  ✅ docs/plans: ...
+  ✅ docs: planning artifacts
   ✅ 1/6: ...
   ✅ 2/6: ...
   ➡️ 3/6: ...   ← starting here
@@ -245,8 +242,7 @@ When a `docs/execution/...` execution artifact exists, also show the series
 boundary, for example:
 
 Series plan progress:
-  ✅ docs/plans: ...
-  ✅ docs/execution: ...
+  ✅ docs: planning artifacts
   Series 1: approved current series
     ✅ 1/3: ...
     ➡️ 2/3: ...
@@ -258,24 +254,25 @@ Series plan progress:
     ⬜ 4/4: ...
 
 ### 1a. Anchor approved docs when needed
-If an approved active `docs/plans/...` file exists and is not yet committed on
-the branch:
-- stage only the active `docs/plans/...` file
-- make a docs-only commit before any implementation commit
+If approved active `docs/plans/...` or `docs/execution/...` artifacts exist and
+are not yet committed on the branch:
+- stage only the active planning artifacts needed for this execution state
+- when both `docs/plans/...` and `docs/execution/...` are needed for the same
+  planning state, stage both in one docs-only commit
+- include any working-tree approval-state changes for those active artifacts in
+  this same first planning-artifacts commit
+- make that docs-only planning-artifacts commit before any implementation commit
 - use a specific subject line such as:
+  - `docs: add <topic> planning artifacts`
+  - `docs: revise <topic> planning artifacts`
+  - `docs: update <topic> planning checkpoints`
   - `docs/plans: add <topic> design`
   - `docs/plans: revise <topic> design`
   - `docs/plans: clarify <topic> invariants`
-- do not include code or unrelated files in this commit
-
-If an approved active `docs/execution/...` file exists and is not yet committed on
-the branch:
-- stage only the active `docs/execution/...` file
-- make a docs-only commit before any implementation commit that depends on it
-- use a specific subject line such as:
   - `docs/execution: add <topic> execution plan`
   - `docs/execution: revise <topic> execution plan`
   - `docs/execution: update <topic> series checkpoints`
+- use the `docs/...` subjects only when the commit touches that directory alone
 - do not include code or unrelated files in this commit
 
 ### 2. Restate the current contract
@@ -380,7 +377,12 @@ Do not add assistant attribution trailers unless explicitly requested.
 
 For docs commits:
 - keep the commit docs-only
+- do not split `docs/plans/...` and `docs/execution/...` into separate commits
+  when both describe the same planning state or approval boundary
 - use specific subjects such as:
+  - `docs: add <topic> planning artifacts`
+  - `docs: revise <topic> planning artifacts`
+  - `docs: update <topic> planning checkpoints`
   - `docs/plans: add <topic> design`
   - `docs/plans: revise <topic> design`
   - `docs/plans: clarify <topic> invariants`

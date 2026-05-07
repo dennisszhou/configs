@@ -1,6 +1,6 @@
 ---
 name: polish-series
-description: Rewrite a local branch into a cleaner final patch series after execution is stable. Use to fold docs/plans update commits back into one high-quality docs/plans commit, squash obvious tiny fixups, and preserve a reviewable final series without changing intended behavior.
+description: Rewrite a local branch into a cleaner final patch series after execution is stable. Use to fold planning-doc update commits back into one high-quality docs-only planning-artifacts commit when docs/plans and docs/execution describe the same state, squash obvious tiny fixups, and preserve a reviewable final series without changing intended behavior.
 ---
 
 # Polish Series
@@ -35,14 +35,15 @@ Produce a cleaner final patch series without changing the intended final
 behavior of the branch.
 
 The common case is:
-- preserve one high-quality `docs/plans` commit
-- preserve one high-quality `docs/execution` commit when a durable execution
-  artifact exists
+- preserve one high-quality docs-only planning-artifacts commit when
+  `docs/plans` and `docs/execution` describe the same planning state
+- preserve a separate `docs/execution` commit only when it is an execution-only
+  update such as later closeout or checkpoint state
 - preserve the real implementation commits
-- fold later `docs/plans` revisions back into that original docs/plans commit
-  when appropriate
-- fold later `docs/execution` revisions back into that original docs/execution
-  commit when appropriate
+- fold later `docs/plans` and same-state `docs/execution` revisions back into
+  that original planning-artifacts commit when appropriate
+- fold later execution-only revisions back into their execution-only commit when
+  appropriate
 - fold tiny obvious fixups into their intended parent commits when safe
 - normalize the final series to the repository or nearest-`AGENTS.md`
   commit-message style, falling back to kernel-style formatting when no more
@@ -66,16 +67,17 @@ Do not rewrite history if:
 ## Process
 
 1. Inspect the branch history
-- Identify the initial `docs/plans` anchoring commit.
-- Identify the initial `docs/execution` anchoring commit when one exists.
+- Identify the initial planning-artifacts anchoring commit.
+- Identify any separate execution-only anchoring commit when one exists.
 - Identify later `docs/plans` revise, update, or clarify commits.
 - Identify later `docs/execution` revise or update commits.
 - Identify tiny obvious fixup commits.
 
 2. Classify candidates
-- `docs/plans` follow-up commits that should fold into the original plan commit
-- `docs/execution` follow-up commits that should fold into the original
-  execution commit
+- `docs/plans` follow-up commits and same-state `docs/execution` commits that
+  should fold into the original planning-artifacts commit
+- execution-only `docs/execution` follow-up commits that should fold into the
+  original execution-only commit
 - tiny fixups that obviously belong to a nearby parent
 - semantic commits that should remain independent
 
@@ -119,7 +121,9 @@ Usually good candidates:
 - later `docs/plans: revise ...`, `docs/plans: update ...`, and
   `docs/plans: clarify ...` commits that simply evolve the same active plan doc
 - later `docs/execution: revise ...` and `docs/execution: update ...` commits
-  that simply evolve the same active execution doc
+  that evolve the same planning state as the active plan doc
+- later execution-only docs/execution commits that evolve a closeout or
+  checkpoint-state update
 - tiny typo or missed-import fixups
 - one-line correction commits that obviously belong to the immediately preceding
   commit
