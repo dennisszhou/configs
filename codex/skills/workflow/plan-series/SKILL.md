@@ -137,32 +137,30 @@ Every commit must say:
 - Avoid mock-heavy plans that mostly restate implementation details.
 
 ## Additional planning rules
-- Mark each commit as one of:
-  - preparatory
-  - semantic
-  - optimization
-  - docs
-  - cleanup
-- Mark whether each commit is required for the requested outcome or is an
-  optional follow-up.
-- Include a brief risk note for commits with non-obvious correctness, migration,
-  or review hazards.
+- Keep commit entries decision-oriented. Do not add metadata fields whose values
+  do not affect whether to start, stop, split, review, or verify the commit.
 - Include one invariant focus per commit so reviewers know what truth that step
   is meant to establish or preserve.
-- Use `Review gate: structures` when a commit names, creates, or materially
-  changes source/module ownership boundaries.
-- Include one test level per commit from this fixed set:
+- Use `Review: structures` when a commit names, creates, or materially changes
+  source/module ownership boundaries.
+- In `Evidence`, include one proof level from this fixed set plus why it is the
+  right layer:
   - none
   - regression
   - functional
   - integration
   - unit
-- Include one review gate per commit from this fixed set:
+- In `Review`, include one review gate from this fixed set plus why that gate is
+  enough:
   - none
   - structures
   - code
   - perf
   - migration
+- Do not re-add checklist-only fields such as `Type`, `Required`, `Risks`, or
+  `Depends on` unless the value changes a start/stop decision. Use
+  `Preconditions`, `Not included`, `Evidence`, or `Review` for the concrete
+  decision instead.
 - The output of this skill is the candidate execution contract. It becomes the
   contract for `$impl-series` after either `$review-execution` returns
   `ready for implementation` and the user approves implementation, or the user
@@ -304,20 +302,16 @@ Within each series, each commit entry must look like this:
 
 Commit N/Total: <subsystem: description>
 
-  Type:          preparatory | semantic | optimization | docs | cleanup
-  Required:      yes | no
   Summary:       1-2 sentence plain-English summary
   Invariant focus: specific truth this commit establishes or preserves
-  Test level:    none | regression | functional | integration | unit
-  Review gate:   none | structures | code | perf | migration
   Files:         explicit list of files created or modified
-  Source topology: owner/impact, or "not material"
+  Source topology: owner/split/not material decision with reason
   Preconditions: what must already be true before this commit starts
   Postconditions: what is true after this commit lands
+  Evidence:      none | regression | functional | integration | unit, with why
+  Review:        none | structures | code | perf | migration, with why
   Verify:        copy-pasteable command(s) proving the postconditions
-  Risks:         brief note or "low"
   Not included:  what this commit explicitly does not do
-  Depends on:    commit number(s) this depends on
 
 When presenting one or more commit entries in chat, emit the commit block(s)
 inside a fenced `text` code block so indentation is preserved exactly. Do not
@@ -332,11 +326,11 @@ wrapped commit blocks in the final response, and do not remove the fenced
 `text` block wrapper around the final formatted output.
 
 When printing or writing long field values such as `Summary`, `Files`,
-`Source topology`, `Preconditions`, `Postconditions`, and `Verify`, you must
-keep the value inline after the label and align continuation lines under the
-start of the value. If output does not follow this format, that is a formatting
-mistake and should be corrected directly rather than explained away. For
-example:
+`Source topology`, `Preconditions`, `Postconditions`, `Evidence`, `Review`, and
+`Verify`, you must keep the value inline after the label and align continuation
+lines under the start of the value. If output does not follow this format, that
+is a formatting mistake and should be corrected directly rather than explained
+away. For example:
 
   Summary:       first wrapped line
                  continuation line
@@ -350,7 +344,7 @@ under the start of the value. For example:
                  crates/igrepd/src/config.rs
 
 Apply the same alignment rule to every wrapped long field, including
-`Invariant focus`, `Preconditions`, `Postconditions`, `Risks`, and
+`Invariant focus`, `Preconditions`, `Postconditions`, `Evidence`, `Review`, and
 `Not included`. This is the required shape:
 
   Summary:       first wrapped line
@@ -371,8 +365,6 @@ The required chat shape is:
 ```text
 Commit 1/2: subsystem: short description
 
-  Type:             semantic
-  Required:         yes
   Summary:          first wrapped line
                     continuation line
 ```
@@ -401,8 +393,9 @@ folding into the implementation commit.
 Name the contract or truth this commit is responsible for. This is the
 centerpiece for review and verification.
 
-### Test level
-Pick the highest-leverage level that matches the contract being changed.
+### Evidence
+Pick the highest-leverage proof level that matches the contract being changed
+and briefly say why that layer is enough.
 
 Guidance:
 - `none` for pure docs, comments, or mechanical changes where another command is
@@ -414,8 +407,9 @@ Guidance:
 
 Do not default to `unit` just to look rigorous.
 
-### Review gate
-Use this to mark commits that deserve extra scrutiny:
+### Review
+Use this to decide whether the commit deserves extra scrutiny and briefly say
+why that gate is enough:
 - `none` for low-risk preparatory or straightforward commits
 - `structures` when the design boundary still needs a structure-focused check
 - `code` for risky semantic changes
@@ -427,10 +421,15 @@ List every file expected to change. Use `(new)` for new files. If uncertain, add
 `(?)`.
 
 ### Source topology
-Name the owner and topology impact when a commit adds substantial behavior,
-creates a module, grows a large file, or touches a crowded directory. Use
-`not material` only when the existing owner is obvious and the commit does not
-make a file or directory more likely to absorb unrelated future work.
+This is a decision field, not a label. Use one of:
+- `owner: <module/path> because <why this owner owns the behavior>`
+- `split: <module/path> because <responsibility that deserves its own owner>`
+- `not material: <why the existing owner is obvious and no split is needed>`
+
+Do not write a bare `not material`. When a commit adds substantial behavior,
+creates a module, grows a large file, or touches a crowded directory, an
+unsupported `not material` answer is invalid. If no owner can be named, the plan
+is not ready; return to design or ask for a topology decision.
 
 ### Preconditions
 State what must already exist or be true before starting this commit. Reference
@@ -444,19 +443,13 @@ about what now works, what now builds, or what invariant now holds.
 Use literal commands. Do not write “run tests” or pseudocode. Include exact
 commands when possible.
 
-### Risks
-Call out non-obvious correctness, migration, review, or blast-radius risk. Use
-`low` when there is nothing notable.
-
 ### Not included
 Explicitly state what tempting adjacent work is deferred. This is the main guard
 against scope creep.
-If you keep a standalone test commit, use `Not included` or `Risks` to justify
-why that separation improves reviewability or establishes a real boundary.
-
-### Depends on
-Usually this is the previous commit, but call out non-obvious dependencies and
-independent branches when relevant.
+If you keep a standalone test commit, use `Not included` to justify why that
+separation improves reviewability or establishes a real boundary. Call out
+non-obvious dependencies or risks here when they affect whether the commit is
+safe to start.
 
 ## Interaction rules
 - After producing the plan, stop. The next gate is either `$review-execution` or
@@ -492,6 +485,7 @@ Good plans:
 - keep each commit independently correct
 - separate semantics from optimization
 - expose scope boundaries explicitly
+- keep commit fields decision-oriented instead of expanding the checklist
 - give verification commands the implementer can actually run
 - make the `AGENTS.md` house rules and `$workflow-house-rules` visible in
   commit boundaries without duplicating the rule text
@@ -509,6 +503,8 @@ Good plans:
   bugfix or narrow behavior change
 
 Bad plans:
+- add fields that only classify the commit without changing implementation,
+  review, or verification behavior
 - end with a final `tests/coverage only` commit for a small bugfix or narrow
   semantic change when that commit does not establish an independently useful
   contract or failing-spec step

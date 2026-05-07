@@ -23,7 +23,7 @@ eligibility and whether execution history stayed truthful.
 Use this skill when:
 - `impl-series` has implemented the current approved execution series and needs
   its mandatory review before any finish-series closeout decision
-- a series plan marks a step with `Review gate: code`
+- a series plan marks a step with `Review: code`
 - a commit changes semantics, optimization behavior, reliability, or migration
   behavior
 - the user explicitly requests skeptical code review
@@ -41,6 +41,8 @@ Check these directly:
 - Is source-of-truth state still authoritative?
 - Did the change preserve source/module topology, or did it make a file or
   directory the obvious dumping ground for the next unrelated feature?
+- If the plan said `not material`, was that decision specific and still true
+  after the diff?
 - Are edge adapter types contained at boundaries, with internal imports using
   owning modules rather than root facades?
 - Are tests high-signal and at the right layer?
@@ -76,6 +78,8 @@ testing gap.
 - Run the source-topology checkpoint for non-trivial work: "Did this change
   leave a file or directory as the obvious dumping ground for the next unrelated
   feature?"
+- Treat a vague `not material` topology answer as a finding when files or
+  directories grew materially.
 
 4. Check evidence quality
 - Decide whether the chosen tests or verification actually exercise the contract.

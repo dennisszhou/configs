@@ -93,7 +93,11 @@ Check whether the contract can be improved before implementation:
   `$workflow-house-rules` for approval and finish boundaries?
 - Does the commit chain preserve source/module ownership, or does it add
   substantial behavior to the nearest large file or crowded directory?
+- Are `not material` source-topology decisions backed by a real owner/scope
+  reason when source files or directories grow?
 - Are review gates on the risky commits, not everywhere or nowhere?
+- Are commit fields acting as decisions, or has the plan grown checklist-only
+  metadata?
 - Is cleanup placed where it reduces risk instead of being dumped at the end?
 - Does each series boundary create a real stable checkpoint?
 - Is a multi-series split justified, or is it arbitrary?
@@ -114,13 +118,15 @@ Allowed minor amendments include:
 - tighten or literalize verification commands
 - add or clarify `Not included`, precondition, postcondition, done-means, or
   checkpoint wording
-- add an obvious missing review gate to an already-risky commit
+- add an obvious missing review field to an already-risky commit
 - add or clarify source-topology impact wording inside an existing commit
 - clarify dependencies between existing commits or series
 - rename a commit subject for accuracy without changing scope
 - move proof wording into the commit that already establishes that behavior
-- add a missing source-topology checkpoint or `structures` review gate to a
+- add a missing source-topology checkpoint or `Review: structures` field to a
   commit that materially grows source files or directories
+- remove checklist-only fields when their information belongs in an existing
+  decision field
 - clarify approval or completion wording without changing approval state,
   current state, or finished state
 
@@ -169,6 +175,9 @@ When a needed improvement is not a minor amendment, return
 - Are docs-only commits justified by a real multi-commit or checkpoint reason?
 - Does each material source change name its owning module and avoid turning a
   broad file or crowded directory into the next dumping ground?
+- Are `not material` topology decisions specific enough to review?
+- Are `Evidence`, `Review`, and `Source topology` real decisions rather than
+  labels copied into every commit?
 
 7. Check verification and review gates
 - Are verify commands literal and high-signal?
@@ -265,6 +274,10 @@ Only return `ready for implementation` when:
 - the current commit chain is atomic, ordered, independently correct, and
   reviewable
 - source-topology impact is explicit for material source growth
+- no material source growth relies on a vague or unsupported `not material`
+  topology decision
+- commit fields are limited to decisions that guide implementation, review, or
+  verification
 - verification proves the right contract at the right layer
 - review gates match the real risk points
 - no series silently smuggles unresolved architecture into execution

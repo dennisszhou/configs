@@ -89,6 +89,9 @@ and execution contract as the starting point for execution history.
 - Before adding substantial behavior to a large file or crowded directory, name
   the owning module. If the owner is unclear or the code wants to create a new
   dumping ground, stop and re-plan.
+- If the planned source-topology decision is vague, says only `not material`,
+  or is contradicted by the actual diff, stop and amend the plan before
+  committing.
 
 4. Keep progress recoverable
 - Use git history as the source of truth.
@@ -127,14 +130,13 @@ that series, and that series's own approval field is `approved`.
 
 Each commit entry should include:
 - subject line
-- type
 - invariant focus
-- test level
-- review gate
 - files
-- source-topology impact
+- source-topology decision
 - preconditions
 - postconditions
+- evidence
+- review
 - verify commands
 - not-included list
 
@@ -289,12 +291,12 @@ are not yet committed on the branch:
 Before implementing each commit, restate:
 - subject line
 - invariant focus
-- test level
-- review gate
 - files
-- source-topology impact
+- source-topology decision
 - preconditions
 - postconditions
+- evidence
+- review
 - verify commands
 - not-included list
 
@@ -347,11 +349,13 @@ If a formatter changes files:
 - re-stage the intended files
 - make sure the commit still matches the planned scope before continuing
 
-Treat the planned test level as guidance about proof:
+Treat the planned evidence field as a proof decision:
 - `regression`, `functional`, and `integration` are often better evidence than
   unit tests for behavior changes
 - `unit` is mainly for small, stable, logic-dense primitives
 - do not pad the commit with low-signal tests that merely mirror implementation
+- if the evidence field is vague or does not match the changed contract, stop
+  and amend the plan before committing
 
 ### 7. Review the staged result
 Stage only the intended files.
@@ -364,7 +368,7 @@ If unexpected files changed:
   planned postconditions and do not materially expand scope
 - otherwise stop and ask, or propose a plan amendment
 
-If the current commit has a non-`none` review gate:
+If the current commit has a non-`none` review field:
 - `code`: perform a skeptical code review pass before committing
 - `perf`: check that performance or reliability claims are backed by concrete
   evidence
@@ -414,9 +418,10 @@ After each successful commit, print a short summary:
 
 ✅ N/Total: <subject>
    Invariant: ...
-   Test level: ...
-   Review gate: ...
+   Evidence: ...
+   Review: ...
    Files: ...
+   Source topology: ...
    Verified: ...
    Matched plan: yes|no
    Notes: <brief deviation note if any>
