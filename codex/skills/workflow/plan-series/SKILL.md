@@ -213,8 +213,8 @@ decomposing the current approved execution series into the commit stack needed
 to reach its checkpoint cleanly.
 
 When creating or revising a `docs/execution/...` doc, use
-`codex/skills/plan-series/EXECUTION_TEMPLATE.md` as the house-style starting
-point:
+`codex/skills/workflow/plan-series/EXECUTION_TEMPLATE.md` as the house-style
+starting point:
 - keep the required metadata and per-series contract fields
 - adapt the doc shape when the execution effort is clearer with less ceremony
 - do not treat the template as permission to bloat the execution doc with
@@ -312,12 +312,13 @@ When presenting one or more commit entries in chat, emit the commit block(s)
 inside a fenced `text` code block so indentation is preserved exactly. Do not
 present aligned commit entries as ordinary prose paragraphs.
 
-For commit-entry formatting, `codex/skills/plan-series/scripts/format_commit_block.py`
-is the source of truth for the required inline-indent layout. When a commit
-entry includes any wrapped field or multi-line file list, you must generate the
-final printed block from that script's layout rather than hand-formatting it.
-Do not freehand wrapped commit blocks in the final response, and do not remove
-the fenced `text` block wrapper around the final formatted output.
+For commit-entry formatting,
+`codex/skills/workflow/plan-series/scripts/format_commit_block.py` is the source
+of truth for the required inline-indent layout. When a commit entry includes any
+wrapped field or multi-line file list, you must generate the final printed block
+from that script's layout rather than hand-formatting it. Do not freehand
+wrapped commit blocks in the final response, and do not remove the fenced
+`text` block wrapper around the final formatted output.
 
 When printing or writing long field values such as `Summary`, `Files`,
 `Preconditions`, `Postconditions`, and `Verify`, you must keep the value inline

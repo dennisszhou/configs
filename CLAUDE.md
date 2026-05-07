@@ -14,6 +14,8 @@ Personal dotfiles and system configuration repo. Symlinks config files into `$HO
 | `claude/install.sh` | Symlinks Claude config + ECC items into `~/.claude/` |
 | `codex/` | Generic Codex config — `~/.codex` files plus user skills, install script |
 | `codex/AGENTS.md` | Global Codex instructions (symlinked to `~/.codex/AGENTS.md`) |
+| `codex/skills/workflow/` | Codex planning, execution, and review workflow skills |
+| `codex/skills/tools/` | Reusable Codex tool skills |
 | `codex/install.sh` | Symlinks Codex config into `~/.codex/` and skills into `~/.agents/skills/` |
 | `vendor/everything-claude-code/` | Git submodule → fork of `affaan-m/everything-claude-code` |
 | `common/shrc` | Shared env vars (editor, history, FZF, PATH) sourced by all shells |

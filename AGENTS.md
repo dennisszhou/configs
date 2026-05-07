@@ -31,6 +31,11 @@ This file supplements broader global defaults. Follow the nearest applicable
 - `vendor/everything-claude-code/` is a git submodule used by `claude/install.sh`.
 - `codex/` contains the generic `~/.codex` payload plus user skills; keep both
   symlink-based so local repo edits reflect immediately.
+- `codex/skills/workflow/` contains the Codex planning, execution, and review
+  workflow skills.
+- `codex/skills/workflow/reviewers/` contains reviewer lenses used by that
+  workflow.
+- `codex/skills/tools/` contains reusable Codex tool skills.
 - `kernel/`, `patches/`, and `iterm/` are supporting config assets, not general
   code modules.
 
