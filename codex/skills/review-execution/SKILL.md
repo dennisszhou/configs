@@ -1,6 +1,6 @@
 ---
 name: review-execution
-description: Skeptically review the execution contract produced by plan-series or an equivalent user-supplied execution plan, including response-only series plans, docs/execution artifacts, and current-series commit chains. Use after plan-series and before impl-series when execution review is required or requested, especially for durable, risky, multi-series, or boundary-sensitive work.
+description: Skeptically review and lightly amend the execution contract produced by plan-series or an equivalent user-supplied execution plan, including response-only series plans, docs/execution artifacts, and current-series commit chains. Use after plan-series and before impl-series when execution review is required or requested, especially for durable, risky, multi-series, or boundary-sensitive work.
 ---
 
 # Review Execution
@@ -12,6 +12,12 @@ This skill is intentionally skeptical and constructive. Its job is not only to
 ask whether the plan is coherent. It should also ask whether the execution
 shape can be made more reviewable, safer, or better staged without changing the
 approved product, roadmap, or design model.
+
+When the review finds small non-structural improvements, apply them instead of
+only reporting them. For durable `docs/execution/...` artifacts, edit the active
+execution doc directly. For response-only plans, include the amended execution
+contract in the review output. A ready review result still does not approve
+implementation; it only makes the contract ready for the user to approve.
 
 Do not turn this into design review. If the better execution shape requires a
 different architecture, API shape, source of truth, migration strategy, or
@@ -88,7 +94,35 @@ Check whether the contract can be improved before implementation:
 - Is `$plan-series` smuggling unresolved design back into execution?
 
 This is a review, not a rewrite session. If the plan should change, describe the
-smallest concrete revision that would make it ready.
+smallest concrete revision that would make it ready. If the needed change is a
+small non-structural amendment, make the amendment and report it.
+
+## Minor Amendments
+
+Make minor amendments during review when they are clearly beneficial and stay
+inside the approved design and execution shape.
+
+Allowed minor amendments include:
+- tighten or literalize verification commands
+- add or clarify `Not included`, precondition, postcondition, done-means, or
+  checkpoint wording
+- add an obvious missing review gate to an already-risky commit
+- clarify dependencies between existing commits or series
+- rename a commit subject for accuracy without changing scope
+- move proof wording into the commit that already establishes that behavior
+- clarify approval or completion wording without changing approval state,
+  current state, or finished state
+
+Do not treat these as minor amendments:
+- add, remove, split, fold, or reorder commits
+- change the current series boundary or stable checkpoint
+- change implementation scope, API shape, migration order, or design truth
+- approve implementation or mark a series finished
+- update unrelated plan or execution docs
+
+When a needed improvement is not a minor amendment, return
+`needs series revision`, `needs execution-doc revision`, or
+`needs design revision` as appropriate.
 
 ## Process
 
@@ -132,8 +166,11 @@ smallest concrete revision that would make it ready.
 
 8. Decide the better execution shape
 - If the current plan is already the best reasonable shape, say so.
-- If it can be improved, list concrete changes such as split, merge, reorder,
-  move proof, adjust gate, tighten verification, or revise execution doc.
+- If it can be improved by minor amendment, apply the amendment and list what
+  changed.
+- If it needs a material change, list concrete changes such as split, merge,
+  reorder, move proof, adjust gate, tighten verification, or revise execution
+  doc.
 - If the improvement would change the approved design, return
   `needs design revision` instead of patching over it in execution.
 
@@ -153,6 +190,7 @@ Findings
 
 Better execution shape
 - `none; current plan is good enough`
+- or `minor amendments applied`
 - or concrete changes:
   - split commit ...
   - fold commit ...
@@ -182,6 +220,10 @@ Approval check
 - For durable execution docs, state the approval fields that must change before
   implementation starts.
 
+Minor amendments applied
+- Use `none` if no amendments were applied.
+- Otherwise list each file or response-only section changed and why.
+
 Blocking issues
 - Use `none` if there are no blockers.
 
@@ -208,6 +250,8 @@ Only return `ready for implementation` when:
 - no series silently smuggles unresolved architecture into execution
 - no obvious split, merge, reorder, or proof-placement change would materially
   improve reviewability before implementation starts
+- any small non-structural improvements found during review have already been
+  applied or included in the amended response-only contract
 
 ## What This Skill Does Not Do
 
@@ -215,4 +259,5 @@ Only return `ready for implementation` when:
 - It does not write code.
 - It does not review implemented diffs.
 - It does not redesign the approved architecture.
+- It does not approve implementation or mark a series finished.
 - It does not paper over structural ambiguity with "implementation details".
