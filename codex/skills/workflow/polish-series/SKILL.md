@@ -11,6 +11,10 @@ This skill is for final local-history cleanup, not for core execution
 correctness. Use it after the branch behavior is settled and the truthful
 working history has already done its job.
 
+Apply the `AGENTS.md` house rules for commit-path and source-ownership policy.
+Apply `$workflow-house-rules`, especially `Preserve Truth Before Polish` and
+`Planning Artifacts Stay Together`.
+
 In a staged execution workflow, this skill is typically used after the current
 series is complete and stable, before planning or starting the next series.
 
@@ -97,13 +101,9 @@ Do not rewrite history if:
 - Preserve independently reviewable semantic commits.
 - When rewording, squashing, or amending commits during cleanup, normalize the
   resulting commit messages to the repository or nearest-`AGENTS.md`
-  commit-hygiene rules. Use `$git-commit` for file-based amend, reword,
-  squash, and fixup message mechanics; do not use `git commit -m`.
-- If there is no more specific local convention, fall back to the ideal 50/72
-  rule for commit formatting:
-  - concise subject, ideally within 50 characters
-  - blank line
-  - explanatory body wrapped at about 72 columns
+  commit-hygiene rules. Use `$git-commit` for amend, reword, squash, and
+  fixup message mechanics; do not use `git commit -m`.
+- If there is no more specific local convention, use the `$git-commit` default.
 
 6. Preserve commit-message quality
 - Do not let history cleanup degrade a good commit into a subject-only message

@@ -15,6 +15,10 @@ For larger or riskier series, this skill may recommend escalating to
 `series-reviewer` so correctness and operations can be reviewed through
 separate lenses.
 
+Apply the `AGENTS.md` house rules when checking proof placement and
+documentation truth. Apply `$workflow-house-rules` when checking finish-series
+eligibility and whether execution history stayed truthful.
+
 ## When to use this
 Use this skill when:
 - `impl-series` has implemented the current approved execution series and needs
@@ -38,6 +42,8 @@ Check these directly:
 - Are tests high-signal and at the right layer?
 - Are tests overfit to implementation details?
 - Would one regression or integration test replace several brittle unit tests?
+- Did the series violate the `AGENTS.md` house rules or
+  `$workflow-house-rules`?
 - Is there hidden semantic drift or scope creep?
 - Are performance or reliability claims supported with real evidence?
 

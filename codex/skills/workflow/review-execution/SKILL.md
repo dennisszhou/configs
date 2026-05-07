@@ -19,6 +19,10 @@ execution doc directly. For response-only plans, include the amended execution
 contract in the review output. A ready review result still does not approve
 implementation; it only makes the contract ready for the user to approve.
 
+Apply the `AGENTS.md` house rules and `$workflow-house-rules` while reviewing
+the execution contract. Prefer short references to rule names over repeating
+shared policy text.
+
 Do not turn this into design review. If the better execution shape requires a
 different architecture, API shape, source of truth, migration strategy, or
 rollout semantics, return `needs design revision` and send the work back to the
@@ -85,6 +89,8 @@ Check whether the contract can be improved before implementation:
 - Should commits be split, merged, reordered, or renamed?
 - Are docs/plans and implementation commits staged correctly?
 - Are tests or proof in the commit that establishes the behavior?
+- Does the plan satisfy the `AGENTS.md` house rules for docs and proof, and
+  `$workflow-house-rules` for approval and finish boundaries?
 - Are review gates on the risky commits, not everywhere or nowhere?
 - Is cleanup placed where it reduces risk instead of being dumped at the end?
 - Does each series boundary create a real stable checkpoint?

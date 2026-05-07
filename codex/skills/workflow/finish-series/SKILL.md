@@ -14,6 +14,9 @@ series finished. That approval may be given before implementation, such as
 review summary. It is a docs-only closeout step. It does not redesign the plan
 or silently change the scope of later series.
 
+Apply the `AGENTS.md` house rules for documentation truth and
+`$workflow-house-rules`, especially `Finish Requires Finish Approval`.
+
 ## When to use this
 Use this skill when:
 - the current approved execution series has been implemented

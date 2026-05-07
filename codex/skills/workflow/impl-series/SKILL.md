@@ -32,6 +32,10 @@ Completion of the current approved series always includes a final
 `$review-series` pass. This skill must review the completed current series
 before handoff and fix in-scope findings inline.
 
+Apply the `AGENTS.md` house rules and `$workflow-house-rules` before each
+commit and before any finish-series handoff. Use rule names in progress notes
+instead of copying the rule text.
+
 ## Approval model
 Invocation of this skill counts as authorization to execute the approved
 current execution series sequentially.
@@ -312,6 +316,9 @@ Guidelines:
 - follow local code style
 - keep the diff focused
 - introduce tests in the commit if the plan says they belong there
+- apply the `AGENTS.md` house rules for docs, proof, and commit-path decisions
+- apply `$workflow-house-rules` for planning-artifact, approval, and finish
+  decisions
 - if a real ambiguity appears, stop and ask
 
 ### 6. Verify
@@ -368,9 +375,9 @@ makes the change necessary. Do not translate these checklist fields into
 separate sentence-per-field paragraphs, and do not put a blank line after every
 sentence.
 
-Use `$git-commit` for the commit mechanics: write the message under `.tmp/`,
-preview its real wrapped lines, commit from the file, and delete the temporary
-message file after success. Do not use `git commit -m`.
+Use `$git-commit` for commit mechanics. It owns file-based message handling,
+format checks, amend/rewrite details, and temp-file cleanup. Do not use
+`git commit -m`.
 
 Do not use `--no-verify`.
 Do not add assistant attribution trailers unless explicitly requested.

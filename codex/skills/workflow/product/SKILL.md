@@ -26,6 +26,10 @@ Do not use this skill when:
 
 This skill works best while native plan mode is on.
 
+Apply the `AGENTS.md` house rules for documentation truth and
+`$workflow-house-rules` for approval movement.
+This skill may recommend `$review-plan`; it does not start roadmap by itself.
+
 ## Goal
 Answer these questions before roadmap decomposition begins:
 - who is this for

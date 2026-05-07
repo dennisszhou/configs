@@ -38,8 +38,6 @@ applicable `AGENTS.md` first.
 
 ## Workflow
 - Plan first for any non-trivial change.
-- Use the planning model below to distinguish architecture/design planning from
-  execution planning.
 - For non-trivial work, show the data model, key structures, or API shape before
   implementation.
 - If something breaks mid-task or the plan stops matching reality: stop, re-plan,
@@ -50,353 +48,58 @@ applicable `AGENTS.md` first.
 - Match repo style. When unsure about a pattern, inspect the codebase instead of
   inventing a new one.
 - Keep changes scoped to what was asked. No drive-by refactors.
-- For non-trivial work, use the lightest lane that fits:
-  - small work: optional native `/plan`, then `$plan-series`, then
-    either explicit implementation approval or `$review-execution`, then
-    `$impl-series`
-  - medium work: `$design` with `docs/plans/...` when needed,
-    `$review-plan`, explicit approval for `$plan-series`, then
-    `$plan-series`, then `$review-execution`, then `$impl-series`
-  - large technical work: `$roadmap`, `$review-plan`, explicit approval for
-    `$design`, then `$design`, `$review-plan`, explicit approval for
-    `$plan-series`, then `$plan-series` with `docs/execution/...` when needed,
-    `$review-execution`, `$impl-series`, then `$finish-series` only when
-    explicitly approved
-  - large product or app work: `$product`, `$review-plan`, explicit approval
-    for `$roadmap`, then `$roadmap`, `$review-plan`, explicit approval for
-    `$design`, then `$design`, `$review-plan`, explicit approval for
-    `$plan-series`, then `$plan-series` with `docs/execution/...` when needed,
-    `$review-execution`, `$impl-series`, then `$finish-series` only when
-    explicitly approved
 - Native `/plan` is optional. It is useful for lightweight planning discussion,
   but durable docs become the source of truth once work is large enough to need
   them. Once a roadmap, design doc, or execution doc exists for the effort,
   chat should not quietly replace that artifact as the source of truth.
 - For bugfixes, reproduce the bug or define regression evidence first; use a
   short design note only when the fix shape is not obvious.
+- Use the lightest workflow skills that fit the risk and ambiguity. The
+  workflow source of truth is split by responsibility:
+  - `codex/AGENTS.md` is the always-loaded baseline.
+  - The house rules below are always loaded and apply to all agent work.
+  - `$workflow-house-rules` owns workflow-specific policy: approval movement,
+    current-series boundaries, planning-artifact commits, finish eligibility,
+    and truthful execution history.
+  - `$product`, `$roadmap`, `$design`, and `$review-plan` own product and
+    architecture planning.
+  - `$plan-series` and `$review-execution` own execution planning.
+  - `$impl-series`, `$review-series`, `$polish-series`, and `$finish-series`
+    own implementation, review, history cleanup, and closeout.
+  - `$git-commit` owns commit-message mechanics.
+- Do not duplicate detailed workflow procedure in this file. Update the owning
+  skill when a workflow rule changes.
+
+## House rules
+- Docs stay truthful. Keep architecture docs, README, AGENTS.md, operator docs,
+  and workflow/config docs accurate as behavior, setup, commands, or agent
+  expectations change. Future-state or vision sections are fine when clearly
+  labeled, but current-state and prior-state descriptions must not become false.
+- Proof travels with behavior. Keep tests or equivalent proof with the commit
+  that introduces the behavior they prove. Separate proof commits are
+  acceptable only when they define a standalone primitive or contract boundary,
+  provide a large final integration scenario whose separation materially
+  improves review, or are otherwise independently useful.
+- Use `$git-commit` for creating, amending, rewording, squashing, or
+  fixup-folding commits. Agent-created commits must use a file-based message
+  path and must not use `git commit -m`. `$git-commit` owns the exact `.tmp`
+  file, preview, 50/72, amend, reword, squash, fixup, and cleanup mechanics.
+- Keep one owning source. When a rule or workflow behavior changes, update the
+  owning source first and replace duplicated copies with pointers. Keep
+  `AGENTS.md` as baseline behavior, skills as procedural authorities, and index
+  files as maps rather than parallel policy documents.
 
 ## Planning model
+Keep architecture/design planning distinct from execution planning:
+- Architecture/design planning settles product scope, roadmap slices, data
+  model, API shape, ownership, invariants, and rollout.
+- Execution planning stages the approved shape into commits, verification,
+  review gates, and series checkpoints.
 
-Planning happens in two distinct phases. Do not collapse them into one.
-
-### 1. Architecture / design planning
-Use architecture or design planning when the problem, API, data model, migration
-strategy, or high-level implementation approach is not yet settled.
-
-This phase is for deciding:
-- what problem is being solved
-- what the constraints and non-goals are
-- what the API or data model should look like
-- what invariants must hold
-- what the authoritative source-of-truth state is
-- what state is derived versus cached versus authoritative
-- what tradeoffs are being made
-- what migration or compatibility strategy is needed
-- what the overall shape of the solution should be
-
-For substantial features, refactors, or migrations, write or update a design doc
-under `docs/plans/` before implementation begins.
-
-For substantial app or initiative work where user journeys, release slices, or
-cross-surface integration are not yet clear, first produce a product doc under
-`docs/products/` before roadmap or design planning begins.
-
-When the work is too large for one design doc, first produce a roadmap that
-identifies components, slices, milestones, dependencies, and which slices need
-their own dedicated design docs under `docs/plans/`.
-
-Product docs should use dated filenames in this form:
-- `docs/products/YYYY-MM-DD-topic.md`
-
-Examples:
-- `docs/products/2026-03-20-collab-notes-v1.md`
-- `docs/products/2026-03-20-admin-ops-console.md`
-
-`docs/products/...` is the source of truth for:
-- target audience or operator
-- core user journeys
-- release slices
-- major integration expectations
-- in-scope versus out-of-scope initiative boundaries
-
-Product docs should be used mostly for:
-- new apps
-- major product initiatives
-- broad user-facing efforts spanning multiple subsystems
-
-Do not force a product doc for technical migrations, narrow internal changes,
-or feature work already well-bounded by existing product context.
-
-Use dated filenames in this form:
-- `docs/plans/YYYY-MM-DD-topic.md`
-
-Examples:
-- `docs/plans/2026-03-20-auth-token-refresh.md`
-- `docs/plans/2026-03-20-percpu-bitmap-migration.md`
-
-A written design plan is required when:
-- the work is large or likely to span multiple sessions
-- the architecture or API is not already clear
-- there are migration or compatibility risks
-- there are multiple milestones or validation checkpoints
-- correctness changes must be staged separately from optimizations
-
-A design or architecture plan should include, when relevant:
-- status
-- title
-- date
-- goal
-- constraints
-- non-goals
-- proposed approach
-- data model or API shape
-- invariants
-- source-of-truth, derived-state, and cached-state boundaries
-- migration strategy
-- validation milestones
-- open questions
-
-When a task is already associated with an existing design plan:
-- update only the current active plan doc for that task
-- do not edit older or unrelated plan docs
-- treat other plan docs as historical records unless explicitly told otherwise
-
-Design docs under `docs/plans/` should carry an explicit status field:
-- `Status: draft` while the design is still being revised
-- `Status: approved` once design review via `$review-plan` is complete enough
-  for execution planning
-- `Status: superseded` when a newer plan replaces it as the active design
-
-Docs produced under `docs/` by this workflow should:
-- include explicit top-of-doc metadata appropriate to the artifact type
-- include `Title`, `Date`, and `Status` sections
-- wrap prose at `80` columns for terminal and review readability
-
-### 2. Execution planning
-Execution planning happens after the architecture or design is already understood
-well enough to implement.
-
-Execution planning is about:
-- breaking the work into commits
-- deciding whether execution should stay in one reviewable series or move into a
-  durable `docs/execution/...` execution artifact
-- staging verification
-- separating correctness from optimization
-- making the work reviewable and bisectable
-- choosing the order of implementation
-
-`$plan-series` is a commit-series planning step, not an architecture-planning
-step or a replacement for a higher-level execution contract.
-
-Use `$plan-series` only after one of these is true:
-- the design is already clear from the task and existing code
-- a design discussion has already settled the approach
-- an approved design doc under `docs/plans/` already exists
-
-If the architecture is still unclear, do not jump straight to `$plan-series`.
-First do design planning.
-
-## Planning workflow
-Use this workflow for non-trivial work:
-
-1. Determine whether product planning is needed.
-2. If needed, create or update `docs/products/...`.
-3. Use `$review-plan` on a product artifact before roadmap planning that
-   depends on it. A `ready for roadmap` result means the artifact is coherent
-   enough to ask the user whether to start roadmap; it does not authorize
-   `$roadmap` by itself.
-4. Determine whether roadmap planning is needed.
-5. If needed, create or update `docs/roadmaps/...`.
-6. Use `$review-plan` on a roadmap artifact before design planning that depends
-   on it. A `ready for design` result means the artifact is coherent enough to
-   ask the user whether to start design; it does not authorize `$design` by
-   itself.
-7. If needed, create or update `docs/plans/...`.
-8. Use `$review-plan` on the design context before series planning. Continue
-   only after the result is `ready for series planning` and the user explicitly
-   approves starting `$plan-series`.
-9. Use `$plan-series` to produce the execution contract:
-   - a response-only current-series commit plan for small enough work
-   - or a durable `docs/execution/...` artifact plus the current-series commit
-     plan when staged execution tracking is needed
-10. Decide whether `$review-execution` is needed:
-   - require it for durable `docs/execution/...` artifacts, multi-series work,
-     risky boundaries, material review gates, unclear verification, or anything
-     that is not obviously small and low-risk
-   - allow skipping it only for a small, low-risk response-only plan when the
-     user explicitly approves implementation from the `$plan-series` output
-11. If `$review-execution` runs and returns `ready for implementation`, or the
-   user explicitly approves a small low-risk bypass, record that approval before
-   execution:
-   - for response-only plans, the chat approval is enough
-   - for durable execution docs, update the doc so whole-doc approval and the
-     current series approval are explicit
-   - do not commit that approval update before `$impl-series`; it belongs in
-     the first `$impl-series` commit, usually the planning-artifacts anchor
-12. Use `$impl-series` to execute that approved commit stack. This always
-    includes a final `$review-series` pass over the implemented current series
-    before any closeout decision.
-13. If the series is stable and local-history cleanup would improve review,
-    optionally run `$polish-series`.
-14. Run `$finish-series` only when a durable execution doc exists and the user
-    explicitly approved marking the current series finished. That approval may
-    be given before implementation, such as "implement this and then finish the
-    series", or after reviewing the implementation and `$review-series` result.
-    If finish approval is absent, stop after the implementation and review
-    summary.
-15. If implementation reveals that the product, roadmap, design, or execution
-    plan is wrong, stop, update the relevant doc, and only then continue.
-
-The active `docs/plans/...` file remains mutable during design, `$review-plan`,
-and series planning. The active `docs/execution/...` file remains mutable during
-`$plan-series` and `$review-execution`. Approval may be written into these
-working docs before implementation, but do not commit approval state until
-`$impl-series` begins. Once `$impl-series` begins:
-- if the active approved plan doc and active execution doc are both ready and
-  not yet committed on the execution branch, commit them together in one
-  docs-only planning-artifacts commit before implementation; do not split them
-  into separate `docs/plans` and `docs/execution` commits for the same planning
-  state
-- if only the active approved plan doc is ready and not yet committed, and more
-  than one implementation commit will follow, commit it first as a docs-only
-  planning-artifacts commit
-- if execution will be exactly one semantic commit, folding the approved
-  `docs/plans/...` update into that lone implementation commit is allowed
-- do not use that single-commit exception to skip a committed approved plan doc
-  for larger multi-commit series
-- if the initial planning-artifacts commit exists and no implementation commit
-  has landed yet, amending it in place is acceptable
-- once implementation commits exist, meaningful design or execution-plan updates
-  should usually be recorded as new docs commits rather than silently rewriting
-  the original approved artifact underneath code history; when the same
-  planning update touches both `docs/plans/...` and `docs/execution/...`, keep
-  those changes together in one docs-only commit
-
-## Heuristics
-- Small, obvious tasks may not need a written design plan.
-- Non-trivial tasks should usually use `$plan-series`.
-- Large app or initiative work should usually start with `docs/products/...`
-  before roadmap or design work.
-- Large, ambiguous, multi-step, or multi-session tasks should usually have a
-  written design plan under `docs/plans/` before `$plan-series`.
-
-## Large execution planning
-Prefer one execution series when the work is still reviewable, independently
-correct, and realistically implementable as one stack.
-
-Require a durable `docs/execution/...` execution doc when any of these hard
-triggers apply:
-- one execution effort spans multiple approved design docs
-- execution requires multiple series
-- implementation is likely to span multiple sessions
-- the plan depends on explicit checkpoints or staged approvals between series
-
-Allow `$plan-series` to return a response-only execution plan only when all of
-these are true:
-- the execution effort depends on one approved design doc
-- the work fits in one execution series
-- the stack remains small enough to review coherently as one unit
-- no durable checkpoint or staged approval boundary is needed
-
-Execution docs should use dated filenames in this form:
-- `docs/execution/YYYY-MM-DD-topic.md`
-
-`docs/plans/...` remains the architecture source of truth.
-`docs/execution/...` is the execution source of truth when a durable execution
-artifact is required.
-
-Execution docs should define the higher-level staged execution contract:
-- the goal and relevant planning inputs
-- the ordered series list and dependencies
-- the stable checkpoint for each series
-- the per-series approval state
-- the completion state for the effort
-
-Execution docs should be strong enough to constrain implementation, but they do
-not need to pre-plan every future commit. `$plan-series` is responsible for
-decomposing the current approved execution series into a clean commit stack.
-The exact execution-doc shape belongs in the relevant skill and template, not
-here.
-
-Durable execution-doc plans must pass `$review-execution` before `$impl-series`
-begins. Response-only series plans should usually pass `$review-execution`, but
-may skip it when the plan is small, low-risk, and explicitly approved for
-implementation from the `$plan-series` output. When it runs,
-`$review-execution` should test not only whether the execution contract is
-coherent, but whether the series boundaries, commit chain, review gates, and
-verification plan can be made more reviewable without changing the approved
-design.
-
-Proof belongs to each series. Do not default to a final standalone
-“proof/cleanup” series when the real evidence should live with the series that
-establishes each checkpoint.
-
-Cleanup should be placed where it best reduces risk or improves reviewability.
-Use a standalone cleanup series only when that cleanup itself forms a real,
-independently correct milestone.
-
-## Important distinction
-Do not treat series planning as a substitute for design.
-
-- Product planning decides what experience should exist and what release slice
-  matters first.
-- Roadmap planning decides what technical slices and milestones are needed to
-  realize that product or initiative.
-- Design planning decides what to build.
-- `$review-plan` reviews each planning artifact before the next planning or
-  execution phase: product before roadmap, roadmap before design, and design
-  before series planning. The review runs automatically when an artifact is
-  ready to check, but its `ready` result only authorizes asking the user for the
-  next action; it does not start the next action by itself.
-- `$plan-series` decides how to stage building it and produces the execution
-  contract: either a response-only series plan or a durable execution doc plus
-  the current-series commit chain.
-- `$review-execution` reviews that execution contract before implementation,
-  looking for better commit boundaries, series boundaries, review gates, and
-  verification placement while staying within the approved design. It is
-  required for durable or risky execution and optional for small low-risk
-  response-only plans.
-- `$impl-series` executes the current approved execution series and always runs
-  `$review-series` on the implemented series before any closeout decision.
-- `$polish-series` optionally cleans local history after a series is stable.
-- `$finish-series` records truthful closeout only after implementation,
-  review, and explicit user approval to mark the current series finished.
-
-## Approval boundaries
-- Present a plan before non-trivial code changes when approval is expected.
-- Do not treat a `docs/plans/...` artifact as implementation-ready until it is
-  explicitly marked `Status: approved`.
-- Do not start `$impl-series` until either `$review-execution` has returned
-  `ready for implementation` for the current execution contract, or the user has
-  explicitly approved implementation from a small low-risk response-only
-  `$plan-series` output.
-- When a `docs/execution/...` artifact exists, also require the whole execution
-  doc to be approved and the current execution series to be explicitly approved.
-- If `$review-execution` finds the execution contract ready but the durable
-  execution doc still says approval is pending, update the doc's approval state
-  before starting `$impl-series`, but leave that update uncommitted until the
-  first `$impl-series` commit.
-- Do not mark an execution series finished, including by running
-  `$finish-series`, unless the user explicitly approves that closeout. The
-  approval may be part of the original request or given after implementation
-  and end-of-series review.
-- Before committing, show the staged diff and proposed commit message when the
-  workflow expects review.
-- If an explicit execution workflow has already been approved through
-  `$review-execution` or through the small low-risk bypass path, that approval
-  authorizes `$impl-series` to execute the planned commits sequentially until a
-  real question, failure, or plan mismatch arises.
-- Use selective review gates rather than mandatory review theater on every
-  commit. Typical gates are `structures`, `code`, `perf`, and `migration`.
-- Stop for approval again when:
-  - the plan needs to change materially
-  - verification fails in a way that requires out-of-scope changes
-  - there are multiple valid implementation choices with meaningful tradeoffs
-  - unexpected files or side effects expand the scope
-
-Preserve truthful execution history while work is ongoing. Do not polish the
-branch history during `$impl-series`; later docs/plans or docs/execution update
-commits are acceptable when the plan changes materially.
+If architecture is still unclear, do not jump straight to `$plan-series`. Use
+the relevant product, roadmap, design, and review-plan skills first. If an
+execution contract is durable, risky, or not clearly small, use
+`$review-execution` before `$impl-series`.
 
 ## Core principles
 - Solve the right problem before optimizing the implementation.
@@ -415,14 +118,16 @@ commits are acceptable when the plan changes materially.
   clever.
 
 ## Commit structure
-Prefer commit stacks that separate concerns:
+Prefer commit stacks that separate concerns while keeping proof and
+documentation with the behavior that needs them. Treat this as a dependency
+ordering heuristic, not as a requirement to create separate test or docs
+commits:
 
 1. preparatory cleanup or code motion
-2. primitive / helper / API introduction
-3. tests for the new primitive or contract
-4. adoption by callers or behavior changes
-5. performance optimizations
-6. docs and cleanup
+2. primitive / helper / API introduction, with contract proof when useful
+3. adoption by callers or behavior changes, with regression or functional proof
+4. performance optimizations behind an established and proven boundary
+5. cleanup or docs-only work that is independently true and reviewable
 
 Rules:
 - Keep each commit understandable on its own.
@@ -434,17 +139,16 @@ Rules:
 - Preserve bisectability whenever practical: intermediate commits should build
   and pass the relevant tests.
 - Prefer small, isolated commits with one logical change per commit.
-- For bugfixes and narrow semantic changes, tests should usually land in the
-  same commit as the behavior change they prove.
-- Do not default to a trailing test-only commit whose only purpose is added
-  regression coverage for a small fix or narrow semantic change.
-- Proof belongs with the commit that establishes the behavior unless the test
-  commit is itself introducing the primitive or contract boundary being defined.
+- Follow the house rule that proof travels with behavior instead of defaulting
+  to trailing test-only commits.
+- Do not move tests or docs later just to match the outline above; if they are
+  needed to make the current commit correct, truthful, or reviewable, they
+  belong in that commit.
 
 ## Primitive-first development
-- When introducing a new primitive, helper, abstraction, or API boundary, also
-  introduce tests for its contract.
-- Tests should define what the primitive guarantees as it is introduced.
+- When introducing a new primitive, helper, abstraction, or API boundary,
+  include the proof needed to make its contract clear.
+- Proof should define what the primitive guarantees as it is introduced.
 - Prefer to establish the boundary and its tests before layering behavior or
   optimizations on top of it.
 - Purely mechanical renames or code motion do not need new tests by themselves,
@@ -629,6 +333,8 @@ For concurrent, async, queued, or retried code:
   commits change the user-facing behavior, API, workflow, or mental model.
 - Update documentation alongside the commit that introduces the behavior so any
   single checked-out commit remains internally consistent and correct.
+- Follow the house rule that docs stay truthful for current-state architecture,
+  README, AGENTS.md, operator, and workflow/config documentation.
 - Large concepts spanning multiple modules should have a dedicated doc.
 - Keep one authoritative place per concept; avoid duplicated documentation that
   can drift.
@@ -674,6 +380,10 @@ For concurrent, async, queued, or retried code:
 
 ## Commit hygiene
 - Never use `--no-verify` when committing.
+- Use `$git-commit` for creating, amending, rewording, squashing, or
+  fixup-folding commits. It is the canonical source for file-based commit
+  mechanics, 50/72 formatting, `.tmp` message files, and avoiding
+  `git commit -m`.
 - Commit messages should explain why the change is needed, not merely what
   changed.
 - Commit bodies should be cohesive prose, not a series of isolated one-sentence
@@ -686,55 +396,16 @@ For concurrent, async, queued, or retried code:
   the commit plan's checklist fields into separate sentence-per-field
   paragraphs.
 - Use `subsystem: short description` subject lines when appropriate for the repo.
-- Wrap commit-message bodies cleanly.
-- Default to the ideal 50/72 rule for commit formatting unless the repository
-  clearly uses a different local convention:
-  - concise subject, ideally within 50 characters
-  - blank line
-  - explanatory body wrapped at about 72 columns
-- Use `$git-commit` for creating, amending, rewording, squashing, or
-  fixup-folding commits.
-- Agent-created commits must write the message under `.tmp/`, preview it, use
-  a file-based commit path such as `git commit -F <message-file>`, and delete
-  the temporary message file after a successful commit.
-- Do not use `git commit -m`, including multiple `-m` flags, for
-  agent-created commits. Git will not wrap long `-m` arguments, and shell
-  escaping makes multi-paragraph bodies easy to corrupt.
-- Before finalizing a commit, ensure the message preview contains real wrapped
-  lines and no literal `\n` sequences.
+- Use specific docs subjects when committing planning artifacts. Avoid vague
+  subjects such as `update docs` or `fix plan`.
+- Apply `$workflow-house-rules` for workflow planning-artifact commit
+  boundaries.
 - Do not add assistant attribution trailers unless explicitly requested.
 
-For planning-artifacts commits that include both `docs/plans/...` and
-`docs/execution/...`, prefer specific subjects such as:
-- `docs: add <topic> planning artifacts`
-- `docs: revise <topic> planning artifacts`
-- `docs: update <topic> planning checkpoints`
-
-For docs/plans-only commits, prefer specific subjects such as:
-- `docs/plans: add <topic> design`
-- `docs/plans: revise <topic> design`
-- `docs/plans: clarify <topic> invariants`
-
-For docs/execution-only commits, prefer specific subjects such as:
-- `docs/execution: add <topic> execution plan`
-- `docs/execution: revise <topic> execution plan`
-- `docs/execution: update <topic> series checkpoints`
-
-Do not split `docs/plans/...` and `docs/execution/...` into separate commits
-when both changes describe the same planning state or approval boundary.
-
-Avoid vague subjects such as `update docs` or `fix plan`.
-
 ## History polishing
-`$polish-series` is an optional local-history cleanup step after execution is
-stable. It may fold later docs/plans or docs/execution update commits back into
-one clean docs commit and squash obvious tiny fixups when safe. The rewrite
-target should follow the repository or nearest-`AGENTS.md` commit-hygiene
-rules, falling back to kernel-style formatting when no more specific convention
-exists.
-
-It is not part of core execution correctness and should not be used to hide
-ambiguous or still-changing implementation history.
+Use `$polish-series` for optional local-history cleanup after execution is
+stable. Do not use polishing to hide ambiguous or still-changing implementation
+history.
 
 ## Repo respect
 - Follow the repository’s formatter, linter, test, and naming conventions.

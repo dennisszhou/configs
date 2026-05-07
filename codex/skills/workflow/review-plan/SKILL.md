@@ -14,6 +14,10 @@ whether the artifact is clear enough to constrain the next planning or
 execution-planning step without hidden ambiguity. A `ready` result is not
 approval to start that next step.
 
+Apply the `AGENTS.md` house rules for documentation truth and
+`$workflow-house-rules`, especially `Reviews Advise; Approval Moves`, when
+deciding whether the artifact is ready to hand off.
+
 ## When to use this
 Use this skill when:
 - a product artifact exists and roadmap planning depends on it

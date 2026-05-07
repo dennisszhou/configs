@@ -29,6 +29,11 @@ Do not use this skill for:
 
 This skill works best while native plan mode is on.
 
+Apply the `AGENTS.md` house rules for documentation truth and
+`$workflow-house-rules` for approval movement.
+This skill may recommend `$review-plan`; it does not start series planning by
+itself.
+
 ## Goal
 Produce a concrete, reviewable design artifact that can be approved before
 series planning begins.

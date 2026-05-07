@@ -28,6 +28,11 @@ current-series commit plan.
 Do not use this skill while native plan mode is still active. Series planning is
 an execution-planning step, not a design-planning step.
 
+Apply the `AGENTS.md` house rules for proof and documentation placement, and
+`$workflow-house-rules` for approval handoff and planning-artifact commits. Do
+not restate those rule bodies here; make the commit plan show how it satisfies
+them when relevant.
+
 ## Goal
 Each planned commit should be:
 - Atomic: one logical change
@@ -92,13 +97,12 @@ Look for boundaries between:
     default
 
 4. Separate correctness from optimization
-- Prefer this order:
+- Prefer this dependency order, not one commit per line:
   1. preparatory cleanup
-  2. primitive / helper / API introduction
-  3. tests for the primitive or contract when that is the right proof
-  4. adoption / behavior change
-  5. optimization
-  6. docs / cleanup
+  2. primitive / helper / API introduction, with contract proof when useful
+  3. adoption / behavior change, with regression or functional proof
+  4. optimization behind an established and proven boundary
+  5. cleanup or docs-only work that is independently true and reviewable
 - Do not apply `primitive / tests / adoption` mechanically when there is no
   real primitive boundary.
 - For bugfixes and narrow semantic changes, merge regression evidence into the
@@ -111,6 +115,8 @@ Every commit must say:
 - what becomes true after it lands
 - how to verify it
 - what is intentionally deferred
+- how the `AGENTS.md` house rules or `$workflow-house-rules` affect docs,
+  proof, or approval state when relevant
 
 6. Make verification concrete
 - Verification commands must be literal, copy-pasteable commands.
@@ -475,6 +481,8 @@ Good plans:
 - separate semantics from optimization
 - expose scope boundaries explicitly
 - give verification commands the implementer can actually run
+- make the `AGENTS.md` house rules and `$workflow-house-rules` visible in
+  commit boundaries without duplicating the rule text
 - keep approved `docs/plans/...` in a front docs-only commit for real
   multi-commit series, including any same-state `docs/execution/...` artifact
   in that commit, but fold it into a lone semantic implementation commit when
@@ -488,6 +496,8 @@ Bad plans:
 - end with a final `tests/coverage only` commit for a small bugfix or narrow
   semantic change when that commit does not establish an independently useful
   contract or failing-spec step
+- defer house-rule fixes to a trailing cleanup commit after earlier commits have
+  already made docs false or proof placement misleading
 
 ## What this skill does not do
 - It does not implement the code.
