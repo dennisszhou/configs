@@ -55,16 +55,19 @@ applicable `AGENTS.md` first.
     either explicit implementation approval or `$review-execution`, then
     `$impl-series`
   - medium work: `$design` with `docs/plans/...` when needed,
-    `$review-plan`, `$plan-series`, then `$review-execution`, then
-    `$impl-series`
-  - large technical work: `$roadmap`, `$review-plan`, `$design`,
-    `$review-plan`, `$plan-series` with `docs/execution/...` when needed,
+    `$review-plan`, explicit approval for `$plan-series`, then
+    `$plan-series`, then `$review-execution`, then `$impl-series`
+  - large technical work: `$roadmap`, `$review-plan`, explicit approval for
+    `$design`, then `$design`, `$review-plan`, explicit approval for
+    `$plan-series`, then `$plan-series` with `docs/execution/...` when needed,
     `$review-execution`, `$impl-series`, then `$finish-series` only when
     explicitly approved
-  - large product or app work: `$product`, `$review-plan`, `$roadmap`,
-    `$review-plan`, `$design`, `$review-plan`, `$plan-series` with
-    `docs/execution/...` when needed, `$review-execution`, `$impl-series`,
-    then `$finish-series` only when explicitly approved
+  - large product or app work: `$product`, `$review-plan`, explicit approval
+    for `$roadmap`, then `$roadmap`, `$review-plan`, explicit approval for
+    `$design`, then `$design`, `$review-plan`, explicit approval for
+    `$plan-series`, then `$plan-series` with `docs/execution/...` when needed,
+    `$review-execution`, `$impl-series`, then `$finish-series` only when
+    explicitly approved
 - Native `/plan` is optional. It is useful for lightweight planning discussion,
   but durable docs become the source of truth once work is large enough to need
   them. Once a roadmap, design doc, or execution doc exists for the effort,
@@ -199,14 +202,19 @@ Use this workflow for non-trivial work:
 1. Determine whether product planning is needed.
 2. If needed, create or update `docs/products/...`.
 3. Use `$review-plan` on a product artifact before roadmap planning that
-   depends on it. Continue only after the result is `ready for roadmap`.
+   depends on it. A `ready for roadmap` result means the artifact is coherent
+   enough to ask the user whether to start roadmap; it does not authorize
+   `$roadmap` by itself.
 4. Determine whether roadmap planning is needed.
 5. If needed, create or update `docs/roadmaps/...`.
 6. Use `$review-plan` on a roadmap artifact before design planning that depends
-   on it. Continue only after the result is `ready for design`.
+   on it. A `ready for design` result means the artifact is coherent enough to
+   ask the user whether to start design; it does not authorize `$design` by
+   itself.
 7. If needed, create or update `docs/plans/...`.
 8. Use `$review-plan` on the design context before series planning. Continue
-   only after the result is `ready for series planning`.
+   only after the result is `ready for series planning` and the user explicitly
+   approves starting `$plan-series`.
 9. Use `$plan-series` to produce the execution contract:
    - a response-only current-series commit plan for small enough work
    - or a durable `docs/execution/...` artifact plus the current-series commit
@@ -326,7 +334,9 @@ Do not treat series planning as a substitute for design.
 - Design planning decides what to build.
 - `$review-plan` reviews each planning artifact before the next planning or
   execution phase: product before roadmap, roadmap before design, and design
-  before series planning.
+  before series planning. The review runs automatically when an artifact is
+  ready to check, but its `ready` result only authorizes asking the user for the
+  next action; it does not start the next action by itself.
 - `$plan-series` decides how to stage building it and produces the execution
   contract: either a response-only series plan or a durable execution doc plus
   the current-series commit chain.

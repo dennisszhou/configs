@@ -1,17 +1,18 @@
 ---
 name: review-plan
-description: Skeptically review product, roadmap, or design planning artifacts before the next workflow phase. Use after product before roadmap, after roadmap before design, and after design before plan-series to test scope, milestones, state boundaries, ownership, invariants, and readiness.
+description: Skeptically review product, roadmap, or design planning artifacts before asking the user to approve the next workflow action. Use automatically after product before roadmap, after roadmap before design, and after design before plan-series to test scope, milestones, state boundaries, ownership, invariants, and readiness without starting the next action.
 ---
 
 # Review Plan
 
-Review whether the proposed planning artifact is coherent enough to trigger the
-next workflow phase.
+Review whether the proposed planning artifact is coherent enough to ask for
+approval to start the next workflow phase.
 
 This skill is intentionally skeptical. Its job is not to invent new product
 scope, roadmap slices, or design structure from scratch. Its job is to test
 whether the artifact is clear enough to constrain the next planning or
-execution-planning step without hidden ambiguity.
+execution-planning step without hidden ambiguity. A `ready` result is not
+approval to start that next step.
 
 ## When to use this
 Use this skill when:
@@ -32,7 +33,7 @@ This skill works best while native plan mode is still on.
 ## Goal
 Answer one question:
 
-Is this artifact coherent enough to trigger the next phase?
+Is this artifact coherent enough to ask the user to approve the next phase?
 
 The outcome must be one of:
 - `ready for roadmap`
@@ -139,6 +140,9 @@ and point to the smallest revision needed.
   `needs design revision`.
 - If the target is a design doc and it is ready, the design doc should be able
   to carry `Status: approved`.
+- A `ready` result should recommend asking the user for explicit approval for
+  the next action. Do not start `$roadmap`, `design`, or `$plan-series` from
+  this skill.
 
 ## Output format
 
@@ -205,7 +209,8 @@ Result
 - `needs design revision`
 
 Recommended next step
-- ...
+- Ask the user whether to approve the next action, such as `$roadmap`,
+  `design`, or `$plan-series`, when the result is ready.
 
 ## Exit criteria for “ready”
 Only return `ready for roadmap` when:

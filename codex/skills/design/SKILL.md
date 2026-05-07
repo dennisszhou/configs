@@ -177,8 +177,9 @@ Design exit criteria
 
 Recommended next step
 - `$review-plan` after the draft design is accepted.
-- Move to `$plan-series` only after `$review-plan` returns
-  `ready for series planning`.
+- Treat `ready for series planning` as permission to ask the user whether to
+  start `$plan-series`, not as permission to start `$plan-series`
+  automatically.
 
 Wrap prose in `docs/` artifacts at `80` columns.
 

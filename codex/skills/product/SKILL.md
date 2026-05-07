@@ -92,7 +92,8 @@ slices, this skill should usually write or update a product doc under
 
 7. Recommend the next step
 - Use `$review-plan` after the product draft is accepted.
-- Move to `$roadmap` only after `$review-plan` returns `ready for roadmap`.
+- Treat `ready for roadmap` as permission to ask the user whether to start
+  `$roadmap`, not as permission to start `$roadmap` automatically.
 
 ## Output format
 

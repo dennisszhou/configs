@@ -32,5 +32,5 @@ Open questions
 - Use `none` when there are no real open questions.
 
 Recommended next step
-- `$review-plan` after the product draft is accepted; `$roadmap` only after
-  `ready for roadmap`.
+- `$review-plan` after the product draft is accepted; ask for approval before
+  starting `$roadmap`, even when review returns `ready for roadmap`.

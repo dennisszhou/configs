@@ -149,7 +149,8 @@ If this roadmap should be saved to disk, use a dated filename such as:
 10. Recommend the next design steps
 - End with the smallest set of next design tasks that would unblock progress.
 - Run `$review-plan` before starting those design tasks.
-- Move to `design` only after `$review-plan` returns `ready for design`.
+- Treat `ready for design` as permission to ask the user whether to start
+  `design`, not as permission to start `design` automatically.
 
 ## Output format
 

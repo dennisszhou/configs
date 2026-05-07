@@ -45,5 +45,6 @@ Design exit criteria
 - ...
 
 Recommended next step
-- `$review-plan` after the draft design is accepted; `$plan-series` only after
+- `$review-plan` after the draft design is accepted; ask for approval before
+  starting `$plan-series`, even when review returns
   `ready for series planning`.
