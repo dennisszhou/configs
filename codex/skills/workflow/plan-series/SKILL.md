@@ -75,6 +75,7 @@ on top of a rejected model.
 Look for boundaries between:
 - data structures and the code that uses them
 - interface definitions and implementations
+- source/module owners and the files that currently happen to be nearby
 - build/config wiring and logic
 - happy path and error handling
 - correctness changes and performance optimizations
@@ -115,6 +116,7 @@ Every commit must say:
 - what becomes true after it lands
 - how to verify it
 - what is intentionally deferred
+- source-topology impact, when a file or directory grows materially
 - how the `AGENTS.md` house rules or `$workflow-house-rules` affect docs,
   proof, or approval state when relevant
 
@@ -147,6 +149,8 @@ Every commit must say:
   or review hazards.
 - Include one invariant focus per commit so reviewers know what truth that step
   is meant to establish or preserve.
+- Use `Review gate: structures` when a commit names, creates, or materially
+  changes source/module ownership boundaries.
 - Include one test level per commit from this fixed set:
   - none
   - regression
@@ -307,6 +311,7 @@ Commit N/Total: <subsystem: description>
   Test level:    none | regression | functional | integration | unit
   Review gate:   none | structures | code | perf | migration
   Files:         explicit list of files created or modified
+  Source topology: owner/impact, or "not material"
   Preconditions: what must already be true before this commit starts
   Postconditions: what is true after this commit lands
   Verify:        copy-pasteable command(s) proving the postconditions
@@ -327,10 +332,11 @@ wrapped commit blocks in the final response, and do not remove the fenced
 `text` block wrapper around the final formatted output.
 
 When printing or writing long field values such as `Summary`, `Files`,
-`Preconditions`, `Postconditions`, and `Verify`, you must keep the value inline
-after the label and align continuation lines under the start of the value. If
-output does not follow this format, that is a formatting mistake and should be
-corrected directly rather than explained away. For example:
+`Source topology`, `Preconditions`, `Postconditions`, and `Verify`, you must
+keep the value inline after the label and align continuation lines under the
+start of the value. If output does not follow this format, that is a formatting
+mistake and should be corrected directly rather than explained away. For
+example:
 
   Summary:       first wrapped line
                  continuation line
@@ -420,6 +426,12 @@ Use this to mark commits that deserve extra scrutiny:
 List every file expected to change. Use `(new)` for new files. If uncertain, add
 `(?)`.
 
+### Source topology
+Name the owner and topology impact when a commit adds substantial behavior,
+creates a module, grows a large file, or touches a crowded directory. Use
+`not material` only when the existing owner is obvious and the commit does not
+make a file or directory more likely to absorb unrelated future work.
+
 ### Preconditions
 State what must already exist or be true before starting this commit. Reference
 earlier commits by number where useful.
@@ -483,6 +495,10 @@ Good plans:
 - give verification commands the implementer can actually run
 - make the `AGENTS.md` house rules and `$workflow-house-rules` visible in
   commit boundaries without duplicating the rule text
+- name the owning module before adding substantial behavior to a large file or
+  crowded directory
+- include a source-topology checkpoint when the series materially grows source
+  files or directories
 - keep approved `docs/plans/...` in a front docs-only commit for real
   multi-commit series, including any same-state `docs/execution/...` artifact
   in that commit, but fold it into a lone semantic implementation commit when
@@ -498,6 +514,8 @@ Bad plans:
   contract or failing-spec step
 - defer house-rule fixes to a trailing cleanup commit after earlier commits have
   already made docs false or proof placement misleading
+- treat source-topology drift as cosmetic cleanup when it changes where future
+  behavior will attach
 
 ## What this skill does not do
 - It does not implement the code.

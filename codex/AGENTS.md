@@ -80,6 +80,18 @@ applicable `AGENTS.md` first.
   acceptable only when they define a standalone primitive or contract boundary,
   provide a large final integration scenario whose separation materially
   improves review, or are otherwise independently useful.
+- Source topology is architecture. For non-trivial code changes, check whether
+  new behavior is landing in the correct owning module or merely in the nearest
+  existing file. Before adding substantial behavior to a large file or crowded
+  directory, name the owner that should contain it. Split by responsibility
+  when a coherent owner can be named, but do not force premature abstraction or
+  split tiny files that still represent one idea.
+- When source topology or repository shape is in question, consider checking
+  `~/workplace/llm-wiki/wiki/topics/project-bootstrap/source-topology.md`,
+  `~/workplace/llm-wiki/wiki/topics/project-bootstrap/repo-shape.md`, and
+  relevant project notes such as `wiki/projects/nbd-server.md` for doctrine and
+  examples. Keep those long examples in the wiki rather than duplicating them
+  here.
 - Use `$git-commit` for creating, amending, rewording, squashing, or
   fixup-folding commits. Agent-created commits must use a file-based message
   path and must not use `git commit -m`. `$git-commit` owns the exact `.tmp`
@@ -92,7 +104,7 @@ applicable `AGENTS.md` first.
 ## Planning model
 Keep architecture/design planning distinct from execution planning:
 - Architecture/design planning settles product scope, roadmap slices, data
-  model, API shape, ownership, invariants, and rollout.
+  model, API shape, source/module topology, ownership, invariants, and rollout.
 - Execution planning stages the approved shape into commits, verification,
   review gates, and series checkpoints.
 
@@ -246,14 +258,21 @@ Before execution planning on non-trivial work, perform a skeptical structure
 review of the proposed model. The review should confirm:
 - the source of truth is explicit
 - authoritative, cached, and derived state are clearly separated
+- source/module topology reflects named ownership boundaries
 - ownership and lifecycle are coherent
 - API boundaries are concrete enough to implement
 - invariants and illegal states are explicit
+- edge adapter types stay at boundaries instead of leaking into core code
+- root facades are used for compatibility, while internal imports prefer
+  owning modules
 - the chosen boundaries support high-signal regression, functional, or
   integration testing
 
 Execution should not casually reopen architecture after design and structure
 review are approved. Reopen it only when implementation exposes a real mismatch.
+For non-trivial code changes, include this source-topology checkpoint before
+handoff: "Did this change leave a file or directory as the obvious dumping
+ground for the next unrelated feature?"
 
 ## Separate correctness from optimization
 - First make the boundary explicit and testable.

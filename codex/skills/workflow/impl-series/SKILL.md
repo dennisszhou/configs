@@ -47,6 +47,8 @@ conditions.
 Do not stop between commits to ask “should I continue?” Stop only when:
 - verification fails and the fix would go out of scope
 - the execution contract no longer matches reality
+- the implementation shape no longer matches the approved design or repo
+  topology
 - a meaningful design decision is required
 - the worktree is unexpectedly dirty
 - the current approved series is complete
@@ -84,6 +86,9 @@ and execution contract as the starting point for execution history.
 - Do not smuggle future work into the current commit.
 - Do not casually reopen architecture once design and `$review-plan` are
   approved. Stop only if the approved model no longer fits reality.
+- Before adding substantial behavior to a large file or crowded directory, name
+  the owning module. If the owner is unclear or the code wants to create a new
+  dumping ground, stop and re-plan.
 
 4. Keep progress recoverable
 - Use git history as the source of truth.
@@ -127,6 +132,7 @@ Each commit entry should include:
 - test level
 - review gate
 - files
+- source-topology impact
 - preconditions
 - postconditions
 - verify commands
@@ -286,6 +292,7 @@ Before implementing each commit, restate:
 - test level
 - review gate
 - files
+- source-topology impact
 - preconditions
 - postconditions
 - verify commands
@@ -317,6 +324,8 @@ Guidelines:
 - keep the diff focused
 - introduce tests in the commit if the plan says they belong there
 - apply the `AGENTS.md` house rules for docs, proof, and commit-path decisions
+- preserve source/module topology; do not leak edge adapter types into core code
+  or route internal imports through a root facade when an owning module exists
 - apply `$workflow-house-rules` for planning-artifact, approval, and finish
   decisions
 - if a real ambiguity appears, stop and ask
@@ -500,8 +509,8 @@ ready to start.
 
 ## Completion
 After the end-of-series review loop is complete, print a concise summary of the
-implemented stack, the main verification that was performed, and the review
-results. Run `$finish-series` only if the user explicitly approved series
-closeout, either in the original request or after seeing the implementation and
-review summary. If finish approval is absent, stop after the summary without
-marking the series finished.
+implemented stack, the main verification that was performed, the
+source-topology checkpoint result, and the review results. Run `$finish-series`
+only if the user explicitly approved series closeout, either in the original
+request or after seeing the implementation and review summary. If finish
+approval is absent, stop after the summary without marking the series finished.

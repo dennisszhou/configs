@@ -39,6 +39,10 @@ Check these directly:
 - Does the diff match the approved contract?
 - Does it preserve the stated invariants?
 - Is source-of-truth state still authoritative?
+- Did the change preserve source/module topology, or did it make a file or
+  directory the obvious dumping ground for the next unrelated feature?
+- Are edge adapter types contained at boundaries, with internal imports using
+  owning modules rather than root facades?
 - Are tests high-signal and at the right layer?
 - Are tests overfit to implementation details?
 - Would one regression or integration test replace several brittle unit tests?
@@ -69,6 +73,9 @@ testing gap.
 3. Check boundary discipline
 - Look for hidden scope creep, unexpected API shifts, or quiet changes to source
   of truth.
+- Run the source-topology checkpoint for non-trivial work: "Did this change
+  leave a file or directory as the obvious dumping ground for the next unrelated
+  feature?"
 
 4. Check evidence quality
 - Decide whether the chosen tests or verification actually exercise the contract.
@@ -91,6 +98,10 @@ Findings
 
 Open questions
 - Use `none` if there are no material questions.
+
+Source topology checkpoint
+- Answer: "Did this change leave a file or directory as the obvious dumping
+  ground for the next unrelated feature?"
 
 Residual risks
 - ...

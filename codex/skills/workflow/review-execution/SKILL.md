@@ -91,6 +91,8 @@ Check whether the contract can be improved before implementation:
 - Are tests or proof in the commit that establishes the behavior?
 - Does the plan satisfy the `AGENTS.md` house rules for docs and proof, and
   `$workflow-house-rules` for approval and finish boundaries?
+- Does the commit chain preserve source/module ownership, or does it add
+  substantial behavior to the nearest large file or crowded directory?
 - Are review gates on the risky commits, not everywhere or nowhere?
 - Is cleanup placed where it reduces risk instead of being dumped at the end?
 - Does each series boundary create a real stable checkpoint?
@@ -113,9 +115,12 @@ Allowed minor amendments include:
 - add or clarify `Not included`, precondition, postcondition, done-means, or
   checkpoint wording
 - add an obvious missing review gate to an already-risky commit
+- add or clarify source-topology impact wording inside an existing commit
 - clarify dependencies between existing commits or series
 - rename a commit subject for accuracy without changing scope
 - move proof wording into the commit that already establishes that behavior
+- add a missing source-topology checkpoint or `structures` review gate to a
+  commit that materially grows source files or directories
 - clarify approval or completion wording without changing approval state,
   current state, or finished state
 
@@ -162,6 +167,8 @@ When a needed improvement is not a minor amendment, return
 - Are narrow bugfixes keeping regression proof with the semantic fix?
 - Are there dormant helpers or feature plumbing whose first real use is later?
 - Are docs-only commits justified by a real multi-commit or checkpoint reason?
+- Does each material source change name its owning module and avoid turning a
+  broad file or crowded directory into the next dumping ground?
 
 7. Check verification and review gates
 - Are verify commands literal and high-signal?
@@ -217,6 +224,9 @@ Series boundary check
 Commit-chain check
 - ...
 
+Source topology check
+- ...
+
 Verification and review-gate check
 - ...
 
@@ -254,6 +264,7 @@ Only return `ready for implementation` when:
 - stable checkpoints, review focus, and done-means are concrete
 - the current commit chain is atomic, ordered, independently correct, and
   reviewable
+- source-topology impact is explicit for material source growth
 - verification proves the right contract at the right layer
 - review gates match the real risk points
 - no series silently smuggles unresolved architecture into execution

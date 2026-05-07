@@ -69,6 +69,7 @@ For design review, check:
 - source of truth
 - authoritative versus cached versus derived state
 - data structure choices
+- source/module topology and project structure
 - lifecycle and ownership
 - API boundary clarity
 - invariants
@@ -118,26 +119,36 @@ and point to the smallest revision needed.
 - Who creates, owns, mutates, and discards each important piece of state?
 - Are state transitions and update paths clear?
 
-8. Check API boundaries
+8. Check source topology
+- Is substantial new behavior assigned to a named owning module instead of the
+  nearest large file or crowded directory?
+- Do proposed splits follow coherent responsibility boundaries rather than line
+  count alone?
+- Do edge adapter types stay at boundaries instead of leaking into core code?
+- Are root facades limited to compatibility while internal imports use owning
+  modules?
+- Skip this when the change is tiny and the existing owner is obvious.
+
+9. Check API boundaries
 - Are inputs, outputs, failure modes, and responsibilities explicit enough for
   implementation and review?
 
-9. Check illegal states
+10. Check illegal states
 - Which invalid combinations are impossible by structure?
 - Which remain possible and require explicit handling?
 
-10. Check validation shape
+11. Check validation shape
 - Would the proposed boundaries support regression, functional, or integration
   tests at the right layer?
 - Are unit tests being forced by the structure rather than chosen because they
   match the contract?
 
-11. Check operational truth when relevant
+12. Check operational truth when relevant
 - For async, concurrent, stateful, background, or operator-facing systems,
   check whether lifecycle and public-status behavior are explicit enough.
 - Only apply this lens when the system actually has these concerns.
 
-12. Decide readiness
+13. Decide readiness
 - For product review, return `ready for roadmap` or `needs product revision`.
 - For roadmap review, return `ready for design` or `needs roadmap revision`.
 - For design review, return `ready for series planning` or
@@ -186,6 +197,9 @@ Data structure check
 Ownership and lifecycle check
 - Use `not applicable` unless this is design review.
 
+Source topology check
+- Use `not applicable` unless this is design review.
+
 API boundary check
 - Use `not applicable` unless this is design review.
 
@@ -232,6 +246,7 @@ Only return `ready for design` when:
 Only return `ready for series planning` when:
 - authoritative, cached, and derived state are clearly separated
 - core structures can express the intended invariants
+- source/module topology has a named owner for substantial new behavior
 - ownership and lifecycle are not ambiguous
 - API boundaries are concrete enough to stage in commits
 - testing can target the real contract at the right layer

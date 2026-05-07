@@ -44,6 +44,7 @@ The artifact should make these things hard to miss:
 - why this solution shape was chosen
 - what the source-of-truth state is
 - what data structures or API boundaries will exist
+- what source/module topology and owning modules should contain the behavior
 - what invariants must hold
 - what operational or lifecycle contracts matter, when they are relevant
 - what risks and tradeoffs remain
@@ -85,6 +86,11 @@ The artifact should make these things hard to miss:
 4. Propose the shape
 - Describe the data model, API boundary, ownership model, and control flow.
 - Distinguish source-of-truth state from cached and derived state.
+- Describe the source/module topology when the change adds substantial behavior
+  or touches a large file or crowded directory.
+- Name the owning module before placing behavior in a broad existing file.
+- Keep edge adapter types at boundaries. Prefer owning-module imports inside
+  the codebase; use root facades for compatibility.
 - When relevant, make request-path versus background-path boundaries explicit.
 
 5. State invariants
@@ -159,6 +165,9 @@ Proposed approach
 Data model / API shape
 - ...
 
+Source topology / project structure
+- Use `not needed` for tiny changes whose existing owner is obvious.
+
 Invariants
 - ...
 
@@ -192,6 +201,7 @@ Wrap prose in `docs/` artifacts at `80` columns.
 The design is not ready if:
 - the source of truth is vague
 - data structures are hand-waved
+- substantial new behavior has no named owning module or source-topology home
 - invariants are missing
 - migration or rollout risk is ignored where relevant
 - validation is described only as generic “add tests”

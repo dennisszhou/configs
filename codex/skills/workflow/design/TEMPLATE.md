@@ -23,6 +23,9 @@ Proposed approach
 Data model / API shape
 - ...
 
+Source topology / project structure
+- Use `not needed` for tiny changes whose existing owner is obvious.
+
 Invariants
 - ...
 
