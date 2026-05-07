@@ -45,6 +45,8 @@ cleanup_stale() {
                 ;;
         esac
     done
+
+    return 0
 }
 
 is_skill_dir() {
@@ -71,18 +73,33 @@ mkdir -p "$SKILLS_HOME"
 
 wanted_codex_entries=" AGENTS.md"
 wanted_skill_entries=""
+skill_list_file=""
 
 install_link "$SCRIPT_DIR/AGENTS.md" "$CODEX_HOME/AGENTS.md"
 
 if [ -d "$SKILLS_DIR" ]; then
-    for src in "$SKILLS_DIR"/*; do
-        [ -e "$src" ] || continue
+    skill_list_file="$(mktemp)"
+    find "$SKILLS_DIR" -type f -name SKILL.md -print | sort > "$skill_list_file"
+
+    while IFS= read -r skill_file; do
+        src=$(dirname "$skill_file")
         is_skill_dir "$src" || continue
 
         base=$(basename "$src")
+        case " $wanted_skill_entries " in
+            *" $base "*)
+                echo "Duplicate Codex skill name: $base" >&2
+                echo "Each skill directory must have a unique basename." >&2
+                rm "$skill_list_file"
+                exit 1
+                ;;
+        esac
+
         install_link "$src" "$SKILLS_HOME/$base"
         wanted_skill_entries="$wanted_skill_entries $base"
-    done
+    done < "$skill_list_file"
+
+    rm "$skill_list_file"
 fi
 
 remove_path_if_exists "$SKILLS_HOME/superpowers"
