@@ -30,9 +30,11 @@ planning domain.
 
 This review gate is not mandatory for every response-only plan. A small,
 low-risk, one-series plan with clear verification may proceed by explicit user
-approval without this skill. Durable execution docs, multi-series work, risky
-boundaries, unclear verification, or material review gates should use this
-skill before implementation.
+approval without this skill. If `$plan-series` creates or materially revises a
+`docs/execution/...` artifact, run this skill regardless of implementation
+size. Durable execution docs, multi-series work, risky boundaries, unclear
+verification, or material review gates should use this skill before
+implementation.
 
 ## When to use this
 

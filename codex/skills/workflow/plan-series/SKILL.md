@@ -452,16 +452,21 @@ non-obvious dependencies or risks here when they affect whether the commit is
 safe to start.
 
 ## Interaction rules
-- After producing the plan, stop. The next gate is either `$review-execution` or
-  explicit implementation approval for a small low-risk response-only plan.
-- If a `docs/execution/...` execution doc is required and does not exist yet,
-  create or update it as part of planning before asking the user to run
-  `$review-execution`.
+- After producing a response-only plan, stop. The next gate is either
+  `$review-execution` or explicit implementation approval for a small low-risk
+  response-only plan.
+- If this skill creates or materially revises a `docs/execution/...` execution
+  doc, do not end with only a request for the user to run `$review-execution`.
+  Treat the durable artifact as the signal that `$review-execution` is required
+  regardless of implementation size, and perform that review immediately in the
+  same turn. This does not approve implementation; it only produces the review
+  result the user may approve.
 - Make clear whether the candidate execution contract covers only the current
   execution series or the whole execution artifact.
 - If you recommend skipping `$review-execution`, state why the plan qualifies:
-  response-only, one small series, no durable checkpoint, no risky boundary, no
-  material review gate, and clear verification.
+  response-only, no `docs/execution/...` artifact, one small series, no durable
+  checkpoint, no risky boundary, no material review gate, and clear
+  verification.
 - Common adjustments:
   - split a commit
   - combine two commits
@@ -521,5 +526,7 @@ Bad plans:
   still unresolved.
 
 ## Final step
-End by asking for `$review-execution`, explicit approval for a small low-risk
-bypass, or edits before implementation begins.
+End by either reporting the immediate `$review-execution` result for durable
+execution docs, asking for `$review-execution` on response-only plans that need
+the gate, asking for explicit approval for a small low-risk bypass, or asking
+for edits before implementation begins.
