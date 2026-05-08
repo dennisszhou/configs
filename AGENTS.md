@@ -9,6 +9,36 @@ This file supplements broader global defaults. Follow the nearest applicable
 - The main behavior is symlink-based installation into `$HOME`, not copying.
 - Treat it as an install/bootstrap repo, not as an application or library.
 
+## Local reference material
+- `~/workplace/llm-wiki` contains LLM-managed wikis for prior work, project
+  lessons, engineering guides, raw evidence, and preferences from work we have
+  done together.
+- Treat it as helpful prior context. It does not replace the current repository,
+  nearest instructions, source code, tests, or official docs.
+- Start at `~/workplace/llm-wiki/wiki/index.md` when you need the root map.
+- Check the wiki when the task asks for planning, structure, project history,
+  engineering judgment, or reusable guidance, or when a quick lookup is likely
+  to prevent rediscovering prior work. Skip it for narrow mechanical edits where
+  the current repo already provides enough context.
+- Useful entrypoints:
+  - `wiki/engineering-guides/index.md` for the guide map.
+  - `wiki/engineering-guides/project-bootstrap/` for repo shape, project
+    direction, and source topology.
+  - `wiki/engineering-guides/systems-primitives/` for config, CLI,
+    observability, concurrency, caching, errors, tests/proof, lifecycle, and
+    storage.
+  - `wiki/engineering-guides/agent-tooling/` for skills, plugins, MCP servers,
+    and reusable agent capabilities.
+  - `wiki/projects/` for prior project-specific lessons.
+- Use wiki guidance as starting points and review prompts. If it conflicts with
+  the current repo, nearest `AGENTS.md`, source, tests, or official docs, prefer
+  the current repo or official source and mention the mismatch when it matters.
+- When the wiki repeatedly helps or gets in the way for a task type, suggest an
+  update to these instructions or to the wiki routing pages.
+- Do not modify `llm-wiki` while working in this repo unless explicitly asked.
+- If importing external material into `llm-wiki` later, preserve its model:
+  durable evidence belongs in `raw/`, synthesis belongs in `wiki/`.
+
 ## Important entrypoints
 - `setup.sh` initializes git submodules before any other setup.
 - `configure.sh` is the main installer. It supports:
