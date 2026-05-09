@@ -17,5 +17,6 @@
 
 [include]
 	path = ~/.gitconfig.local
+
 [core]
-	excludesfile = /tmp/configs-base-test.p09meH/.gitignore.global
+	excludesfile = ~/.gitignore.global
