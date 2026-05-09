@@ -1,6 +1,6 @@
 ---
 name: review-execution
-description: Skeptically review and lightly amend the execution contract produced by plan-series or an equivalent user-supplied execution plan, including response-only series plans, docs/execution artifacts, and current-series commit chains. Use after plan-series and before impl-series when execution review is required or requested, especially for durable, risky, multi-series, or boundary-sensitive work.
+description: Skeptically review and lightly amend the execution contract produced by plan-series or an equivalent user-supplied execution plan, including response-only series plans, docs/execution artifacts, and current-series commit chains. Use after plan-series and before impl-series for every candidate execution contract.
 ---
 
 # Review Execution
@@ -28,13 +28,10 @@ different architecture, API shape, source of truth, migration strategy, or
 rollout semantics, return `needs design revision` and send the work back to the
 planning domain.
 
-This review gate is not mandatory for every response-only plan. A small,
-low-risk, one-series plan with clear verification may proceed by explicit user
-approval without this skill. If `$plan-series` creates or materially revises a
-`docs/execution/...` artifact, run this skill regardless of implementation
-size. Durable execution docs, multi-series work, risky boundaries, unclear
-verification, or material review gates should use this skill before
-implementation.
+Run this review gate after every `$plan-series` result and before
+implementation approval. Tiny obvious work should be implemented without the
+series workflow rather than creating a candidate execution contract without
+review.
 
 ## When to use this
 
@@ -43,7 +40,6 @@ Use this skill when:
 - `$plan-series` has created or revised a `docs/execution/...` artifact
 - `$plan-series` has produced a current-series commit chain for a durable
   execution doc
-- the execution contract is not clearly small and low-risk
 - the user supplied an equivalent execution contract and wants to approve
   implementation
 - the user wants to approve implementation after series planning

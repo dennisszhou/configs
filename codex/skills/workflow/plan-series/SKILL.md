@@ -162,9 +162,8 @@ Every commit must say:
   `Preconditions`, `Not included`, `Evidence`, or `Review` for the concrete
   decision instead.
 - The output of this skill is the candidate execution contract. It becomes the
-  contract for `$impl-series` after either `$review-execution` returns
-  `ready for implementation` and the user approves implementation, or the user
-  explicitly approves a small low-risk response-only bypass.
+  contract for `$impl-series` after `$review-execution` returns
+  `ready for implementation` and the user approves implementation.
 - Every commit must stand on its own:
   - the repo remains correct
   - relevant verification passes
@@ -452,21 +451,15 @@ non-obvious dependencies or risks here when they affect whether the commit is
 safe to start.
 
 ## Interaction rules
-- After producing a response-only plan, stop. The next gate is either
-  `$review-execution` or explicit implementation approval for a small low-risk
-  response-only plan.
-- If this skill creates or materially revises a `docs/execution/...` execution
-  doc, do not end with only a request for the user to run `$review-execution`.
-  Treat the durable artifact as the signal that `$review-execution` is required
-  regardless of implementation size, and perform that review immediately in the
-  same turn. This does not approve implementation; it only produces the review
-  result the user may approve.
+- After producing a candidate execution contract, immediately run
+  `$review-execution` in the same turn.
+- Do not end by asking the user to invoke `$review-execution`. Perform the
+  review and report its result. This still does not approve implementation; it
+  only produces the review result the user may approve.
 - Make clear whether the candidate execution contract covers only the current
   execution series or the whole execution artifact.
-- If you recommend skipping `$review-execution`, state why the plan qualifies:
-  response-only, no `docs/execution/...` artifact, one small series, no durable
-  checkpoint, no risky boundary, no material review gate, and clear
-  verification.
+- Tiny obvious work should be implemented without the series workflow rather
+  than creating a candidate execution contract without review.
 - Common adjustments:
   - split a commit
   - combine two commits
@@ -475,8 +468,7 @@ safe to start.
   - move tests earlier
   - separate optimization from correctness more clearly
 - Once `$review-execution` has returned `ready for implementation` and the user
-  approves implementation, or once the user explicitly approves a small
-  low-risk response-only bypass, treat the plan as the execution contract.
+  approves implementation, treat the plan as the execution contract.
 - If that contract uses a durable `docs/execution/...` doc, record the user's
   approval in the working doc before `$impl-series` starts, but do not commit
   that approval update yet. The approval state is committed by the first
@@ -526,7 +518,6 @@ Bad plans:
   still unresolved.
 
 ## Final step
-End by either reporting the immediate `$review-execution` result for durable
-execution docs, asking for `$review-execution` on response-only plans that need
-the gate, asking for explicit approval for a small low-risk bypass, or asking
-for edits before implementation begins.
+End by reporting the immediate `$review-execution` result, asking for explicit
+implementation approval when the result is `ready for implementation`, or
+asking for edits before implementation begins.

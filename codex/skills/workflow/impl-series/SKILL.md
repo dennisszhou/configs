@@ -21,12 +21,10 @@ Use this skill when:
 - the user asks to continue or resume an in-progress commit stack
 
 If there is no approved execution contract, stop and ask the user to run
-`$plan-series`, then either `$review-execution` or explicit approval for a small
-low-risk response-only bypass.
+`$plan-series`, then `$review-execution`.
 
 Do not use this skill while native plan mode is active. Execution begins after
-design work, `$plan-series`, and either `$review-execution` or an approved
-small low-risk bypass are finished.
+design work, `$plan-series`, and `$review-execution` are finished.
 
 Completion of the current approved series always includes a final
 `$review-series` pass. This skill must review the completed current series
@@ -111,10 +109,7 @@ and execution contract as the starting point for execution history.
 This skill expects:
 - a candidate execution contract from `$plan-series` or an equivalent numbered
   series plan supplied by the user
-- either:
-  - a `$review-execution` result of `ready for implementation`
-  - or explicit user approval to skip `$review-execution` because the contract
-    is small, low-risk, response-only, and has clear verification
+- a `$review-execution` result of `ready for implementation`
 - explicit user approval to implement
 - and optionally:
   - an active approved `docs/plans/...` design doc for the task

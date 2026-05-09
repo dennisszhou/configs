@@ -109,9 +109,11 @@ Keep architecture/design planning distinct from execution planning:
   review gates, and series checkpoints.
 
 If architecture is still unclear, do not jump straight to `$plan-series`. Use
-the relevant product, roadmap, design, and review-plan skills first. If an
-execution contract is durable, risky, or not clearly small, use
-`$review-execution` before `$impl-series`.
+the relevant product, roadmap, design, and review-plan skills first. Once
+`$plan-series` produces a candidate execution contract, run
+`$review-execution` before `$impl-series`. Tiny obvious work should be
+implemented without the series workflow rather than creating a candidate
+execution contract without review.
 
 ## Core principles
 - Solve the right problem before optimizing the implementation.
