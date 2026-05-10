@@ -56,18 +56,6 @@ is_skill_dir() {
     [ -f "$dir/SKILL.md" ]
 }
 
-remove_path_if_exists() {
-    target="$1"
-
-    if [ -L "$target" ]; then
-        echo "Removing symlink: $target"
-        rm "$target"
-    elif [ -d "$target" ]; then
-        echo "Removing directory: $target"
-        rm -rf "$target"
-    fi
-}
-
 mkdir -p "$CODEX_HOME"
 mkdir -p "$SKILLS_HOME"
 
@@ -101,8 +89,6 @@ if [ -d "$SKILLS_DIR" ]; then
 
     rm "$skill_list_file"
 fi
-
-remove_path_if_exists "$SKILLS_HOME/superpowers"
 
 cleanup_stale "$CODEX_HOME" "$SCRIPT_DIR" $wanted_codex_entries
 cleanup_stale "$SKILLS_HOME" "$SKILLS_DIR" $wanted_skill_entries
