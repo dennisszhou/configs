@@ -5,6 +5,7 @@ neovim
 tmux
 fzf
 ripgrep
+shellcheck     | shellcheck | shellcheck   | ShellCheck
 fd             | fd         | fd-find      | fd-find
 curl
 coreutils
