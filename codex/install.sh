@@ -67,6 +67,8 @@ install_link "$SCRIPT_DIR/AGENTS.md" "$CODEX_HOME/AGENTS.md"
 
 if [ -d "$SKILLS_DIR" ]; then
     skill_list_file="$(mktemp)"
+    # Keep repo skills nestable for organization, but install them flat because
+    # Codex discovers user skills as direct children of ~/.agents/skills.
     find "$SKILLS_DIR" -type f -name SKILL.md -print | sort > "$skill_list_file"
 
     while IFS= read -r skill_file; do
