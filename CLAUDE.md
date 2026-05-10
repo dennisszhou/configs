@@ -12,11 +12,11 @@ Personal dotfiles and system configuration repo. Symlinks config files into `$HO
 | `claude/CLAUDE.md` | Global Claude Code instructions (symlinked to `~/.claude/CLAUDE.md`) |
 | `claude/manifest.conf` | Which ECC agents/commands/skills/rules to enable |
 | `claude/install.sh` | Symlinks Claude config + ECC items into `~/.claude/` |
-| `codex/` | Generic Codex config — `~/.codex` files plus user skills, install script |
+| `codex/` | Global Codex instructions plus user skills and install script |
 | `codex/AGENTS.md` | Global Codex instructions (symlinked to `~/.codex/AGENTS.md`) |
 | `codex/skills/workflow/` | Codex planning, execution, and review workflow skills |
 | `codex/skills/tools/` | Reusable Codex tool skills |
-| `codex/install.sh` | Symlinks Codex config into `~/.codex/` and skills into `~/.agents/skills/` |
+| `codex/install.sh` | Symlinks Codex instructions into `~/.codex/` and skills into `~/.agents/skills/` |
 | `vendor/everything-claude-code/` | Git submodule → fork of `affaan-m/everything-claude-code` |
 | `common/shrc` | Shared env vars (editor, history, FZF, PATH) sourced by all shells |
 | `common/aliases` | Shell aliases shared across bash/zsh |
@@ -46,7 +46,7 @@ Personal dotfiles and system configuration repo. Symlinks config files into `$HO
 - **configs** — symlinks shell, vim, tmux, git, and neovim configs; copies local config templates if absent
 - **plugins** — installs TPM (tmux), vim-plug, fzf shell integration
 - **claude** — installs only Claude Code config into `~/.claude/`
-- **codex** — installs only Codex config into `~/.codex/` and `~/.agents/skills/`
+- **codex** — installs only Codex instructions into `~/.codex/` and skills into `~/.agents/skills/`
 - **all** (default) — runs packages, base configs, local templates, and plugins
 
 Pre-flight check: aborts if `neovim/` submodule is empty (run `./setup.sh` first).

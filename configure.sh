@@ -72,11 +72,6 @@ setup_codex_config() {
     if [ -f "codex/install.sh" ]; then
         echo "Setting up Codex..."
         sh codex/install.sh
-        if [ -f "codex/sync-config.sh" ]; then
-            sh codex/sync-config.sh
-        else
-            echo "Codex config sync script not found; skipping."
-        fi
     else
         echo "Codex installer not found; skipping."
     fi
@@ -205,7 +200,7 @@ usage() {
     echo "  configs  - Set up shell/base configs and local templates only"
     echo "  plugins  - Install plugins only"
     echo "  claude   - Install Claude Code config only"
-    echo "  codex    - Install Codex config only"
+    echo "  codex    - Install Codex instructions and skills only"
     exit 1
 }
 
