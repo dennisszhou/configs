@@ -430,6 +430,13 @@ history.
 
 ## Repo respect
 - Follow the repository’s formatter, linter, test, and naming conventions.
+- Match indentation and whitespace from the strongest local signal first:
+  formatter config, `.editorconfig`, modelines, nearest `AGENTS.md`, then
+  surrounding lines. Prefer those signals and project or language conventions
+  over personal editor defaults; fall back to my Vim settings only when no repo
+  style is discoverable. For kernel-style files, preserve required tab
+  indentation. In Makefiles, preserve tabs on recipe lines because they are
+  syntax, not style.
 - Match local idioms unless those idioms are part of the problem being solved.
 - When no convention exists, choose the simplest rule and apply it consistently.
 - Keep the tree easier to understand than you found it.
