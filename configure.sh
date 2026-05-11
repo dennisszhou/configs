@@ -45,8 +45,12 @@ setup_base_configs() {
 
     # Vim
     install_file "common/vimrc" "$HOME/.vimrc"
-    mkdir -p "$HOME/.vim/ftplugin"
-    install_file "common/vim/c.vim" "$HOME/.vim/ftplugin/c.vim"
+    # Local ftplugin overrides live under after/ so they win over Vim defaults.
+    mkdir -p "$HOME/.vim/after/ftplugin"
+    for ftplugin in common/vim/after/ftplugin/*.vim; do
+        [[ -e "$ftplugin" ]] || continue
+        install_file "$ftplugin" "$HOME/.vim/after/ftplugin/$(basename "$ftplugin")"
+    done
     mkdir -p "$HOME/.vim/undodir"
 
     # Neovim

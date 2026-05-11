@@ -43,6 +43,7 @@ hi Search ctermbg=44
 map <Space> :noh<cr>
 
 syntax on
+filetype plugin on
 set nu
 set backspace=2
 
@@ -53,8 +54,9 @@ set expandtab
 set smarttab
 set showtabline=2
 
-" c.vim
-let g:c_repo_whitelist = ['workplace/percpu', 'workplace/drgn']
+" C style overrides. Unlisted C files use the default 4-space settings above.
+let g:c_linux_style_whitelist = ['~/workplace/percpu']
+let g:c_gnu_style_whitelist = ['~/workplace/drgn']
 
 " pane management
 set splitbelow
