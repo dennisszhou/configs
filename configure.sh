@@ -60,7 +60,6 @@ setup_base_configs() {
     # Git
     install_file "common/gitconfig" "$HOME/.gitconfig"
     install_file "common/gitignore.global" "$HOME/.gitignore.global"
-    git config --global core.excludesfile "$HOME/.gitignore.global"
 
 }
 
