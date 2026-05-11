@@ -25,6 +25,7 @@ setup_shell_config() {
     echo "Setting up shell entry points (linking directly to repo)..."
 
     if [[ "$platform" == "mac" ]]; then
+        install_file "zsh/zshenv"   "$HOME/.zshenv"
         install_file "zsh/zprofile" "$HOME/.zprofile"
         install_file "zsh/zshrc"    "$HOME/.zshrc"
         [[ -e "$HOME/.profile" ]] && mv "$HOME/.profile" "$HOME/.profile.old"

@@ -1,0 +1,11 @@
+# Minimal environment for every zsh invocation, including ssh/mosh commands.
+typeset -U path
+path=(
+    /opt/homebrew/bin
+    /usr/local/bin
+    $path
+)
+
+export PATH
+export LANG=en_US.UTF-8
+export LC_CTYPE=en_US.UTF-8
