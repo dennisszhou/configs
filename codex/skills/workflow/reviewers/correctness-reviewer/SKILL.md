@@ -11,6 +11,11 @@ series contract.
 This is a narrow reviewer lens, not a standalone workflow. It is best used
 under `series-reviewer`.
 
+Inherit the shared implementation review baseline from
+`codex/skills/workflow/reviewers/shared/implementation-review-baseline.md`.
+This lens adds depth for semantic correctness; it does not redefine the whole
+implementation review contract.
+
 ## Focus
 Check these directly:
 - does the implementation still match the approved contract
@@ -24,10 +29,19 @@ Check these directly:
 Findings
 - Ordered by severity. Use `none` if there are no findings.
 
+Scope inspected
+- Files, contracts, invariants, and tests checked.
+
 Contract mismatches
 - ...
 
 Invariant risks
+- ...
+
+Unknowns or assumptions
+- ...
+
+Commands run
 - ...
 
 Residual risks

@@ -10,6 +10,16 @@ Review the implemented series for operational and lifecycle coherence.
 This is a narrow reviewer lens, not a standalone workflow. It is best used
 under `series-reviewer`.
 
+Inherit the shared implementation review baseline from
+`codex/skills/workflow/reviewers/shared/implementation-review-baseline.md`.
+This lens adds depth for runtime and lifecycle behavior; it does not redefine
+the whole implementation review contract.
+
+When runtime behavior needs deeper doctrine, use:
+`~/workplace/llm-wiki/wiki/engineering-guides/systems-primitives/background-work-and-lifecycle.md`
+and
+`~/workplace/llm-wiki/wiki/engineering-guides/systems-primitives/synchronization.md`
+
 ## Focus
 Check these directly when relevant:
 - can request-path work accidentally block on background work
@@ -24,10 +34,20 @@ Check these directly when relevant:
 Findings
 - Ordered by severity. Use `none` if there are no findings.
 
+Scope inspected
+- Runtime paths, lifecycle owners, status surfaces, and cancellation paths
+  checked.
+
 Lifecycle risks
 - ...
 
 Status/progress risks
+- ...
+
+Unknowns or assumptions
+- ...
+
+Commands run
 - ...
 
 Residual risks
