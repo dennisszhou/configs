@@ -72,6 +72,8 @@ For design review, check:
 - source/module topology and project structure
 - lifecycle and ownership
 - API boundary clarity
+- whether language such as hidden, not known, decoupled, or behind a boundary
+  leaves the API or ownership model unclear
 - invariants
 - illegal states and ambiguity
 - whether the boundaries support high-signal regression, functional, or
