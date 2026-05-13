@@ -23,10 +23,10 @@ into a later series unless that later continuation is explicitly approved by
 the user or already approved in the execution contract.
 
 ### Finish Requires Finish Approval
-`$review-series` can say the implemented series is acceptable, but that does
-not authorize `$finish-series`. Mark a series finished only when the user
-explicitly approves closeout, either before implementation or after reviewing
-the implementation and review result.
+The implementation review gate can say the implemented series is acceptable,
+but that does not authorize `$finish-series`. Mark a series finished only when
+the user explicitly approves closeout, either before implementation or after
+reviewing the implementation and review result.
 
 ### Parallel Review Is A Synthesis Tool
 Parallel review uses subagents as context reducers and focused reviewer lenses.
