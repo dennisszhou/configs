@@ -25,6 +25,9 @@ shared policy text.
 
 Apply the shared execution review baseline at
 `codex/skills/workflow/exec-reviewers/shared/execution-review-baseline.md`.
+For larger or riskier execution contracts, use `execution-reviewer` so the
+same baseline can be reviewed with extra depth. `review-execution` still owns
+the final readiness result.
 
 Do not turn this into design review. If the better execution shape requires a
 different architecture, API shape, source of truth, migration strategy, or
@@ -109,6 +112,8 @@ Check whether the contract can be improved before implementation:
 - Is a single series too large for review?
 - Are there hidden dependency, migration, or rollback-ordering problems?
 - Is `$plan-series` smuggling unresolved design back into execution?
+- Is a deeper `execution-reviewer` pass needed because one compact review is
+  likely too coarse?
 
 This is a review, not a rewrite session. If the plan should change, describe the
 smallest concrete revision that would make it ready. If the needed change is a
@@ -197,7 +202,14 @@ When a needed improvement is not a minor amendment, return
 - If `parallel-deep` is selected, did the user explicitly authorize subagents
   through the request or execution contract?
 
-8. Decide the better execution shape
+8. Decide whether deeper execution review is needed
+- If one compact execution review is likely too coarse, run
+  `execution-reviewer` before returning the final readiness result.
+- Do not use parallel execution-review subagents unless the user explicitly
+  asks for subagents or parallel review.
+- Treat `execution-reviewer` as review depth, not as approval to implement.
+
+9. Decide the better execution shape
 - If the current plan is already the best reasonable shape, say so.
 - If it can be improved by minor amendment, apply the amendment and list what
   changed.
