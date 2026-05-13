@@ -35,6 +35,26 @@ be written into the working tree before `$impl-series`, but do not create a
 standalone approval-only commit; include it in the first implementation-series
 commit, usually the planning-artifacts anchor.
 
+### Documentation Lifetimes
+Durable documentation is part of the current system contract. Keep `AGENTS.md`,
+README files, architecture docs, operator or setup docs, API or configuration
+docs, and other reference docs truthful at every commit. They may describe
+accepted future goals when clearly labeled that way, but current-state
+descriptions must match the checkout.
+
+Working artifacts coordinate a change in flight. Product briefs, roadmaps,
+design docs, `docs/plans/...`, and `docs/execution/...` must be accurate for
+the phase or series they govern, including approval state and discovered plan
+changes. They are not general current-state architecture references unless
+their durable conclusions are promoted into the appropriate reference docs.
+
+Rule of thumb: if a reader might use the doc to operate, extend, review, or use
+the repo outside the active change series, treat it as durable and keep it
+always current. If the doc only explains what this change intends, why the
+series is staged a certain way, or what remains in the current execution, treat
+it as a working artifact. Mark completed or superseded working artifacts when
+they could otherwise be mistaken for current guidance.
+
 ### Preserve Truth Before Polish
 During `$impl-series`, preserve truthful execution history. If implementation
 reveals a meaningful plan change after code commits exist, record it as a new

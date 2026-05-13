@@ -28,6 +28,11 @@ current-series commit plan.
 Do not use this skill while native plan mode is still active. Series planning is
 an execution-planning step, not a design-planning step.
 
+Apply the `$workflow-house-rules` documentation lifetime rule when choosing docs
+commit boundaries. Durable reference docs must stay truthful as current-state
+system guidance, while product, roadmap, design, `docs/plans/...`, and
+`docs/execution/...` artifacts are working docs for the active phase or series.
+
 Apply the `AGENTS.md` house rules for proof and documentation placement, and
 `$workflow-house-rules` for approval handoff and planning-artifact commits. Do
 not restate those rule bodies here; make the commit plan show how it satisfies
