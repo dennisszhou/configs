@@ -23,6 +23,9 @@ Apply the `AGENTS.md` house rules and `$workflow-house-rules` while reviewing
 the execution contract. Prefer short references to rule names over repeating
 shared policy text.
 
+Apply the shared execution review baseline at
+`codex/skills/workflow/exec-reviewers/shared/execution-review-baseline.md`.
+
 Do not turn this into design review. If the better execution shape requires a
 different architecture, API shape, source of truth, migration strategy, or
 rollout semantics, return `needs design revision` and send the work back to the

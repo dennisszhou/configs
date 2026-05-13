@@ -65,6 +65,8 @@ This file supplements broader global defaults. Follow the nearest applicable
   workflow skills.
 - `codex/skills/workflow/impl-reviewers/` contains implementation reviewer
   lenses used by that workflow.
+- `codex/skills/workflow/exec-reviewers/` contains shared execution-review
+  contracts used by that workflow.
 - `codex/skills/tools/` contains reusable Codex tool skills.
 - `kernel/`, `patches/`, and `iterm/` are supporting config assets, not general
   code modules.
