@@ -36,12 +36,21 @@ Do not use this skill when:
 - there is no candidate execution contract to review
 - the issue is unresolved architecture, API shape, source of truth, or rollout
   semantics that should return to design review
-- parallel review is requested but neither the user nor the approved review
-  mode authorizes subagents
+- parallel review is requested but the user has not explicitly authorized
+  subagents or parallel execution review
 
 ## Goal
 Produce one synthesized execution-contract review by applying the shared
 baseline through the smallest useful amount of extra depth.
+
+The default deep-review lens set is:
+- `execution-boundary-reviewer`
+- `execution-evidence-reviewer`
+
+Select one lens when the risk is clearly narrow. Use both when boundary,
+ordering, proof, verification, and review-gate concerns interact. Do not add a
+migration-specific lens until repeated use shows that boundary review is too
+coarse.
 
 This skill does not approve implementation by itself. Its verdict feeds back
 into `review-execution`, which still returns `ready for implementation`,
@@ -65,8 +74,10 @@ into `review-execution`, which still returns `ready for implementation`,
 3. Select the narrowest useful focus set
 - Cover every baseline category in the parent thread unless a focused lens is
   selected for that category.
-- Select focused lenses only when they add real depth for the contract under
-  review.
+- Select `execution-boundary-reviewer` for series boundaries, commit staging,
+  source ownership, dependency ordering, migration, rollback, or cleanup risks.
+- Select `execution-evidence-reviewer` for proof placement, verification,
+  review-gate, documentation truth, or unsupported-claim risks.
 - Do not fan out just because the mechanism exists.
 
 4. Prepare focus task packets
@@ -81,8 +92,8 @@ into `review-execution`, which still returns `ready for implementation`,
 
 5. Run inline or parallel review
 - In `deep-inline`, apply the selected focus areas locally.
-- In `parallel-deep`, spawn selected reviewer subagents only when authorized by
-  the user or an approved review mode.
+- In `parallel-deep`, spawn selected reviewer subagents only when the user has
+  explicitly authorized subagents or parallel execution review.
 - If a subagent report is vague, missing exact references, or conflicts with
   another report, inspect the relevant artifact in the parent thread before
   deciding the final verdict.
@@ -139,8 +150,8 @@ Verdict for review-execution
 - Keep one final review output.
 - Do not produce competing reviewer conclusions.
 - Do not treat invocation of `execution-reviewer` alone as authorization for
-  subagents. Use subagents only for `parallel-deep` or an explicit user request
-  for parallel execution review.
+  subagents. Use subagents only after an explicit user request for subagents or
+  parallel execution review.
 - Use the smallest review depth that matches the risk.
 - Do not redesign the feature or rewrite the execution contract.
 - Do not approve implementation directly.
