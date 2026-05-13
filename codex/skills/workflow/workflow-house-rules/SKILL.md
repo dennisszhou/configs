@@ -28,6 +28,25 @@ not authorize `$finish-series`. Mark a series finished only when the user
 explicitly approves closeout, either before implementation or after reviewing
 the implementation and review result.
 
+### Parallel Review Is A Synthesis Tool
+Parallel review uses subagents as context reducers and focused reviewer lenses.
+It may run only when the user explicitly asks for subagents or parallel review,
+or when the user approves an execution contract whose implementation review mode
+is `parallel-deep`.
+
+Reviewer subagents are read-only by default. Use the smallest useful lens set,
+and keep the parent agent responsible for final synthesis, severity ordering,
+coverage checks, and verdict. Do not concatenate competing reviewer reports.
+
+Each reviewer report must state:
+- scope inspected
+- exact file or symbol references for findings
+- blockers
+- non-blocking findings
+- unknowns or assumptions
+- commands run
+- residual risk
+
 ### Planning Artifacts Stay Together
 When active `docs/plans/...` and `docs/execution/...` changes describe the same
 planning state or approval boundary, commit them together. Approval state may
