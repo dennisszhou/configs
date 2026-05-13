@@ -8,12 +8,14 @@ description: Skeptically review an implementation diff against the approved desi
 Review the implemented diff as a skeptical reviewer, not as the author trying to
 defend it.
 
-This skill is for checking whether a risky or semantic change actually matches
-the approved contract and whether its evidence is strong enough.
+This skill is the compact baseline implementation review path. It checks
+whether a risky or semantic change actually matches the approved contract and
+whether its evidence is strong enough.
 
-For larger or riskier series, this skill may recommend escalating to
-`series-reviewer` so correctness and operations can be reviewed through
-separate lenses.
+Apply the shared implementation review baseline at
+`codex/skills/workflow/reviewers/shared/implementation-review-baseline.md`.
+For larger or riskier series, escalate to `series-reviewer` so the same
+baseline can be reviewed through focused lenses.
 
 Apply the `AGENTS.md` house rules when checking proof placement and
 documentation truth. Apply `$workflow-house-rules` when checking finish-series
@@ -35,23 +37,15 @@ Do not use this skill for:
 
 ## Review questions
 
-Check these directly:
-- Does the diff match the approved contract?
-- Does it preserve the stated invariants?
-- Is source-of-truth state still authoritative?
-- Did the change preserve source/module topology, or did it make a file or
-  directory the obvious dumping ground for the next unrelated feature?
-- If the plan said `not material`, was that decision specific and still true
-  after the diff?
-- Are edge adapter types contained at boundaries, with internal imports using
-  owning modules rather than root facades?
-- Are tests high-signal and at the right layer?
-- Are tests overfit to implementation details?
-- Would one regression or integration test replace several brittle unit tests?
-- Did the series violate the `AGENTS.md` house rules or
-  `$workflow-house-rules`?
-- Is there hidden semantic drift or scope creep?
-- Are performance or reliability claims supported with real evidence?
+Cover the shared baseline compactly:
+- contract alignment
+- invariants and source of truth
+- source topology and ownership
+- API and boundary drift
+- evidence and proof quality
+- documentation truth
+- claims and measurements
+- residual risk and verdict
 
 ## Review stance
 
@@ -89,11 +83,16 @@ testing gap.
 - Require concrete evidence for performance, reliability, or migration safety
   claims.
 
-6. Return a verdict
+6. Decide whether deep review is needed
+- If the series spans multiple risk types, broad source areas, runtime
+  behavior, performance claims, migration risk, or enough material that one
+  pass is likely too coarse, say that it should use `series-reviewer`.
+- Do not silently run subagents from this skill.
+
+7. Return a verdict
 - Findings, open questions, and residual risk.
-- If the series is broad enough that one review pass is likely too coarse, say
-  that it is a good candidate for `series-reviewer` and explicitly tell the user
-  to run `series-reviewer` if they want the parallel reviewer path.
+- If `series-reviewer` is needed, return `not ready` or `acceptable with
+  follow-up` as appropriate and name the missing deep-review path.
 
 ## Output format
 
@@ -116,6 +115,8 @@ Verdict
 - `not ready`
 
 ## Review heuristics
+- Load relevant llm-wiki pages named by the shared baseline when the diff
+  touches those primitive areas.
 - Prefer regression, functional, or integration proof when behavior is visible
   at a boundary.
 - Prefer unit tests only for small, stable, logic-dense primitives.
