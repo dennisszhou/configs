@@ -102,7 +102,7 @@ slices, this skill should usually write or update a product doc under
 ## Output format
 
 Produce the product artifact using
-`codex/skills/workflow/product/TEMPLATE.md` as a starting point:
+`codex/skills/workflow/product/template.md` as a starting point:
 
 - keep the audience, journey, release-slice, and integration structure
 - adapt the shape when the work needs a simpler or more focused product brief

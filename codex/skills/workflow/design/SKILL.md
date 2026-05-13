@@ -125,7 +125,7 @@ The artifact should make these things hard to miss:
 ## Output format
 
 Produce the design artifact using
-`codex/skills/workflow/design/TEMPLATE.md` as a starting point:
+`codex/skills/workflow/design/template.md` as a starting point:
 
 - keep the required core sections
 - adapt the shape when the task needs a narrower or clearer doc

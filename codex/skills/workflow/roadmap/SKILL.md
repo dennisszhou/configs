@@ -159,7 +159,7 @@ If this roadmap should be saved to disk, use a dated filename such as:
 ## Output format
 
 Produce the roadmap artifact using
-`codex/skills/workflow/roadmap/TEMPLATE.md` as a starting point:
+`codex/skills/workflow/roadmap/template.md` as a starting point:
 
 - keep the milestone, dependency, and design-backlog structure
 - adapt the shape when the work needs a simpler or more focused roadmap

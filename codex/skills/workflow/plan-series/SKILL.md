@@ -225,7 +225,7 @@ decomposing the current approved execution series into the commit stack needed
 to reach its checkpoint cleanly.
 
 When creating or revising a `docs/execution/...` doc, use
-`codex/skills/workflow/plan-series/EXECUTION_TEMPLATE.md` as the house-style
+`codex/skills/workflow/plan-series/execution-template.md` as the house-style
 starting point:
 - keep the required metadata and per-series contract fields
 - adapt the doc shape when the execution effort is clearer with less ceremony
