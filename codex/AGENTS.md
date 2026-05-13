@@ -458,6 +458,12 @@ Scale the review to the difficulty and risk of the problem:
 - do not iterate indefinitely; if remaining uncertainty is structural or cannot
   be resolved locally, surface it explicitly instead of spinning
 
+Generated plans, summaries, reviews, and other handoff artifacts should optimize
+for readability after rendering. Prefer formats that stay easy to scan when
+lines wrap, such as fenced `text` blocks for structured plans or compact flat
+bullets for short lists. Avoid deeply nested Markdown when wrapping would make
+the result harder to read.
+
 When presenting a non-trivial implementation, include:
 - the problem statement
 - the constraints and invariants
