@@ -1,6 +1,6 @@
 ---
 name: impl-series
-description: Execute an approved execution contract by implementing, verifying, committing each planned step in order, and always running review-series before handoff. Use when the user says to execute the approved series plan, start implementing, resume the stack, or continue an already approved staged implementation.
+description: Execute an approved execution contract by implementing, verifying, committing each planned step in order, and running the approved implementation review gate before handoff. Use when the user says to execute the approved series plan, start implementing, resume the stack, or continue an already approved staged implementation.
 ---
 
 # Impl Series
@@ -26,9 +26,11 @@ If there is no approved execution contract, stop and ask the user to run
 Do not use this skill while native plan mode is active. Execution begins after
 design work, `$plan-series`, and `$review-execution` are finished.
 
-Completion of the current approved series always includes a final
-`$review-series` pass. This skill must review the completed current series
-before handoff and fix in-scope findings inline.
+Completion of the current approved series always includes the approved
+implementation review gate before handoff. `standard` uses `$review-series`,
+`deep-inline` uses `$series-reviewer` without subagents, and `parallel-deep`
+uses `$series-reviewer` with authorized reviewer subagents. Fix in-scope
+findings inline.
 
 Apply the `AGENTS.md` house rules and `$workflow-house-rules` before each
 commit and before any finish-series handoff. Use rule names in progress notes
@@ -55,7 +57,7 @@ Do not stop between commits to ask “should I continue?” Stop only when:
 If the approved execution contract contains selective review gates such as
 `code`, `perf`, or `migration`, honor them at the planned points instead of
 treating every commit as a mandatory review stop. The end-of-series
-`$review-series` pass is independent of those per-commit review gates.
+implementation review gate is independent of those per-commit review gates.
 
 If there is an approved active `docs/plans/...` design doc for the task and it
 is not yet committed on the execution branch, that docs/plans commit becomes
@@ -103,7 +105,7 @@ and execution contract as the starting point for execution history.
 - Final cleanup belongs to `$polish-series`, not this skill.
 - Exception: after the current approved series is implemented, this skill may
   amend or rewrite commits inside that just-completed local series to fold in
-  in-scope `$review-series` fixes before handoff.
+  in-scope implementation-review fixes before handoff.
 
 ## Inputs
 This skill expects:
@@ -134,6 +136,24 @@ Each commit entry should include:
 - review
 - verify commands
 - not-included list
+
+Compact response-only plans may omit `preconditions`, `postconditions`, or
+`invariant focus` only when those rows would be boilerplate. They must still
+include enough decision-bearing fields to implement, verify, review, and keep
+scope: purpose or summary, files, source-topology decision, evidence, review,
+verify commands, and not-included list.
+
+Each current series should include an `Implementation review` decision:
+- `Mode: standard` runs `$review-series`
+- `Mode: deep-inline` runs `$series-reviewer` without subagents
+- `Mode: parallel-deep` runs `$series-reviewer` with authorized reviewer
+  subagents
+- `Lenses:` names the selected reviewer lenses for deep modes
+
+If an older approved contract has no `Implementation review` field, default to
+`standard` unless implementation reveals that deep review is required. Stop and
+amend the contract before using `parallel-deep` without explicit subagent
+authorization.
 
 The user may optionally specify where to start:
 - start from the first unimplemented commit
@@ -295,6 +315,9 @@ Before implementing each commit, restate:
 - verify commands
 - not-included list
 
+For compact plans, restate the available decision-bearing fields instead of
+inventing boilerplate rows.
+
 If a design-doc or execution-doc update commit is required before the next
 implementation commit, restate that docs update as a separate step first.
 
@@ -425,12 +448,16 @@ Then immediately continue to the next planned commit.
 
 If that commit completes the current approved series, do not hand off yet.
 First run the end-of-series review loop:
-- run `$review-series` on the completed current series
+- run the approved implementation review gate on the completed current series
+  - `standard`: `$review-series`
+  - `deep-inline`: `$series-reviewer` without subagents
+  - `parallel-deep`: `$series-reviewer` with authorized reviewer subagents
 - if findings are in scope and do not materially change the approved execution
   contract, fix them inline by amending or rewriting commits within the
   just-completed local series
 - re-run verification
-- optionally re-run `$review-series` once to confirm the series is clean enough
+- optionally re-run the same review gate once to confirm the series is clean
+  enough
 - stop immediately if findings require a material plan or design change
 
 After that review loop, report:
@@ -479,8 +506,8 @@ stop and present the options with tradeoffs.
 ### Need to modify a prior commit
 Do not rewrite prior commits during execution unless:
 - the user explicitly asks
-- or the rewrite is part of the end-of-series `$review-series` loop and is
-  limited to the just-completed local series
+- or the rewrite is part of the end-of-series implementation review loop and
+  is limited to the just-completed local series
 
 If a prior issue blocks progress outside that narrow case, stop and explain.
 
