@@ -302,7 +302,7 @@ Until the user explicitly approves a series, keep that series at
 If the plan is recorded in a doc, name that doc explicitly in the response.
 Wrap prose in `docs/` artifacts at `80` columns.
 
-Within each series, each commit entry must look like this:
+Within each series, the full commit-entry shape is:
 
 Commit N/Total: <subsystem: description>
 
@@ -317,6 +317,22 @@ Commit N/Total: <subsystem: description>
   Verify:        copy-pasteable command(s) proving the postconditions
   Not included:  what this commit explicitly does not do
 
+For final chat approval plans, use compact aligned commit blocks when the full
+shape would add boilerplate instead of clarity. Compact blocks must keep the
+rows that affect implementation, review, verification, or scope, such as:
+
+  Purpose:       why this commit exists and what contract it changes
+  Files:         explicit list of files created or modified
+  Source topology: owner/split/not material decision with reason
+  Evidence:      none | regression | functional | integration | unit, with why
+  Review:        none | structures | code | perf | migration, with why
+  Verify:        copy-pasteable command(s) proving the postconditions
+  Not included:  what this commit explicitly does not do
+
+Do not omit `Preconditions`, `Postconditions`, or `Invariant focus` when they
+carry real ordering, correctness, or review decisions. Omit rows only when they
+would restate the obvious for a docs-only or workflow-only commit.
+
 When presenting one or more commit entries in chat, emit the commit block(s)
 inside a fenced `text` code block so indentation is preserved exactly. Do not
 present aligned commit entries as ordinary prose paragraphs.
@@ -329,12 +345,12 @@ from that script's layout rather than hand-formatting it. Do not freehand
 wrapped commit blocks in the final response, and do not remove the fenced
 `text` block wrapper around the final formatted output.
 
-When printing or writing long field values such as `Summary`, `Files`,
-`Source topology`, `Preconditions`, `Postconditions`, `Evidence`, `Review`, and
-`Verify`, you must keep the value inline after the label and align continuation
-lines under the start of the value. If output does not follow this format, that
-is a formatting mistake and should be corrected directly rather than explained
-away. For example:
+When printing or writing long field values such as `Summary`, `Purpose`,
+`Files`, `Source topology`, `Preconditions`, `Postconditions`, `Evidence`,
+`Review`, `Verify`, and `Not included`, you must keep the value inline after
+the label and align continuation lines under the start of the value. If output
+does not follow this format, that is a formatting mistake and should be
+corrected directly rather than explained away. For example:
 
   Summary:       first wrapped line
                  continuation line
