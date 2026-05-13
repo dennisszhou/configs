@@ -13,7 +13,7 @@ whether a risky or semantic change actually matches the approved contract and
 whether its evidence is strong enough.
 
 Apply the shared implementation review baseline at
-`codex/skills/workflow/reviewers/shared/implementation-review-baseline.md`.
+`codex/skills/workflow/impl-reviewers/shared/implementation-review-baseline.md`.
 For larger or riskier series, escalate to `series-reviewer` so the same
 baseline can be reviewed through focused lenses.
 

@@ -14,7 +14,7 @@ finds that a single pass is too coarse for the implemented series.
 
 Deep review is a review-depth choice, not a different standard. This skill must
 satisfy the shared implementation review baseline at
-`codex/skills/workflow/reviewers/shared/implementation-review-baseline.md`.
+`codex/skills/workflow/impl-reviewers/shared/implementation-review-baseline.md`.
 Focused lenses may add depth, but they must not replace that baseline.
 
 Apply `$workflow-house-rules`, especially `Parallel Review Is A Synthesis

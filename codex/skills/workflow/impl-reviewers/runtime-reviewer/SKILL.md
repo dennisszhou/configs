@@ -11,7 +11,7 @@ This is a narrow reviewer lens, not a standalone workflow. It is best used
 under `series-reviewer`.
 
 Inherit the shared implementation review baseline from
-`codex/skills/workflow/reviewers/shared/implementation-review-baseline.md`.
+`codex/skills/workflow/impl-reviewers/shared/implementation-review-baseline.md`.
 This lens adds depth for runtime and lifecycle behavior; it does not redefine
 the whole implementation review contract.
 
