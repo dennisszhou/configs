@@ -39,7 +39,7 @@ Personal dotfiles and system configuration repo. Symlinks config files into `$HO
 ## How `configure.sh` works
 
 ```
-./configure.sh [all|packages|configs|plugins|claude|codex]
+./configure.sh [--force] [all|packages|configs|plugins|claude|codex]
 ```
 
 - **packages** — installs from `packages.list` using brew/apt/dnf
@@ -48,6 +48,7 @@ Personal dotfiles and system configuration repo. Symlinks config files into `$HO
 - **claude** — installs only Claude Code config into `~/.claude/`
 - **codex** — installs only Codex instructions into `~/.codex/` and skills into `~/.agents/skills/`
 - **all** (default) — runs packages, base configs, local templates, and plugins
+- `--force` — backs up user-owned symlinks before replacing them; without it, unmanaged symlinks are refused
 
 Pre-flight check: aborts if `neovim/` submodule is empty (run `./setup.sh` first).
 

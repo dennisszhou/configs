@@ -8,15 +8,17 @@ AGENTS_HOME="${AGENTS_HOME:-$HOME/.agents}"
 SKILLS_HOME="${SKILLS_HOME:-$AGENTS_HOME/skills}"
 SKILLS_DIR="$SCRIPT_DIR/skills"
 DRY_RUN=0
+FORCE=0
 skill_list_file=""
 
 usage() {
-    echo "Usage: $0 [--dry-run]"
+    echo "Usage: $0 [--dry-run] [--force]"
     echo
     echo "Symlink Codex AGENTS.md into CODEX_HOME and user skills into SKILLS_HOME."
     echo
     echo "Options:"
     echo "  -n, --dry-run  Show intended changes without modifying target directories"
+    echo "  -f, --force    Back up user-owned symlinks before replacing them"
     echo "  -h, --help     Show this help"
     echo
     echo "Environment:"
@@ -39,6 +41,9 @@ parse_args() {
         case "$1" in
             -n|--dry-run)
                 DRY_RUN=1
+                ;;
+            -f|--force)
+                FORCE=1
                 ;;
             -h|--help)
                 usage
@@ -73,10 +78,52 @@ is_managed_link() {
     source_root="$2"
 
     [ -L "$link" ] || return 1
-    case "$(readlink "$link")" in
-        "$source_root"|"$source_root"/*) return 0 ;;
+    source_canon=$(canonical_path "$source_root") || source_canon="$source_root"
+    target=$(link_target_path "$link" "$(readlink "$link")")
+    target_canon=$(canonical_path "$target") || target_canon="$target"
+
+    case "$target_canon" in
+        "$source_canon"|"$source_canon"/*) return 0 ;;
         *) return 1 ;;
     esac
+}
+
+link_matches_path() {
+    link="$1"
+    link_target="$2"
+    expected="$3"
+
+    target=$(link_target_path "$link" "$link_target")
+    target_canon=$(canonical_path "$target") || target_canon="$target"
+    expected_canon=$(canonical_path "$expected") || expected_canon="$expected"
+
+    [ "$target_canon" = "$expected_canon" ]
+}
+
+link_target_path() {
+    link="$1"
+    target="$2"
+
+    case "$target" in
+        /*) echo "$target" ;;
+        *) echo "$(dirname "$link")/$target" ;;
+    esac
+}
+
+canonical_path() {
+    path="$1"
+
+    if [ -d "$path" ]; then
+        (cd "$path" 2>/dev/null && pwd -P)
+        return
+    fi
+
+    dir=$(dirname "$path")
+    base=$(basename "$path")
+    [ -d "$dir" ] || return 1
+
+    dir=$(cd "$dir" 2>/dev/null && pwd -P) || return 1
+    echo "$dir/$base"
 }
 
 next_backup_path() {
@@ -118,16 +165,21 @@ install_link() {
 
     if [ -L "$dest" ]; then
         link_target=$(readlink "$dest")
-        if [ "$link_target" = "$src" ]; then
+        if [ "$link_target" = "$src" ] || link_matches_path "$dest" "$link_target" "$src"; then
             echo "Already linked: $dest -> $src"
             return 0
         fi
         if ! is_managed_link "$dest" "$source_root"; then
-            echo "Refusing to replace user-owned symlink: $dest -> $link_target" >&2
-            echo "Expected a link into $source_root." >&2
-            exit 1
+            if [ "$FORCE" -eq 0 ]; then
+                echo "Refusing to replace user-owned symlink: $dest -> $link_target" >&2
+                echo "Expected a link into $source_root." >&2
+                echo "Use --force to back up the symlink and replace it." >&2
+                exit 1
+            fi
+            backup_existing_path "$dest"
+        else
+            remove_managed_link "$dest"
         fi
-        remove_managed_link "$dest"
     elif [ -e "$dest" ]; then
         backup_existing_path "$dest"
     fi
@@ -204,8 +256,8 @@ install_user_skills() {
 }
 
 cleanup_managed_links() {
-    cleanup_stale "$CODEX_HOME" "$SCRIPT_DIR" $wanted_codex_entries
-    cleanup_stale "$SKILLS_HOME" "$SKILLS_DIR" $wanted_skill_entries
+    cleanup_stale "$CODEX_HOME" "$SCRIPT_DIR" "$wanted_codex_entries"
+    cleanup_stale "$SKILLS_HOME" "$SKILLS_DIR" "$wanted_skill_entries"
 }
 
 main() {

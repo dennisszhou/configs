@@ -8,6 +8,37 @@ REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 ECC_DIR="$REPO_DIR/vendor/everything-claude-code"
 MANIFEST="$SCRIPT_DIR/manifest.conf"
 CLAUDE_HOME="$HOME/.claude"
+FORCE=0
+
+usage() {
+    echo "Usage: $0 [--force]"
+    echo
+    echo "Symlink Claude Code config, user skills, and ECC items into CLAUDE_HOME."
+    echo
+    echo "Options:"
+    echo "  -f, --force  Back up user-owned symlinks before replacing them"
+    echo "  -h, --help   Show this help"
+}
+
+parse_args() {
+    while [ "$#" -gt 0 ]; do
+        case "$1" in
+            -f|--force)
+                FORCE=1
+                ;;
+            -h|--help)
+                usage
+                exit 0
+                ;;
+            *)
+                echo "Unknown option: $1" >&2
+                usage >&2
+                exit 1
+                ;;
+        esac
+        shift
+    done
+}
 
 # --- install_link: symlink with backup ---
 is_managed_link() {
@@ -15,10 +46,52 @@ is_managed_link() {
     source_root="$2"
 
     [ -L "$link" ] || return 1
-    case "$(readlink "$link")" in
-        "$source_root"|"$source_root"/*) return 0 ;;
+    source_canon=$(canonical_path "$source_root") || source_canon="$source_root"
+    target=$(link_target_path "$link" "$(readlink "$link")")
+    target_canon=$(canonical_path "$target") || target_canon="$target"
+
+    case "$target_canon" in
+        "$source_canon"|"$source_canon"/*) return 0 ;;
         *) return 1 ;;
     esac
+}
+
+link_matches_path() {
+    link="$1"
+    link_target="$2"
+    expected="$3"
+
+    target=$(link_target_path "$link" "$link_target")
+    target_canon=$(canonical_path "$target") || target_canon="$target"
+    expected_canon=$(canonical_path "$expected") || expected_canon="$expected"
+
+    [ "$target_canon" = "$expected_canon" ]
+}
+
+link_target_path() {
+    link="$1"
+    target="$2"
+
+    case "$target" in
+        /*) echo "$target" ;;
+        *) echo "$(dirname "$link")/$target" ;;
+    esac
+}
+
+canonical_path() {
+    path="$1"
+
+    if [ -d "$path" ]; then
+        (cd "$path" 2>/dev/null && pwd -P)
+        return
+    fi
+
+    dir=$(dirname "$path")
+    base=$(basename "$path")
+    [ -d "$dir" ] || return 1
+
+    dir=$(cd "$dir" 2>/dev/null && pwd -P) || return 1
+    echo "$dir/$base"
 }
 
 next_backup_path() {
@@ -54,16 +127,21 @@ install_link() {
     source_root="$REPO_DIR"
     if [ -L "$dest" ]; then
         link_target=$(readlink "$dest")
-        if [ "$link_target" = "$src" ]; then
+        if [ "$link_target" = "$src" ] || link_matches_path "$dest" "$link_target" "$src"; then
             echo "Already linked: $dest -> $src"
             return 0
         fi
         if ! is_managed_link "$dest" "$source_root"; then
-            echo "Refusing to replace user-owned symlink: $dest -> $link_target" >&2
-            echo "Expected a link into $source_root." >&2
-            exit 1
+            if [ "$FORCE" -eq 0 ]; then
+                echo "Refusing to replace user-owned symlink: $dest -> $link_target" >&2
+                echo "Expected a link into $source_root." >&2
+                echo "Use --force to back up the symlink and replace it." >&2
+                exit 1
+            fi
+            backup_existing_path "$dest"
+        else
+            remove_managed_link "$dest"
         fi
-        remove_managed_link "$dest"
     elif [ -e "$dest" ]; then
         backup_existing_path "$dest"
     fi
@@ -87,9 +165,8 @@ parse_section() {
     done < "$MANIFEST"
 }
 
-# --- cleanup_stale: remove ECC symlinks in target_dir not in wanted list ---
-# Only removes symlinks whose target contains vendor/everything-claude-code/$ecc_subpath,
-# so user-owned symlinks in the same directory are never touched.
+# --- cleanup_stale: remove managed ECC symlinks not in wanted list ---
+# User-owned symlinks in the same directory are never touched.
 cleanup_stale() {
     target_dir="$1"; ecc_subpath="$2"; shift 2
     wanted="$*"
@@ -161,6 +238,8 @@ migrate_old_symlinks() {
         done
     fi
 }
+
+parse_args "$@"
 
 # =====================
 # 1. Core: CLAUDE.md

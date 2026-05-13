@@ -1,5 +1,7 @@
 #!/bin/bash
 
+FORCE=0
+
 # --- Helper Functions ---
 
 # Symlinks a file, backing up the original if it exists and isn't already a link.
@@ -14,16 +16,21 @@ install_file() {
 
     if [[ -L "$dest" ]]; then
         link_target="$(readlink "$dest")"
-        if [[ "$link_target" == "$src" ]]; then
+        if [[ "$link_target" == "$src" ]] || link_matches_path "$dest" "$link_target" "$src"; then
             echo "Already linked: $dest -> $src"
             return 0
         fi
         if ! is_managed_link "$dest" "$source_root"; then
-            echo "Refusing to replace user-owned symlink: $dest -> $link_target" >&2
-            echo "Expected a link into $source_root." >&2
-            exit 1
+            if [[ "$FORCE" -eq 0 ]]; then
+                echo "Refusing to replace user-owned symlink: $dest -> $link_target" >&2
+                echo "Expected a link into $source_root." >&2
+                echo "Use --force to back up the symlink and replace it." >&2
+                exit 1
+            fi
+            backup_existing_path "$dest"
+        else
+            remove_managed_link "$dest"
         fi
-        remove_managed_link "$dest"
     elif [[ -e "$dest" ]]; then
         backup_existing_path "$dest"
     fi
@@ -35,12 +42,62 @@ install_file() {
 is_managed_link() {
     local link="$1"
     local source_root="$2"
+    local source_canon
+    local target
+    local target_canon
 
     [[ -L "$link" ]] || return 1
-    case "$(readlink "$link")" in
-        "$source_root"|"$source_root"/*) return 0 ;;
+    source_canon="$(canonical_path "$source_root")" || source_canon="$source_root"
+    target="$(link_target_path "$link" "$(readlink "$link")")"
+    target_canon="$(canonical_path "$target")" || target_canon="$target"
+
+    case "$target_canon" in
+        "$source_canon"|"$source_canon"/*) return 0 ;;
         *) return 1 ;;
     esac
+}
+
+link_matches_path() {
+    local link="$1"
+    local link_target="$2"
+    local expected="$3"
+    local target
+    local target_canon
+    local expected_canon
+
+    target="$(link_target_path "$link" "$link_target")"
+    target_canon="$(canonical_path "$target")" || target_canon="$target"
+    expected_canon="$(canonical_path "$expected")" || expected_canon="$expected"
+
+    [[ "$target_canon" == "$expected_canon" ]]
+}
+
+link_target_path() {
+    local link="$1"
+    local target="$2"
+
+    case "$target" in
+        /*) echo "$target" ;;
+        *) echo "$(dirname "$link")/$target" ;;
+    esac
+}
+
+canonical_path() {
+    local path="$1"
+    local dir
+    local base
+
+    if [[ -d "$path" ]]; then
+        (cd "$path" 2>/dev/null && pwd -P)
+        return
+    fi
+
+    dir="$(dirname "$path")"
+    base="$(basename "$path")"
+    [[ -d "$dir" ]] || return 1
+
+    dir="$(cd "$dir" 2>/dev/null && pwd -P)" || return 1
+    echo "$dir/$base"
 }
 
 next_backup_path() {
@@ -134,7 +191,11 @@ setup_base_configs() {
 setup_claude_config() {
     if [ -f "claude/install.sh" ]; then
         echo "Setting up Claude Code..."
-        sh claude/install.sh
+        if [[ "$FORCE" -eq 1 ]]; then
+            sh claude/install.sh --force
+        else
+            sh claude/install.sh
+        fi
     else
         echo "Claude installer not found; skipping."
     fi
@@ -143,7 +204,11 @@ setup_claude_config() {
 setup_codex_config() {
     if [ -f "codex/install.sh" ]; then
         echo "Setting up Codex..."
-        sh codex/install.sh
+        if [[ "$FORCE" -eq 1 ]]; then
+            sh codex/install.sh --force
+        else
+            sh codex/install.sh
+        fi
     else
         echo "Codex installer not found; skipping."
     fi
@@ -264,18 +329,22 @@ install_plugins() {
 # --- Main Execution ---
 
 usage() {
-    echo "Usage: $0 [all|packages|configs|plugins|claude|codex]"
+    echo "Usage: $0 [--force] [all|packages|configs|plugins|claude|codex]"
     echo "  all      - Install packages, base configs, local templates, and plugins (default)"
     echo "  packages - Install packages only"
     echo "  configs  - Set up shell/base configs and local templates only"
     echo "  plugins  - Install plugins only"
     echo "  claude   - Install Claude Code config only"
     echo "  codex    - Install Codex instructions and skills only"
+    echo
+    echo "Options:"
+    echo "  -f, --force - Back up user-owned symlinks before replacing them"
     exit 1
 }
 
 main() {
     local target="all"
+    local target_set=0
     local platform=""
 
     # 1. Platform Detection
@@ -286,10 +355,18 @@ main() {
     esac
 
     # 2. Argument Parsing
-    if [[ $# -gt 0 ]]; then
+    while [[ $# -gt 0 ]]; do
         case "$1" in
             all|packages|configs|plugins|claude|codex)
+                if [[ "$target_set" -eq 1 ]]; then
+                    echo "Multiple targets specified: $target and $1"
+                    usage
+                fi
                 target="$1"
+                target_set=1
+                ;;
+            -f|--force)
+                FORCE=1
                 ;;
             -h|--help)
                 usage
@@ -299,7 +376,8 @@ main() {
                 usage
                 ;;
         esac
-    fi
+        shift
+    done
 
     echo "Configuring for platform: $platform (Target: $target)"
 

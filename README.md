@@ -12,5 +12,6 @@ https://devhints.io/vimscript
   skill directory basenames must be unique.
 - Re-run `./configure.sh codex` after changing Codex instructions or user skills
 - Preview direct installer changes with `sh codex/install.sh --dry-run`
+- Pass `--force` to back up user-owned symlinks before replacing them
 - For tests, override target roots with `CODEX_HOME`, `AGENTS_HOME`, or
   `SKILLS_HOME` instead of writing to real home directories.
