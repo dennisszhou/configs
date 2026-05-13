@@ -94,6 +94,10 @@ Check whether the contract can be improved before implementation:
 - Are `not material` source-topology decisions backed by a real owner/scope
   reason when source files or directories grow?
 - Are review gates on the risky commits, not everywhere or nowhere?
+- Is the series-level implementation review mode justified by the series risk,
+  and are selected lenses narrow enough?
+- Is the per-commit `Review` field clearly commit-local rather than confused
+  with the end-of-series implementation review mode?
 - Are commit fields acting as decisions, or has the plan grown checklist-only
   metadata?
 - Is cleanup placed where it reduces risk instead of being dumped at the end?
@@ -183,6 +187,12 @@ When a needed improvement is not a minor amendment, return
 - Are performance, migration, or reliability claims backed by evidence?
 - Are `structures`, `code`, `perf`, and `migration` review gates placed where
   extra scrutiny is useful?
+- Is implementation review mode `standard`, `deep-inline`, or `parallel-deep`
+  appropriate for the series as a whole?
+- If deep review is selected, are the lenses limited to the risks that actually
+  need extra depth?
+- If `parallel-deep` is selected, did the user explicitly authorize subagents
+  through the request or execution contract?
 
 8. Decide the better execution shape
 - If the current plan is already the best reasonable shape, say so.
@@ -235,6 +245,9 @@ Source topology check
 - ...
 
 Verification and review-gate check
+- ...
+
+Implementation review check
 - ...
 
 Approval check

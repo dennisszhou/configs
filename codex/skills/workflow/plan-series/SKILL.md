@@ -156,12 +156,25 @@ Every commit must say:
   - integration
   - unit
 - In `Review`, include one review gate from this fixed set plus why that gate is
-  enough:
+  enough. This is a commit-local scrutiny field, not the end-of-series
+  implementation review mode:
   - none
   - structures
   - code
   - perf
   - migration
+- For the current execution series, include a series-level `Implementation
+  review` decision:
+  - `Mode: standard` uses `$review-series`
+  - `Mode: deep-inline` uses `$series-reviewer` without subagents
+  - `Mode: parallel-deep` uses `$series-reviewer` with authorized reviewer
+    subagents
+  - `Lenses:` names the selected deep-review lenses when the mode is
+    `deep-inline` or `parallel-deep`
+- Use `standard` for small or local series. Use `deep-inline` when the series
+  needs multiple reviewer lenses but not parallel context reduction. Use
+  `parallel-deep` only when the user has explicitly approved subagents through
+  the request or execution contract.
 - Do not re-add checklist-only fields such as `Type`, `Required`, `Risks`, or
   `Depends on` unless the value changes a start/stop decision. Use
   `Preconditions`, `Not included`, `Evidence`, or `Review` for the concrete
@@ -291,6 +304,8 @@ Then, for each series, include:
 - `Design coverage: ...`
 - `Stable checkpoint: ...`
 - `Review focus: ...`
+- `Implementation review: Mode: standard | deep-inline | parallel-deep; Lenses:
+  correctness, structure, evidence, runtime, performance as applicable`
 - `Done means: ...`
 - `Approval: pending | approved | finished`
 - `Verification plan: ...`
