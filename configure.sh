@@ -4,18 +4,72 @@
 
 # Symlinks a file, backing up the original if it exists and isn't already a link.
 install_file() {
-    local src="$(pwd)/$1"
+    local src
     local dest="$2"
+    local source_root
+    local link_target
+
+    src="$(pwd)/$1"
+    source_root="$(pwd)"
 
     if [[ -L "$dest" ]]; then
-        rm "$dest"
+        link_target="$(readlink "$dest")"
+        if [[ "$link_target" == "$src" ]]; then
+            echo "Already linked: $dest -> $src"
+            return 0
+        fi
+        if ! is_managed_link "$dest" "$source_root"; then
+            echo "Refusing to replace user-owned symlink: $dest -> $link_target" >&2
+            echo "Expected a link into $source_root." >&2
+            exit 1
+        fi
+        remove_managed_link "$dest"
     elif [[ -e "$dest" ]]; then
-        echo "Backing up $dest to $dest.old"
-        mv "$dest" "$dest.old"
+        backup_existing_path "$dest"
     fi
 
     echo "Linking $dest -> $src"
     ln -s "$src" "$dest"
+}
+
+is_managed_link() {
+    local link="$1"
+    local source_root="$2"
+
+    [[ -L "$link" ]] || return 1
+    case "$(readlink "$link")" in
+        "$source_root"|"$source_root"/*) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
+next_backup_path() {
+    local target="$1"
+    local backup="$target.old"
+    local i=1
+
+    while [[ -e "$backup" || -L "$backup" ]]; do
+        backup="$target.old.$i"
+        i=$((i + 1))
+    done
+
+    echo "$backup"
+}
+
+backup_existing_path() {
+    local target="$1"
+    local backup
+
+    backup="$(next_backup_path "$target")"
+    echo "Backing up $target to $backup"
+    mv "$target" "$backup"
+}
+
+remove_managed_link() {
+    local link="$1"
+
+    echo "Removing managed link: $link"
+    rm "$link"
 }
 
 install_private_template() {
@@ -42,11 +96,11 @@ setup_shell_config() {
         install_file "zsh/zshenv"   "$HOME/.zshenv"
         install_file "zsh/zprofile" "$HOME/.zprofile"
         install_file "zsh/zshrc"    "$HOME/.zshrc"
-        [[ -e "$HOME/.profile" ]] && mv "$HOME/.profile" "$HOME/.profile.old"
+        [[ -e "$HOME/.profile" || -L "$HOME/.profile" ]] && backup_existing_path "$HOME/.profile"
     else
         install_file "bash/bash_profile" "$HOME/.bash_profile"
         install_file "bash/bashrc"       "$HOME/.bashrc"
-        [[ -e "$HOME/.profile" ]] && mv "$HOME/.profile" "$HOME/.profile.old"
+        [[ -e "$HOME/.profile" || -L "$HOME/.profile" ]] && backup_existing_path "$HOME/.profile"
     fi
 }
 
@@ -179,8 +233,8 @@ install_plugins() {
     
     # Tmux TPM
     local tmux_tpm="$HOME/.tmux/plugins/tpm"
-    if [[ -f "$HOME/.tmux" ]]; then
-        rm "$HOME/.tmux"
+    if [[ ( -e "$HOME/.tmux" || -L "$HOME/.tmux" ) && ! -d "$HOME/.tmux" ]]; then
+        backup_existing_path "$HOME/.tmux"
     fi
     if [ ! -d "$tmux_tpm" ]; then
         mkdir -p "$HOME/.tmux/plugins"

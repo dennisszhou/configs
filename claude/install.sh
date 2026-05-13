@@ -10,13 +10,62 @@ MANIFEST="$SCRIPT_DIR/manifest.conf"
 CLAUDE_HOME="$HOME/.claude"
 
 # --- install_link: symlink with backup ---
+is_managed_link() {
+    link="$1"
+    source_root="$2"
+
+    [ -L "$link" ] || return 1
+    case "$(readlink "$link")" in
+        "$source_root"|"$source_root"/*) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
+next_backup_path() {
+    target="$1"
+    backup="$target.old"
+    i=1
+
+    while [ -e "$backup" ] || [ -L "$backup" ]; do
+        backup="$target.old.$i"
+        i=$((i + 1))
+    done
+
+    echo "$backup"
+}
+
+backup_existing_path() {
+    target="$1"
+    backup=$(next_backup_path "$target")
+
+    echo "Backing up $target to $backup"
+    mv "$target" "$backup"
+}
+
+remove_managed_link() {
+    link="$1"
+
+    echo "Removing managed link: $link"
+    rm "$link"
+}
+
 install_link() {
     src="$1"; dest="$2"
+    source_root="$REPO_DIR"
     if [ -L "$dest" ]; then
-        rm "$dest"
+        link_target=$(readlink "$dest")
+        if [ "$link_target" = "$src" ]; then
+            echo "Already linked: $dest -> $src"
+            return 0
+        fi
+        if ! is_managed_link "$dest" "$source_root"; then
+            echo "Refusing to replace user-owned symlink: $dest -> $link_target" >&2
+            echo "Expected a link into $source_root." >&2
+            exit 1
+        fi
+        remove_managed_link "$dest"
     elif [ -e "$dest" ]; then
-        echo "Backing up $dest to $dest.old"
-        mv "$dest" "$dest.old"
+        backup_existing_path "$dest"
     fi
     echo "Linking $dest -> $src"
     ln -s "$src" "$dest"
@@ -47,17 +96,12 @@ cleanup_stale() {
     [ -d "$target_dir" ] || return 0
     for link in "$target_dir"/*; do
         [ -L "$link" ] || continue
-        link_target=$(readlink "$link")
-        case "$link_target" in
-            *vendor/everything-claude-code/$ecc_subpath*)
-                base=$(basename "$link")
-                found=0
-                for w in $wanted; do [ "$w" = "$base" ] && found=1 && break; done
-                if [ "$found" -eq 0 ]; then
-                    echo "Removing stale link: $link"
-                    rm "$link"
-                fi ;;
-        esac
+        source_root="$ECC_DIR/$ecc_subpath"
+        is_managed_link "$link" "$source_root" || continue
+        base=$(basename "$link")
+        found=0
+        for w in $wanted; do [ "$w" = "$base" ] && found=1 && break; done
+        [ "$found" -eq 0 ] && remove_managed_link "$link"
     done
 }
 
@@ -69,13 +113,10 @@ migrate_old_symlinks() {
     for dir in commands agents; do
         target="$CLAUDE_HOME/$dir"
         if [ -L "$target" ]; then
-            case "$(readlink "$target")" in
-                *everything-claude-code*|*vendor/everything-claude-code*)
-                    echo "Migrating $target: whole-dir symlink -> directory"
-                    rm "$target"
-                    mkdir -p "$target"
-                    ;;
-            esac
+            is_managed_link "$target" "$ECC_DIR" || continue
+            echo "Migrating $target: whole-dir symlink -> directory"
+            remove_managed_link "$target"
+            mkdir -p "$target"
         fi
     done
 
@@ -84,11 +125,9 @@ migrate_old_symlinks() {
         [ -d "$CLAUDE_HOME/$dir" ] || continue
         for link in "$CLAUDE_HOME/$dir"/*.md; do
             [ -L "$link" ] || continue
-            case "$(readlink "$link")" in
-                *everything-claude-code/$dir/*|*vendor/everything-claude-code/$dir/*)
-                    echo "Removing un-namespaced symlink: $link"
-                    rm "$link" ;;
-            esac
+            is_managed_link "$link" "$ECC_DIR/$dir" || continue
+            echo "Removing un-namespaced symlink: $link"
+            remove_managed_link "$link"
         done
     done
 
@@ -96,11 +135,9 @@ migrate_old_symlinks() {
     if [ -d "$CLAUDE_HOME/skills" ]; then
         for entry in "$CLAUDE_HOME/skills"/*; do
             [ -L "$entry" ] || continue
-            case "$(readlink "$entry")" in
-                *everything-claude-code/skills/*|*vendor/everything-claude-code/skills/*)
-                    echo "Removing un-namespaced skill symlink: $entry"
-                    rm "$entry" ;;
-            esac
+            is_managed_link "$entry" "$ECC_DIR/skills" || continue
+            echo "Removing un-namespaced skill symlink: $entry"
+            remove_managed_link "$entry"
         done
     fi
 
@@ -112,11 +149,9 @@ migrate_old_symlinks() {
             [ "$category" = "ecc" ] && continue
             for link in "$category_dir"*.md; do
                 [ -L "$link" ] || continue
-                case "$(readlink "$link")" in
-                    *everything-claude-code/rules/*|*vendor/everything-claude-code/rules/*)
-                        echo "Removing un-namespaced rule symlink: $link"
-                        rm "$link" ;;
-                esac
+                is_managed_link "$link" "$ECC_DIR/rules" || continue
+                echo "Removing un-namespaced rule symlink: $link"
+                remove_managed_link "$link"
             done
             # Remove category dir if now empty
             if [ -z "$(ls -A "$category_dir" 2>/dev/null)" ]; then
@@ -153,7 +188,7 @@ if [ -d "$SCRIPT_DIR/skills" ]; then
                 base=$(basename "$link")
                 found=0
                 for w in $wanted_user_skills; do [ "$w" = "$base" ] && found=1 && break; done
-                [ "$found" -eq 0 ] && echo "Removing stale user skill: $link" && rm "$link" ;;
+                [ "$found" -eq 0 ] && remove_managed_link "$link" ;;
         esac
     done
 fi
@@ -177,7 +212,7 @@ for src in "$ECC_DIR/agents"/*.md; do
     install_link "$src" "$CLAUDE_HOME/agents/ecc/$base"
     wanted_agents="$wanted_agents $base"
 done
-cleanup_stale "$CLAUDE_HOME/agents/ecc" "agents" $wanted_agents
+cleanup_stale "$CLAUDE_HOME/agents/ecc" "agents" "$wanted_agents"
 
 # Commands: all ECC commands under commands/ecc/ (invoked as /ecc:command-name)
 mkdir -p "$CLAUDE_HOME/commands/ecc"
@@ -188,7 +223,7 @@ for src in "$ECC_DIR/commands"/*.md; do
     install_link "$src" "$CLAUDE_HOME/commands/ecc/$base"
     wanted_commands="$wanted_commands $base"
 done
-cleanup_stale "$CLAUDE_HOME/commands/ecc" "commands" $wanted_commands
+cleanup_stale "$CLAUDE_HOME/commands/ecc" "commands" "$wanted_commands"
 
 # Skills: selective per-item symlinks under skills/ecc/ (invoked as /ecc:skill-name)
 mkdir -p "$CLAUDE_HOME/skills/ecc"
@@ -201,7 +236,7 @@ for skill in $(parse_section skills); do
         echo "Warning: skill '$skill' not found in ECC, skipping"
     fi
 done
-cleanup_stale "$CLAUDE_HOME/skills/ecc" "skills" $wanted_skills
+cleanup_stale "$CLAUDE_HOME/skills/ecc" "skills" "$wanted_skills"
 
 # Rules: selective per-item symlinks under rules/ecc/category/
 for rule_entry in $(parse_section rules); do
@@ -224,7 +259,7 @@ for category_dir in "$CLAUDE_HOME/rules/ecc"/*/; do
         rc=$(dirname "$rule_entry"); rf=$(basename "$rule_entry")
         [ "$rc" = "$category" ] && wanted_rules="$wanted_rules ${rf}.md"
     done
-    cleanup_stale "$category_dir" "rules/$category" $wanted_rules
+    cleanup_stale "$category_dir" "rules/$category" "$wanted_rules"
     # Remove category dir if now empty
     if [ -z "$(ls -A "$category_dir" 2>/dev/null)" ]; then
         rmdir "$category_dir"
