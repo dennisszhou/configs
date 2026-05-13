@@ -22,68 +22,89 @@ as a short map so it does not become a second copy of the workflow rules.
 
 ## Flow graph
 
-```mermaid
-flowchart TD
-    Request["work request"]
-    Tiny{"tiny obvious work?"}
-    Direct["implement directly"]
+```text
+work request
+  |
+  v
+tiny obvious work?
+  | yes
+  v
+implement directly
 
-    Product["$product"]
-    ReviewProduct["$review-plan: product"]
-    Roadmap["$roadmap"]
-    ReviewRoadmap["$review-plan: roadmap"]
-    Design["$design"]
-    ReviewDesign["$review-plan: design"]
+  | no
+  v
+choose needed planning depth
+  |
+  +--> $product
+  |      |
+  |      v
+  |    $review-plan: product
+  |      | ready + user approval
+  |      v
+  +--> $roadmap
+  |      |
+  |      v
+  |    $review-plan: roadmap
+  |      | ready + user approval
+  |      v
+  +--> $design
+         |
+         v
+       $review-plan: design
+         | ready + user approval
+         v
+       $plan-series
+         |
+         v
+       $review-execution
+         | large/risky contract
+         v
+       execution-reviewer
+         |
+         v
+       $review-execution
+         |
+         | ready + user approval
+         v
+       $impl-series
+         |
+         v
+       $review-series
+         | one pass too coarse
+         v
+       series-reviewer
+         |
+         v
+       $review-series
+         |
+         +-- acceptable + closeout approval --> $finish-series --> handoff
+         |
+         +-- acceptable, no closeout approval --> handoff
+         |
+         +-- findings fixed in scope --> $impl-series
+```
 
-    PlanSeries["$plan-series"]
-    ReviewExecution["$review-execution"]
-    ExecutionReviewer["execution-reviewer"]
-    ImplSeries["$impl-series"]
+## Revision loops
 
-    ReviewSeries["$review-series"]
-    SeriesReviewer["series-reviewer"]
-    FinishSeries["$finish-series"]
-    PolishSeries["$polish-series"]
-    Handoff["handoff / wait for approval"]
+```text
+$review-plan: product  -- needs product revision --> $product
+$review-plan: roadmap  -- needs roadmap revision --> $roadmap
+$review-plan: design   -- needs design revision  --> $design
 
-    Request --> Tiny
-    Tiny -->|yes| Direct
-    Tiny -->|no; product scope unclear| Product
-    Tiny -->|no; roadmap needed| Roadmap
-    Tiny -->|no; design needed| Design
-    Tiny -->|architecture clear| PlanSeries
+$review-execution -- needs series/execution-doc revision --> $plan-series
+$review-execution -- needs design revision               --> $design
 
-    Product --> ReviewProduct
-    ReviewProduct -->|ready for roadmap + user approval| Roadmap
-    ReviewProduct -->|needs product revision| Product
+$impl-series -- plan mismatch   --> $plan-series
+$impl-series -- design mismatch --> $design
+```
 
-    Roadmap --> ReviewRoadmap
-    ReviewRoadmap -->|ready for design + user approval| Design
-    ReviewRoadmap -->|needs roadmap revision| Roadmap
+## Optional cleanup
 
-    Design --> ReviewDesign
-    ReviewDesign -->|ready for series planning + user approval| PlanSeries
-    ReviewDesign -->|needs design revision| Design
-
-    PlanSeries --> ReviewExecution
-    ReviewExecution -->|large or risky contract| ExecutionReviewer
-    ExecutionReviewer --> ReviewExecution
-    ReviewExecution -->|needs series or execution-doc revision| PlanSeries
-    ReviewExecution -->|needs design revision| Design
-    ReviewExecution -->|ready + user approval| ImplSeries
-
-    ImplSeries -->|plan mismatch| PlanSeries
-    ImplSeries -->|design mismatch| Design
-    ImplSeries --> ReviewSeries
-
-    ReviewSeries -->|one pass too coarse| SeriesReviewer
-    SeriesReviewer --> ReviewSeries
-    ReviewSeries -->|findings fixed in scope| ImplSeries
-    ReviewSeries -->|acceptable + closeout approval| FinishSeries
-    ReviewSeries -->|acceptable; no closeout approval| Handoff
-
-    FinishSeries --> Handoff
-    Handoff -->|optional local cleanup| PolishSeries
+```text
+handoff / stable execution
+  |
+  v
+$polish-series
 ```
 
 ## Review paths
