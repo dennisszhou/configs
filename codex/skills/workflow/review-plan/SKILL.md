@@ -163,70 +163,37 @@ and point to the smallest revision needed.
 
 ## Output format
 
-Review target
-- ...
+Keep the output compact. Lead with the decision and blockers so the user can
+quickly tell whether the artifact is ready and what must change. Do not emit a
+separate visible section for every review lens; fold those checks into findings
+unless a section materially improves readability.
 
-Review mode
-- `product review`
-- `roadmap review`
-- `design review`
-
-Planning inputs
-- `product: ...`
-- `roadmap: ...`
-- `design docs: ...`
-
-Findings
-- ...
-
-Product scope check
-- Use `not applicable` unless this is product review.
-
-Roadmap boundary check
-- Use `not applicable` unless this is roadmap review.
-
-Source of truth check
-- Use `not applicable` unless this is design review.
-
-State boundary check
-- Use `not applicable` unless this is design review.
-
-Data structure check
-- Use `not applicable` unless this is design review.
-
-Ownership and lifecycle check
-- Use `not applicable` unless this is design review.
-
-Source topology check
-- Use `not applicable` unless this is design review.
-
-API boundary check
-- Use `not applicable` unless this is design review.
-
-Invariant check
-- Use `not applicable` unless this is design review.
-
-Testability check
-- Use `not applicable` unless this is design review.
+Decision
+- Result: one of `ready for roadmap`, `ready for design`,
+  `ready for series planning`, `needs product revision`,
+  `needs roadmap revision`, or `needs design revision`.
+- `Target: ...`
+- `Mode: product review | roadmap review | design review`
+- Design doc status: `draft`, `approved`, or `superseded` when the review
+  target is a design doc. Use `approved` only when the review result is
+  `ready for series planning`.
 
 Blocking issues
 - Use `none` if there are no blockers.
+- Each blocker should name the unclear or unsafe part of the artifact, why it
+  blocks the next phase, and the smallest revision needed.
 
-Ready criteria
-- ...
+Findings
+- List notable non-blocking findings ordered by risk. Do not repeat blockers
+  unless the repetition is needed for context.
+- Use short labels such as `scope`, `source of truth`, `ownership`, `API`,
+  `invariants`, or `testability` when they help scanning.
+- Skip lenses that are not applicable instead of emitting `not applicable`
+  sections.
 
-Design doc status
-- `draft` | `approved` | `superseded`
-- Use this section only when the review target is a design doc.
-- Use `approved` only when the review result is `ready for series planning`.
-
-Result
-- `ready for roadmap`
-- `ready for design`
-- `ready for series planning`
-- `needs product revision`
-- `needs roadmap revision`
-- `needs design revision`
+Readiness basis
+- `Inputs: product: ...; roadmap: ...; design docs: ...`
+- Briefly state which criteria are satisfied or which one is not yet satisfied.
 
 Recommended next step
 - Ask the user whether to approve the next action, such as `$roadmap`,
