@@ -18,6 +18,20 @@ install_file() {
     ln -s "$src" "$dest"
 }
 
+install_private_template() {
+    local src="$1"
+    local dest="$2"
+    local message="$3"
+
+    if [[ ! -e "$dest" && ! -L "$dest" ]]; then
+        echo "Creating $dest from template..."
+        install -m 600 "$src" "$dest"
+        echo "$message"
+    elif [[ -f "$dest" && ! -L "$dest" ]]; then
+        chmod 600 "$dest"
+    fi
+}
+
 # Sets up shell entry points by linking directly to the repo files.
 setup_shell_config() {
     local platform="$1"
@@ -85,17 +99,15 @@ setup_codex_config() {
 setup_local_configs() {
     echo "Checking for local configuration files..."
 
-    if [[ ! -f "$HOME/.gitconfig.local" ]]; then
-        echo "Creating ~/.gitconfig.local from template..."
-        cp "templates/gitconfig.local.example" "$HOME/.gitconfig.local"
-        echo "PLEASE EDIT ~/.gitconfig.local WITH YOUR SECRETS!"
-    fi
+    install_private_template \
+        "templates/gitconfig.local.example" \
+        "$HOME/.gitconfig.local" \
+        "PLEASE EDIT ~/.gitconfig.local WITH YOUR SECRETS!"
 
-    if [[ ! -f "$HOME/.shrc.local" ]]; then
-        echo "Creating ~/.shrc.local from template..."
-        cp "templates/shrc.local.example" "$HOME/.shrc.local"
-        echo "PLEASE EDIT ~/.shrc.local WITH YOUR LOCAL SETTINGS!"
-    fi
+    install_private_template \
+        "templates/shrc.local.example" \
+        "$HOME/.shrc.local" \
+        "PLEASE EDIT ~/.shrc.local WITH YOUR LOCAL SETTINGS!"
 }
 
 # Installs core packages by parsing packages.list and choosing the right name for the platform.
